@@ -1,0 +1,48 @@
+{
+    "schemaVersion": 1,
+    "ioMap": {
+        "fireInput": { "module": 1, "channel": 1 },
+        "manualFireButton": { "module": 1, "channel": 2 },
+        "manualStopButton": { "module": 1, "channel": 3 },
+        "voltageControlInput": { "module": 1, "channel": 4 },
+        "modeRelay": { "module": 1, "channel": 1 },
+        "faultLampRelay": { "module": 1, "channel": 2 },
+        "testLampRelay": { "module": 1, "channel": 3 },
+        "reserveRelay": { "module": 1, "channel": 4 }
+    },
+    "lines": [
+        {
+            "index": 1,
+            "name": "Линия 1",
+            "enabled": true,
+            "kind": "constant",
+            "nominalPower": 100,
+            "powerTestTolerancePercent": 5,
+            "leakageCurrentLimit": 30,
+            "requestInput": { "module": 1, "channel": 5 },
+            "outputRelay": { "module": 1, "channel": 5 }
+        },
+        {
+            "index": 2,
+            "name": "Линия 2",
+            "enabled": true,
+            "kind": "constant",
+            "nominalPower": 100,
+            "powerTestTolerancePercent": 5,
+            "leakageCurrentLimit": 30,
+            "requestInput": { "module": 1, "channel": 6 },
+            "outputRelay": { "module": 1, "channel": 6 }
+        },
+        {
+            "index": 3,
+            "name": "Линия 3",
+            "enabled": true,
+            "kind": "constant",
+            "nominalPower": 100,
+            "powerTestTolerancePercent": 5,
+            "leakageCurrentLimit": 30,
+            "requestInput": { "module": 1, "channel": 7 },
+            "outputRelay": { "module": 1, "channel": 7 }
+        }
+    ]
+}

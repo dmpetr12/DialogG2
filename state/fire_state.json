@@ -1,0 +1,93 @@
+{
+    "activeFaults": [
+    ],
+    "battery": {
+        "connected": true,
+        "current": null,
+        "fault": false,
+        "percent": null,
+        "temperature": null,
+        "voltage": null
+    },
+    "explanation": "Пожарный режим или ручная авария",
+    "fireInputActive": true,
+    "health": 0,
+    "healthCode": "normal",
+    "healthText": "Норма",
+    "inputPower": null,
+    "inputVoltage": null,
+    "lines": [
+        {
+            "enabled": true,
+            "index": 1,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 2,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 3,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 4,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 5,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 6,
+            "leakageCurrent": null,
+            "outputCurrent": null,
+            "outputPower": null,
+            "outputVoltage": null,
+            "state": 0,
+            "stateText": "Норма"
+        }
+    ],
+    "manualEmergencyActive": false,
+    "mode": 2,
+    "modeCode": "fire",
+    "modeText": "Пожар",
+    "schemaVersion": 1,
+    "temperature": null,
+    "testActive": false,
+    "testKind": 0,
+    "testKindCode": "none",
+    "testKindText": "",
+    "timestamp": "2026-07-18T19:29:40.111Z",
+    "voltageControlOk": true
+}

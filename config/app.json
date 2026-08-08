@@ -1,0 +1,25 @@
+{
+    "schemaVersion": 1,
+    "modbus": {
+        "relay": {
+            "port": "/dev/rs485_relay",
+            "baudRate": 9600,
+            "parity": "none",
+            "dataBits": 8,
+            "stopBits": 1,
+            "timeoutMs": 250,
+            "retries": 0,
+            "busOfflineFailureThreshold": 3
+        },
+        "metering": {
+            "port": "/dev/rs485_metering",
+            "baudRate": 9600,
+            "parity": "none",
+            "dataBits": 8,
+            "stopBits": 1,
+            "timeoutMs": 250,
+            "retries": 0,
+            "busOfflineFailureThreshold": 3
+        }
+    }
+}

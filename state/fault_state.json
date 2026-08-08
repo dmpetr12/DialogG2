@@ -1,0 +1,93 @@
+{
+    "activeFaults": [
+        "связь Modbus",
+        "линия 1"
+    ],
+    "battery": {
+        "connected": true,
+        "current": 0,
+        "fault": false,
+        "percent": 80,
+        "temperature": 24,
+        "voltage": 48
+    },
+    "explanation": "Есть неисправность: связь Modbus, линия 1",
+    "fireInputActive": false,
+    "health": 1,
+    "healthCode": "fault",
+    "healthText": "Неисправность",
+    "inputPower": 50,
+    "inputVoltage": 220,
+    "lines": [
+        {
+            "enabled": true,
+            "index": 1,
+            "leakageCurrent": 9,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 1,
+            "stateText": "Неисправность"
+        },
+        {
+            "enabled": true,
+            "index": 2,
+            "leakageCurrent": 10,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 3,
+            "leakageCurrent": 11,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 4,
+            "leakageCurrent": 12,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 5,
+            "leakageCurrent": 13,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 0,
+            "stateText": "Норма"
+        },
+        {
+            "enabled": true,
+            "index": 6,
+            "leakageCurrent": 14,
+            "outputCurrent": 0.6,
+            "outputPower": 35,
+            "outputVoltage": 220,
+            "state": 0,
+            "stateText": "Норма"
+        }
+    ],
+    "mainsAvailable": true,
+    "manualEmergencyActive": false,
+    "mode": 0,
+    "modeCode": "mains",
+    "modeText": "От сети",
+    "schemaVersion": 1,
+    "temperature": 24,
+    "testActive": false,
+    "testKind": "",
+    "timestamp": "2026-07-18T19:08:43.015Z"
+}
