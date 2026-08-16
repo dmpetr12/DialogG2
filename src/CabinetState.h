@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 
 class CabinetState : public QObject
 {
@@ -39,6 +40,9 @@ public:
 
     explicit CabinetState(QObject *parent = nullptr);
 
+    void setStateFilePath(const QString &path);
+    void startPolling(int intervalMs = 500);
+
     Mode mode() const;
     void setMode(Mode mode);
 
@@ -75,6 +79,9 @@ signals:
     void changed();
 
 private:
+    void reload();
+    void applyJson(const QByteArray &data);
+
     Mode m_mode = NormalMode;
     Health m_health = Normal;
     bool m_voltageControlOk = true;
@@ -84,4 +91,6 @@ private:
     double m_outputPower = 0.0;
     double m_leakageCurrent = 0.0;
     int m_temperature = 0;
+    QString m_stateFilePath;
+    QTimer m_pollTimer;
 };

@@ -28,6 +28,8 @@ public:
 
     void setMinLevel(Level level);
     Level minLevel() const;
+    void setConsoleOutputEnabled(bool enabled);
+    bool consoleOutputEnabled() const;
 
     void installQtMessageHandler();
 
@@ -55,6 +57,7 @@ private:
     qint64 m_maxFileSize = 10 * 1024 * 1024;
     int m_maxFiles = 5;
     Level m_minLevel = Level::Info;
+    bool m_consoleOutputEnabled = false;
 };
 
 } // namespace DialogG2

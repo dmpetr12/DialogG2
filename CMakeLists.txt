@@ -11,8 +11,21 @@ find_package(Qt6 REQUIRED COMPONENTS
     Qml
     Quick
     QuickControls2
+    Network
     SerialPort
     SerialBus
+)
+
+get_target_property(QT_QMAKE_EXECUTABLE Qt6::qmake IMPORTED_LOCATION)
+execute_process(
+    COMMAND "${QT_QMAKE_EXECUTABLE}" -query QT_INSTALL_PLUGINS
+    OUTPUT_VARIABLE QT_INSTALL_PLUGINS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND "${QT_QMAKE_EXECUTABLE}" -query QT_INSTALL_BINS
+    OUTPUT_VARIABLE QT_INSTALL_BINS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 qt_standard_project_setup(REQUIRES 6.5)
@@ -49,6 +62,8 @@ add_library(dialog-g2-core STATIC
     src/engine/LineManager.cpp
     src/engine/LineOperationalMonitor.h
     src/engine/LineOperationalMonitor.cpp
+    src/engine/MaintenanceChecker.h
+    src/engine/MaintenanceChecker.cpp
     src/engine/ManualEmergencyController.h
     src/engine/ManualEmergencyController.cpp
     src/engine/MeteringBusController.h
@@ -63,6 +78,7 @@ add_library(dialog-g2-core STATIC
 
 target_link_libraries(dialog-g2-core PUBLIC
     Qt6::Core
+    Qt6::Network
     Qt6::SerialPort
     Qt6::SerialBus
 )
@@ -73,6 +89,7 @@ target_include_directories(dialog-g2-core PUBLIC
 
 qt_add_executable(dialog-g2-engine
     src/engine_main.cpp
+    src/PasswordManager.h
 )
 
 target_link_libraries(dialog-g2-engine PRIVATE
@@ -88,6 +105,10 @@ target_link_libraries(test-controller-tests PRIVATE
 )
 
 add_custom_command(TARGET dialog-g2-engine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:dialog-g2-engine>
+        $<TARGET_FILE_DIR:dialog-g2-engine>
+    COMMAND_EXPAND_LISTS
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-engine>/config"
     COMMAND ${CMAKE_COMMAND}
         -D "SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/config/app.json"
@@ -101,8 +122,8 @@ add_custom_command(TARGET dialog-g2-engine POST_BUILD
 
 qt_add_executable(dialog-g2-hmi
     src/main.cpp
-    src/CabinetState.h
-    src/CabinetState.cpp
+    src/PanelFacade.h
+    src/PanelFacade.cpp
 )
 
 qt_add_qml_module(dialog-g2-hmi
@@ -110,6 +131,21 @@ qt_add_qml_module(dialog-g2-hmi
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+        qml/pages/StartPage.qml
+        qml/pages/PasswordPage.qml
+        qml/pages/TestPage.qml
+        qml/pages/SettingsPage.qml
+        qml/pages/LineSettingsPage.qml
+        qml/pages/PasswordChangePage.qml
+        qml/pages/DateTimePage.qml
+        qml/pages/SchedulePage.qml
+        qml/pages/TestSettingsPage.qml
+        qml/pages/JournalPage.qml
+        qml/pages/SystemPage.qml
+        qml/pages/LinesPage.qml
+    RESOURCES
+        qml/assets/light-tech-logo.png
+        qml/assets/Back.png
 )
 
 target_link_libraries(dialog-g2-hmi PRIVATE
@@ -118,7 +154,28 @@ target_link_libraries(dialog-g2-hmi PRIVATE
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
+    Qt6::Network
 )
+
+add_custom_command(TARGET dialog-g2-hmi POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:dialog-g2-hmi>
+        $<TARGET_FILE_DIR:dialog-g2-hmi>
+    COMMAND_EXPAND_LISTS
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${QT_INSTALL_PLUGINS}/platforms/$<IF:$<CONFIG:Debug>,qwindowsd.dll,qwindows.dll>"
+        "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
+)
+
+if (WIN32)
+    add_custom_command(TARGET dialog-g2-hmi POST_BUILD
+        COMMAND "${QT_INSTALL_BINS}/windeployqt.exe"
+            --no-translations
+            --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+            "$<TARGET_FILE:dialog-g2-hmi>"
+    )
+endif()
 
 if (WIN32)
     set_target_properties(dialog-g2-hmi PROPERTIES

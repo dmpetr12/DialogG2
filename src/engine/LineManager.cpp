@@ -389,7 +389,10 @@ LineManagerResult LineManager::evaluate(const LineManagerInputs &inputs) const
     result.manualStopButtonActive = inputActive(inputs.modules, m_ioMap.manualStopButton);
 
     setRelayBit(&result.relayOutputBytes, m_ioMap.modeRelay, inputs.modeRelayOn);
+    // Fault lamp uses a normally closed contact: keep the coil energized in
+    // normal state and drop it on fault, including electronics power loss.
     setRelayBit(&result.relayOutputBytes, m_ioMap.faultLampRelay, !inputs.faultLampOn);
+    // Test lamp is wired directly: energized coil means lamp on.
     setRelayBit(&result.relayOutputBytes, m_ioMap.testLampRelay, inputs.testLampOn);
     setRelayBit(&result.relayOutputBytes, m_ioMap.reserveRelay, false);
 
@@ -414,13 +417,17 @@ LineManagerResult LineManager::evaluate(const LineManagerInputs &inputs) const
             && inputActive(inputs.modules, config.requestInput);
 
         bool shouldBeOn = false;
-        if (config.enabled && config.kind == LineKind::Constant)
+        if (config.enabled && (inputs.forceLinesOn || inputs.forceLineIndex == config.index))
+            shouldBeOn = true;
+        else if (config.enabled && config.kind == LineKind::Constant)
             shouldBeOn = true;
         else if (config.enabled && config.kind == LineKind::NonConstant)
             shouldBeOn = line.requestInputActive;
 
         line.outputState = shouldBeOn ? LineOutputState::On : LineOutputState::Off;
-        setRelayBit(&result.relayOutputBytes, config.outputRelay, shouldBeOn);
+        // Line outputs use normally closed relay contacts: logical line ON means
+        // the WaveShare coil must be de-energized.
+        setRelayBit(&result.relayOutputBytes, config.outputRelay, !shouldBeOn);
         result.lines.append(line);
     }
 

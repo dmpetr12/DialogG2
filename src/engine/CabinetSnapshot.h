@@ -195,6 +195,26 @@ struct BatterySnapshot
     QStringList warnings;
 };
 
+struct MaintenanceLineStatus
+{
+    int lineIndex = 0;
+    QString lineName;
+    QDateTime lastTestAt;
+    bool overdue = false;
+};
+
+struct MaintenanceSnapshot
+{
+    bool ok = true;
+    int overdueLinesCount = 0;
+    bool longTestOverdue = false;
+    QDateTime lastLongTestAt;
+    int lineLimitDays = 30;
+    int longTestLimitDays = 365;
+    QVector<MaintenanceLineStatus> lines;
+    QString summary;
+};
+
 struct CabinetSnapshot
 {
     int schemaVersion = 1;
@@ -220,6 +240,7 @@ struct CabinetSnapshot
     BatterySnapshot battery;
     QVector<LineSnapshot> lines;
     QVector<TestJournalEntry> testJournal;
+    MaintenanceSnapshot maintenance;
     QStringList activeFaults;
 };
 
@@ -250,6 +271,8 @@ QJsonObject toJson(const TestLineMeasurement &measurement);
 QJsonObject toJson(const TestJournalEntry &entry);
 QJsonObject toJson(const ActiveTestSnapshot &test);
 QJsonObject toJson(const BatterySnapshot &battery);
+QJsonObject toJson(const MaintenanceLineStatus &line);
+QJsonObject toJson(const MaintenanceSnapshot &maintenance);
 QJsonObject toJson(const CabinetSnapshot &snapshot);
 
 LineOperationalCheck lineOperationalCheckFromJson(const QJsonObject &obj);
@@ -259,6 +282,8 @@ TestJournalEntry testJournalEntryFromJson(const QJsonObject &obj);
 ActiveTestSnapshot activeTestFromJson(const QJsonObject &obj);
 LineSnapshot lineFromJson(const QJsonObject &obj);
 BatterySnapshot batteryFromJson(const QJsonObject &obj);
+MaintenanceLineStatus maintenanceLineStatusFromJson(const QJsonObject &obj);
+MaintenanceSnapshot maintenanceFromJson(const QJsonObject &obj);
 CabinetSnapshot snapshotFromJson(const QJsonObject &obj);
 
 } // namespace DialogG2

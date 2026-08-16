@@ -261,12 +261,14 @@ TestKind TestScheduleManager::kindFromTestType(const QString &testType)
 {
     const QString normalized = testType.trimmed().toLower();
     if (normalized == QStringLiteral("тест на время")
+        || normalized == QStringLiteral("на время")
         || normalized == QStringLiteral("duration")
         || normalized == QStringLiteral("duration_test")
         || normalized == QStringLiteral("long")) {
         return TestKind::Duration;
     }
     if (normalized == QStringLiteral("функциональный тест")
+        || normalized == QStringLiteral("функциональный")
         || normalized == QStringLiteral("functional")
         || normalized == QStringLiteral("functional_test")
         || normalized == QStringLiteral("short")) {

@@ -1,316 +1,425 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "pages"
 
 ApplicationWindow {
     id: window
-    width: 800
-    height: 480
+
+    width: 1024
+    height: 768
+    minimumWidth: 1024
+    minimumHeight: 768
+    maximumWidth: 1024
+    maximumHeight: 768
     visible: true
-    title: "Шкаф Dialog G2"
-    color: "#eef3eb"
+    title: "Щит аварийного освещения Dialog G2"
+    color: "#ffffff"
 
-    readonly property color panelBg: "#f8faf6"
-    readonly property color textMain: "#171a17"
-    readonly property color muted: "#5c665c"
-    readonly property color border: "#c9d5c7"
+    property date now: new Date()
+    property bool unlocked: false
+    property int selectedLineIndex: 0
+    property int selectedScheduleIndex: -1
+    readonly property int idleTimeoutMs: 10 * 60 * 1000
 
-    header: Rectangle {
-        height: 72
-        color: panelBg
+    Timer {
+        interval: 1000
+        repeat: true
+        running: true
+        onTriggered: window.now = new Date()
+    }
 
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 18
-            anchors.rightMargin: 18
-            spacing: 16
+    Timer {
+        id: accessIdleTimer
+        interval: window.idleTimeoutMs
+        repeat: false
+        running: window.unlocked
 
-            Rectangle {
-                width: 54
-                height: 42
-                color: "#2f3833"
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "СТ"
-                    color: "white"
-                    font.pixelSize: 20
-                    font.bold: true
-                }
-            }
-
-            Text {
-                Layout.fillWidth: true
-                text: "Шкаф аварийного освещения Dialog G2"
-                color: textMain
-                font.pixelSize: 26
-                font.bold: true
-                elide: Text.ElideRight
-            }
-
-            Text {
-                text: Qt.formatDateTime(new Date(), "hh:mm  dd.MM.yyyy")
-                color: textMain
-                font.pixelSize: 24
-            }
+        onTriggered: {
+            window.unlocked = false
+            pageStack.replace(startPageComponent)
         }
     }
 
-    ColumnLayout {
+    onUnlockedChanged: {
+        if (unlocked)
+            accessIdleTimer.restart()
+        else
+            accessIdleTimer.stop()
+    }
+
+    Rectangle {
+        id: headerBand
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: 120
+        color: "#c5dfc0"
+
+        Image {
+            anchors.left: parent.left
+            anchors.leftMargin: -40
+            anchors.top: parent.top
+            anchors.topMargin: -5
+            width: 400
+            height: 100
+            source: "assets/light-tech-logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        Row {
+            anchors.right: parent.right
+            anchors.rightMargin: 26
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            spacing: 34
+
+            Text {
+                text: panel.temperature.toFixed(0) + "°C"
+                color: "#111111"
+                font.pixelSize: 41
+                font.family: "Arial"
+            }
+
+            Text {
+                text: Qt.formatDateTime(window.now, "hh:mm")
+                color: "#111111"
+                font.pixelSize: 41
+                font.family: "Arial"
+            }
+
+            Text {
+                text: Qt.formatDateTime(window.now, "dd.MM.yyyy")
+                color: "#111111"
+                font.pixelSize: 41
+                font.family: "Arial"
+            }
+        }
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            text: "ЩИТ АВАРИЙНОГО ОСВЕЩЕНИЯ \"ДИАЛОГ G2\""
+            color: "#111111"
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: 35
+            font.family: "Arial"
+        }
+    }
+
+    StackView {
+        id: pageStack
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: headerBand.bottom
+        anchors.bottom: parent.bottom
+
+        initialItem: startPageComponent
+
+        pushEnter: null
+        pushExit: null
+        popEnter: null
+        popExit: null
+        replaceEnter: null
+        replaceExit: null
+    }
+
+    MouseArea {
         anchors.fill: parent
-        anchors.margins: 14
-        spacing: 12
+        z: 1000
+        hoverEnabled: true
+        propagateComposedEvents: true
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 12
+        onPressed: function(mouse) {
+            if (window.unlocked)
+                accessIdleTimer.restart()
+            mouse.accepted = false
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: panelBg
-                border.color: border
-                radius: 6
+        onReleased: function(mouse) {
+            if (window.unlocked)
+                accessIdleTimer.restart()
+            mouse.accepted = false
+        }
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 18
-                    spacing: 14
+        onClicked: function(mouse) {
+            if (window.unlocked)
+                accessIdleTimer.restart()
+            mouse.accepted = false
+        }
+    }
 
-                    Text {
-                        text: "Режим"
-                        color: muted
-                        font.pixelSize: 22
-                    }
+    Popup {
+        id: digitalPopup
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 18
+        parent: Overlay.overlay
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        x: Math.round((window.width - width) / 2)
+        y: Math.round((window.height - height) / 2)
+        width: 360
+        height: 450
+        margins: 20
 
-                        Rectangle {
-                            width: 46
-                            height: 46
-                            radius: 23
-                            color: cabinet.modeColor
-                        }
+        property var targetObject: null
+        property string targetProperty: ""
+        property string nameP: ""
+        property int maxV: 1000
 
-                        Text {
-                            Layout.fillWidth: true
-                            text: cabinet.modeText
-                            color: textMain
-                            font.pixelSize: 46
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 1
-                        color: border
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 18
-
-                        StatusButton {
-                            Layout.fillWidth: true
-                            title: "Система"
-                            value: cabinet.healthText
-                            accent: cabinet.healthColor
-                        }
-
-                        StatusButton {
-                            Layout.fillWidth: true
-                            title: "АКБ"
-                            value: cabinet.batteryOk ? "Норма" : "Неисправность"
-                            accent: cabinet.batteryOk ? "#0bbf63" : "#d93636"
-                        }
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 18
-
-                        StatusButton {
-                            Layout.fillWidth: true
-                            title: "КН"
-                            value: cabinet.voltageControlOk ? "Норма" : "Авария"
-                            accent: cabinet.voltageControlOk ? "#0bbf63" : "#d93636"
-                        }
-
-                        StatusButton {
-                            Layout.fillWidth: true
-                            title: "Заряд"
-                            value: cabinet.batteryPercent >= 0 ? cabinet.batteryPercent + "%" : "-"
-                            accent: cabinet.batteryPercent > 30 ? "#0bbf63" : "#d99a00"
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredWidth: 250
-                Layout.fillHeight: true
-                color: panelBg
-                border.color: border
-                radius: 6
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 18
-                    spacing: 18
-
-                    Text {
-                        text: "Измерения"
-                        color: muted
-                        font.pixelSize: 22
-                    }
-
-                    MetricRow {
-                        label: "Вход"
-                        value: "-"
-                        unit: "В"
-                    }
-
-                    MetricRow {
-                        label: "Мощность"
-                        value: "-"
-                        unit: "Вт"
-                    }
-
-                    MetricRow {
-                        label: "Утечка"
-                        value: "-"
-                        unit: "мА"
-                    }
-
-                    MetricRow {
-                        label: "Темп."
-                        value: "-"
-                        unit: "°C"
-                    }
-
-                    Item { Layout.fillHeight: true }
-                }
-            }
+        function openFor(nameText, target, propName, initialValue, maxValue) {
+            nameP = nameText
+            targetObject = target
+            targetProperty = propName
+            powerField.text = ""
+            maxV = maxValue
+            open()
         }
 
         Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 74
-            color: "#dce9da"
-            radius: 6
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 8
-                spacing: 8
-
-                NavButton { text: "Линии" }
-                NavButton { text: "АКБ" }
-                NavButton { text: "Журнал" }
-                NavButton { text: "Настройки" }
-                NavButton { text: "Расписание" }
-            }
-        }
-    }
-
-    component StatusButton: Rectangle {
-        property string title
-        property string value
-        property color accent
-
-        Layout.preferredHeight: 82
-        color: "#ffffff"
-        border.color: border
-        radius: 6
-
-        RowLayout {
             anchors.fill: parent
-            anchors.margins: 12
-            spacing: 10
+            color: "#333333"
+            radius: 10
 
-            Rectangle {
-                width: 28
-                height: 28
-                radius: 14
-                color: accent
-            }
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 2
+            Column {
+                anchors.fill: parent
+                anchors.margins: 16
+                spacing: 12
 
                 Text {
-                    text: title
-                    color: muted
-                    font.pixelSize: 18
-                    elide: Text.ElideRight
+                    text: digitalPopup.nameP
+                    color: "white"
+                    font.pixelSize: 30
                 }
 
-                Text {
-                    text: value
-                    color: textMain
-                    font.pixelSize: 28
-                    font.bold: true
-                    elide: Text.ElideRight
+                TextField {
+                    id: powerField
+                    text: ""
+                    readOnly: true
+                    font.pixelSize: 40
+                    inputMethodHints: Qt.ImhPreferNumbers
+                }
+
+                GridLayout {
+                    columns: 3
+                    rowSpacing: 4
+                    columnSpacing: 4
+
+                    Repeater {
+                        model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ",", "←"]
+
+                        delegate: Button {
+                            text: modelData
+                            font.pixelSize: 34
+
+                            onClicked: {
+                                if (text === "←")
+                                    powerField.text = powerField.text.slice(0, -1)
+                                else
+                                    powerField.text += text
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    spacing: 12
+
+                    Button {
+                        text: "Отмена"
+                        font.pixelSize: 40
+                        onClicked: digitalPopup.close()
+                    }
+
+                    Button {
+                        text: " OK "
+                        font.pixelSize: 40
+
+                        onClicked: {
+                            var cont = true
+                            var v = parseFloat(powerField.text.replace(",", "."))
+
+                            if (!isNaN(v) && v < 1 &&
+                                    digitalPopup.targetProperty !== "minute" &&
+                                    digitalPopup.targetProperty !== "hour" &&
+                                    digitalPopup.targetProperty !== "mpower")
+                                cont = false
+
+                            if (!isNaN(v) && v < 2025 &&
+                                    digitalPopup.targetProperty === "year")
+                                cont = false
+
+                            if (cont && !isNaN(v) &&
+                                    digitalPopup.targetObject &&
+                                    digitalPopup.targetProperty !== "")
+                                digitalPopup.targetObject[digitalPopup.targetProperty] =
+                                        digitalPopup.maxV > v ? v : digitalPopup.maxV
+
+                            digitalPopup.close()
+                        }
+                    }
                 }
             }
         }
     }
 
-    component MetricRow: RowLayout {
-        property string label
-        property string value
-        property string unit
+    Component {
+        id: startPageComponent
 
-        Layout.fillWidth: true
-        spacing: 8
-
-        Text {
-            Layout.fillWidth: true
-            text: label
-            color: muted
-            font.pixelSize: 21
-            elide: Text.ElideRight
-        }
-
-        Text {
-            text: value
-            color: textMain
-            font.pixelSize: 30
-            font.bold: true
-        }
-
-        Text {
-            text: unit
-            color: muted
-            font.pixelSize: 19
+        StartPage {
+            unlocked: window.unlocked
+            onLoginRequested: pageStack.replace(passwordPageComponent)
+            onLogoutRequested: window.unlocked = false
+            onTestRequested: pageStack.replace(testPageComponent)
+            onSettingsRequested: pageStack.replace(settingsPageComponent)
+            onScheduleRequested: pageStack.replace(schedulePageComponent)
+            onJournalRequested: pageStack.replace(journalPageComponent)
+            onSystemRequested: pageStack.replace(systemPageComponent)
+            onLinesRequested: pageStack.replace(linesPageComponent)
         }
     }
 
-    component NavButton: Button {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        font.pixelSize: 22
-        font.bold: true
+    Component {
+        id: passwordPageComponent
 
-        background: Rectangle {
-            color: parent.down ? "#b8cbb6" : "#f8faf6"
-            border.color: border
-            radius: 6
+        PasswordPage {
+            onAccepted: {
+                window.unlocked = true
+                pageStack.replace(startPageComponent)
+            }
+            onRejected: {
+                window.unlocked = false
+                pageStack.replace(startPageComponent)
+            }
+            onCanceled: pageStack.replace(startPageComponent)
+            onForgotPasswordRequested: pageStack.replace(forgotPasswordChangePageComponent)
         }
+    }
 
-        contentItem: Text {
-            text: parent.text
-            color: textMain
-            font: parent.font
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+    Component {
+        id: testPageComponent
+
+        TestPage {
+            id: testPage
+
+            unlocked: window.unlocked
+            onBackRequested: pageStack.replace(startPageComponent)
+            onInputRequested: function(nameText, propertyName, initialValue, maxValue) {
+                digitalPopup.openFor(nameText, testPage, propertyName, initialValue, maxValue)
+            }
+        }
+    }
+
+    Component {
+        id: settingsPageComponent
+
+        SettingsPage {
+            onBackRequested: pageStack.replace(startPageComponent)
+            onDateTimeRequested: pageStack.replace(dateTimePageComponent)
+            onPasswordRequested: pageStack.replace(passwordChangePageComponent)
+            onLineRequested: function(index) {
+                window.selectedLineIndex = index
+                pageStack.replace(lineSettingsPageComponent)
+            }
+        }
+    }
+
+    Component {
+        id: lineSettingsPageComponent
+
+        LineSettingsPage {
+            id: lineSettingsPage
+
+            lineIndex: window.selectedLineIndex
+            onBackRequested: pageStack.replace(settingsPageComponent)
+            onInputRequested: function(nameText, propertyName, initialValue, maxValue) {
+                digitalPopup.openFor(nameText, lineSettingsPage, propertyName, initialValue, maxValue)
+            }
+        }
+    }
+
+    Component {
+        id: passwordChangePageComponent
+
+        PasswordChangePage {
+            onBackRequested: pageStack.replace(settingsPageComponent)
+        }
+    }
+
+    Component {
+        id: schedulePageComponent
+
+        SchedulePage {
+            onBackRequested: pageStack.replace(startPageComponent)
+            onEditRequested: function(index) {
+                window.selectedScheduleIndex = index
+                pageStack.replace(testSettingsPageComponent)
+            }
+        }
+    }
+
+    Component {
+        id: journalPageComponent
+
+        JournalPage {
+            onBackRequested: pageStack.replace(startPageComponent)
+        }
+    }
+
+    Component {
+        id: systemPageComponent
+
+        SystemPage {
+            onBackRequested: pageStack.replace(startPageComponent)
+        }
+    }
+
+    Component {
+        id: linesPageComponent
+
+        LinesPage {
+            onBackRequested: pageStack.replace(startPageComponent)
+        }
+    }
+
+    Component {
+        id: testSettingsPageComponent
+
+        TestSettingsPage {
+            id: testSettingsPage
+
+            currentIndex: window.selectedScheduleIndex
+            onBackRequested: pageStack.replace(schedulePageComponent)
+            onInputRequested: function(nameText, propertyName, initialValue, maxValue) {
+                digitalPopup.openFor(nameText, testSettingsPage, propertyName, initialValue, maxValue)
+            }
+        }
+    }
+
+    Component {
+        id: forgotPasswordChangePageComponent
+
+        PasswordChangePage {
+            onBackRequested: pageStack.replace(startPageComponent)
+        }
+    }
+
+    Component {
+        id: dateTimePageComponent
+
+        DateTimePage {
+            id: dateTimePage
+
+            onBackRequested: pageStack.replace(settingsPageComponent)
+            onInputRequested: function(nameText, propertyName, initialValue, maxValue) {
+                digitalPopup.openFor(nameText, dateTimePage, propertyName, initialValue, maxValue)
+            }
         }
     }
 }

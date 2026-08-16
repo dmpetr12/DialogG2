@@ -58,6 +58,8 @@ struct LineManagerInputs
     bool modeRelayOn = false;
     bool faultLampOn = false;
     bool testLampOn = false;
+    bool forceLinesOn = false;
+    int forceLineIndex = 0;
 };
 
 struct LineManagerResult

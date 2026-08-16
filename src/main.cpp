@@ -1,19 +1,24 @@
 #include <QGuiApplication>
+#include <QFont>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
 
-#include "CabinetState.h"
+#include "PanelFacade.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle(QStringLiteral("Basic"));
+    QQuickStyle::setStyle(QStringLiteral("Fusion"));
 
-    CabinetState cabinet;
+    QFont font(QStringLiteral("Ubuntu"));
+    font.setPixelSize(30);
+    app.setFont(font);
+
+    PanelFacade panel;
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty(QStringLiteral("cabinet"), &cabinet);
+    engine.rootContext()->setContextProperty(QStringLiteral("panel"), &panel);
     engine.loadFromModule(QStringLiteral("DialogG2"), QStringLiteral("Main"));
 
     if (engine.rootObjects().isEmpty())

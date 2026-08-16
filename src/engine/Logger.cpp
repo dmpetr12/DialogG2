@@ -7,6 +7,9 @@
 #include <QTextStream>
 #include <QThread>
 #include <QtGlobal>
+#ifdef Q_OS_WIN
+#include <iostream>
+#endif
 
 namespace DialogG2 {
 
@@ -78,6 +81,18 @@ Logger::Level Logger::minLevel() const
     return m_minLevel;
 }
 
+void Logger::setConsoleOutputEnabled(bool enabled)
+{
+    QMutexLocker locker(&m_mutex);
+    m_consoleOutputEnabled = enabled;
+}
+
+bool Logger::consoleOutputEnabled() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_consoleOutputEnabled;
+}
+
 void Logger::installQtMessageHandler()
 {
     previousHandler = qInstallMessageHandler(qtMessageHandler);
@@ -128,6 +143,18 @@ void Logger::write(Level level, const QString &message)
     QTextStream out(&m_file);
     out << line << Qt::endl;
     out.flush();
+
+    if (m_consoleOutputEnabled) {
+#ifdef Q_OS_WIN
+        const QByteArray localLine = line.toLocal8Bit();
+        std::ostream &stream = level >= Level::Warning ? std::cerr : std::cout;
+        stream << localLine.constData() << std::endl;
+#else
+        QTextStream console(level >= Level::Warning ? stderr : stdout);
+        console << line << Qt::endl;
+        console.flush();
+#endif
+    }
 
     rotateIfNeeded();
 }

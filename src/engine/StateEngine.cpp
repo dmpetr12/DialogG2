@@ -25,6 +25,7 @@ CabinetSnapshot StateEngine::evaluate(const EngineInputs &inputs) const
     snapshot.battery = inputs.battery;
     snapshot.lines = inputs.lines;
     snapshot.testJournal = inputs.testJournal;
+    snapshot.maintenance = inputs.maintenance;
 
     return snapshot;
 }

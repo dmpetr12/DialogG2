@@ -1,10 +1,17 @@
 #include "CabinetState.h"
 
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 #include <algorithm>
+#include <cmath>
 
 CabinetState::CabinetState(QObject *parent)
     : QObject(parent)
 {
+    connect(&m_pollTimer, &QTimer::timeout, this, &CabinetState::reload);
 }
 
 CabinetState::Mode CabinetState::mode() const { return m_mode; }
@@ -86,7 +93,8 @@ int CabinetState::batteryPercent() const { return m_batteryPercent; }
 
 void CabinetState::setBatteryPercent(int percent)
 {
-    percent = std::clamp(percent, 0, 100);
+    if (percent >= 0)
+        percent = std::clamp(percent, 0, 100);
     if (m_batteryPercent == percent)
         return;
     m_batteryPercent = percent;
@@ -131,4 +139,64 @@ void CabinetState::setTemperature(int temperature)
         return;
     m_temperature = temperature;
     emit changed();
+}
+
+void CabinetState::setStateFilePath(const QString &path)
+{
+    m_stateFilePath = path;
+    reload();
+}
+
+void CabinetState::startPolling(int intervalMs)
+{
+    m_pollTimer.start(std::max(100, intervalMs));
+}
+
+void CabinetState::reload()
+{
+    if (m_stateFilePath.isEmpty())
+        return;
+
+    QFile file(m_stateFilePath);
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    applyJson(file.readAll());
+}
+
+void CabinetState::applyJson(const QByteArray &data)
+{
+    QJsonParseError error;
+    const QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+    if (error.error != QJsonParseError::NoError || !doc.isObject())
+        return;
+
+    const QJsonObject root = doc.object();
+    setMode(static_cast<Mode>(root.value(QStringLiteral("mode")).toInt()));
+    setHealth(static_cast<Health>(root.value(QStringLiteral("health")).toInt()));
+    setVoltageControlOk(root.value(QStringLiteral("voltageControlOk")).toBool(true));
+    setInputVoltage(root.value(QStringLiteral("inputVoltage")).toDouble(0.0));
+    setTemperature(static_cast<int>(std::round(root.value(QStringLiteral("temperature")).toDouble(0.0))));
+
+    const QJsonObject battery = root.value(QStringLiteral("battery")).toObject();
+    const int batteryState = battery.value(QStringLiteral("state")).toInt();
+    setBatteryOk(battery.value(QStringLiteral("connected")).toBool(true)
+                 && battery.value(QStringLiteral("communicationOk")).toBool(true)
+                 && batteryState < 2);
+    setBatteryPercent(battery.value(QStringLiteral("socPercent")).toInt(-1));
+
+    double totalPower = 0.0;
+    double maxLeakage = 0.0;
+    const QJsonArray lines = root.value(QStringLiteral("lines")).toArray();
+    for (const QJsonValue &value : lines) {
+        const QJsonObject line = value.toObject();
+        const double power = line.value(QStringLiteral("outputPower")).toDouble(0.0);
+        const double leakage = line.value(QStringLiteral("leakageCurrent")).toDouble(0.0);
+        if (std::isfinite(power))
+            totalPower += power;
+        if (std::isfinite(leakage))
+            maxLeakage = std::max(maxLeakage, leakage);
+    }
+    setOutputPower(totalPower);
+    setLeakageCurrent(maxLeakage);
 }

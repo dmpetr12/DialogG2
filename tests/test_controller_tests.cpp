@@ -7,6 +7,7 @@
 #include "engine/TestScheduleManager.h"
 #include "engine/LineManager.h"
 #include "engine/LineOperationalMonitor.h"
+#include "engine/MaintenanceChecker.h"
 #include "engine/ManualEmergencyController.h"
 #include "engine/ModbusRtuCodec.h"
 #include "engine/WhdTemperatureHumidityController.h"
@@ -306,6 +307,14 @@ static bool testSchedulePersistsLegacyArrayFormat()
                   QStringLiteral("schedule entry should contain legacy startTime field"));
 }
 
+static bool testScheduleAcceptsArchivedTestTypeNames()
+{
+    return expect(TestScheduleManager::kindFromTestType(QStringLiteral("Функциональный")) == TestKind::Functional,
+                  QStringLiteral("archived functional test type should be accepted"))
+        && expect(TestScheduleManager::kindFromTestType(QStringLiteral("На время")) == TestKind::Duration,
+                  QStringLiteral("archived duration test type should be accepted"));
+}
+
 static bool functionalTestPasses()
 {
     TestControllerConfig config;
@@ -326,6 +335,64 @@ static bool functionalTestPasses()
                   QStringLiteral("functional test should pass"))
         && expect(result.lines.first().lastFunctionalTest.status == TestRunStatus::Passed,
                   QStringLiteral("line should store last functional result"));
+}
+
+static bool functionalTestUsesRequestedWarmup()
+{
+    TestControllerConfig config;
+    config.functionalWarmupSeconds = 120;
+
+    TestController controller(config);
+    TestControllerInputs inputs;
+    inputs.now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    inputs.lines = {testLine(1, 100.0)};
+    inputs.manualFunctional = {true, 60};
+
+    TestControllerResult result = controller.evaluate(inputs);
+    if (!expect(result.activeTest.active, QStringLiteral("functional test should start")))
+        return false;
+    if (!expect(result.activeTest.warmupSeconds == 60,
+                QStringLiteral("functional test should use requested warmup")))
+        return false;
+
+    inputs.now = inputs.now.addSecs(61);
+    result = controller.evaluate(inputs);
+    return expect(result.journalEntries.size() == 1,
+                  QStringLiteral("functional test should finish after requested warmup"));
+}
+
+static bool activeTestsRequestBatteryMode()
+{
+    TestControllerConfig config;
+    config.functionalWarmupSeconds = 120;
+    config.defaultDurationSeconds = 3600;
+
+    TestController controller(config);
+    TestControllerInputs inputs;
+    inputs.now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    inputs.lines = {testLine(1, 100.0)};
+    inputs.manualFunctional.active = true;
+
+    TestControllerResult result = controller.evaluate(inputs);
+    if (!expect(result.activeTest.active, QStringLiteral("functional test should start")))
+        return false;
+    if (!expect(result.modeRelayOn, QStringLiteral("functional test should request battery mode relay")))
+        return false;
+
+    inputs.manualFunctional.active = false;
+    inputs.stopRequested = true;
+    result = controller.evaluate(inputs);
+    if (!expect(!result.activeTest.active, QStringLiteral("functional test should stop")))
+        return false;
+
+    TestController durationController(config);
+    inputs = {};
+    inputs.now = QDateTime::fromString(QStringLiteral("2026-08-08T09:00:00.000Z"), Qt::ISODateWithMs);
+    inputs.lines = {testLine(1, 100.0)};
+    inputs.manualDuration.active = true;
+    result = durationController.evaluate(inputs);
+    return expect(result.activeTest.active, QStringLiteral("duration test should start"))
+        && expect(result.modeRelayOn, QStringLiteral("duration test should request battery mode relay"));
 }
 
 static bool durationTestUsesExpandedTolerance()
@@ -351,6 +418,59 @@ static bool durationTestUsesExpandedTolerance()
                   QStringLiteral("line 1 should pass within 10 percent expanded tolerance"))
         && expect(result.journalEntries.first().lines.at(1).status == TestRunStatus::Failed,
                   QStringLiteral("line 2 should fail outside 10 percent expanded tolerance"));
+}
+
+static TestJournalEntry durationJournalEntry(const QDateTime &finishedAt)
+{
+    TestJournalEntry entry;
+    entry.kind = TestKind::Duration;
+    entry.source = TestSource::Manual;
+    entry.startedAt = finishedAt.addSecs(-3600);
+    entry.finishedAt = finishedAt;
+    entry.status = TestRunStatus::Passed;
+    return entry;
+}
+
+static bool maintenanceCheckerReportsMissingTests()
+{
+    MaintenanceChecker checker;
+    const QDateTime now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    const MaintenanceSnapshot result = checker.evaluate({testLine(1, 100.0), testLine(2, 100.0)}, {}, now);
+
+    return expect(!result.ok, QStringLiteral("maintenance should fail when no tests were performed"))
+        && expect(result.overdueLinesCount == 2, QStringLiteral("all enabled lines should be overdue"))
+        && expect(result.longTestOverdue, QStringLiteral("missing duration test should be overdue"));
+}
+
+static bool maintenanceCheckerAcceptsFreshTests()
+{
+    MaintenanceChecker checker;
+    const QDateTime now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    LineSnapshot line = testLine(1, 100.0);
+    line.lastFunctionalTest.completedAt = now.addDays(-7);
+    line.lastFunctionalTest.status = TestRunStatus::Passed;
+
+    const MaintenanceSnapshot result = checker.evaluate({line}, {durationJournalEntry(now.addDays(-60))}, now);
+    return expect(result.ok, QStringLiteral("fresh line and duration tests should satisfy maintenance"))
+        && expect(result.overdueLinesCount == 0, QStringLiteral("fresh line test should not be overdue"))
+        && expect(!result.longTestOverdue, QStringLiteral("fresh duration test should not be overdue"));
+}
+
+static bool maintenanceCheckerReportsOldLineTest()
+{
+    MaintenanceCheckerConfig config;
+    config.lineLimitDays = 30;
+    config.longTestLimitDays = 365;
+    MaintenanceChecker checker(config);
+    const QDateTime now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    LineSnapshot line = testLine(1, 100.0);
+    line.lastFunctionalTest.completedAt = now.addDays(-31);
+    line.lastFunctionalTest.status = TestRunStatus::Passed;
+
+    const MaintenanceSnapshot result = checker.evaluate({line}, {durationJournalEntry(now.addDays(-30))}, now);
+    return expect(!result.ok, QStringLiteral("old line test should make maintenance not ok"))
+        && expect(result.overdueLinesCount == 1, QStringLiteral("old line test should be counted as overdue"))
+        && expect(!result.longTestOverdue, QStringLiteral("fresh duration test should stay ok"));
 }
 
 static bool testInterruptedByVoltagePriority()
@@ -446,6 +566,114 @@ static bool lineManagerDrivesNormallyClosedFaultLamp()
     result = manager.evaluate(inputs);
     return expect((result.relayOutputBytes.value(1) & faultLampMask) == 0,
                   QStringLiteral("normally closed fault lamp relay should drop on fault"));
+}
+
+static bool lineManagerDrivesDirectTestLamp()
+{
+    LineManager manager;
+    LineManagerInputs inputs;
+    WaveShareModuleState module;
+    module.module = 1;
+    inputs.modules.insert(module.module, module);
+
+    LineManagerResult result = manager.evaluate(inputs);
+    const quint8 testLampMask = static_cast<quint8>(1u << 2);
+    if (!expect((result.relayOutputBytes.value(1) & testLampMask) == 0,
+                QStringLiteral("direct test lamp relay should be off without active test")))
+        return false;
+
+    inputs.testLampOn = true;
+    result = manager.evaluate(inputs);
+    return expect((result.relayOutputBytes.value(1) & testLampMask) != 0,
+                  QStringLiteral("direct test lamp relay should energize on active test"));
+}
+
+static bool lineManagerForcesEnabledLinesOnDuringTest()
+{
+    LineManager manager;
+    LineConfig line = *manager.line(1);
+    line.kind = LineKind::NonConstant;
+    line.enabled = true;
+
+    QString error;
+    if (!expect(manager.updateLine(line, &error),
+                QStringLiteral("line should update to non-constant: %1").arg(error)))
+        return false;
+
+    LineManagerInputs inputs;
+    WaveShareModuleState module;
+    module.module = 1;
+    module.online = true;
+    inputs.modules.insert(module.module, module);
+
+    LineManagerResult result = manager.evaluate(inputs);
+    if (!expect(result.lines.first().outputState == LineOutputState::Off,
+                QStringLiteral("non-constant line should be off without request input")))
+        return false;
+
+    inputs.forceLinesOn = true;
+    result = manager.evaluate(inputs);
+    return expect(result.lines.first().outputState == LineOutputState::On,
+                  QStringLiteral("enabled line should be forced on during test"));
+}
+
+static bool lineManagerForcesSelectedLineOnDuringSetup()
+{
+    LineManager manager;
+    LineConfig line = *manager.line(1);
+    line.kind = LineKind::NonConstant;
+    line.enabled = true;
+
+    QString error;
+    if (!expect(manager.updateLine(line, &error),
+                QStringLiteral("line should update to non-constant: %1").arg(error)))
+        return false;
+
+    LineManagerInputs inputs;
+    WaveShareModuleState module;
+    module.module = 1;
+    module.online = true;
+    inputs.modules.insert(module.module, module);
+
+    LineManagerResult result = manager.evaluate(inputs);
+    if (!expect(result.lines.first().outputState == LineOutputState::Off,
+                QStringLiteral("non-constant line should be off without request input")))
+        return false;
+
+    inputs.forceLineIndex = 1;
+    result = manager.evaluate(inputs);
+    return expect(result.lines.first().outputState == LineOutputState::On,
+                  QStringLiteral("selected setup line should be forced on"));
+}
+
+static bool lineManagerUsesNormallyClosedLineOutputRelays()
+{
+    LineManager manager;
+    LineConfig line = *manager.line(1);
+    line.kind = LineKind::NonConstant;
+    line.enabled = true;
+
+    QString error;
+    if (!expect(manager.updateLine(line, &error),
+                QStringLiteral("line should update to non-constant: %1").arg(error)))
+        return false;
+
+    LineManagerInputs inputs;
+    WaveShareModuleState module;
+    module.module = 1;
+    module.online = true;
+    inputs.modules.insert(module.module, module);
+
+    const quint8 lineMask = static_cast<quint8>(1u << (line.outputRelay.channel - 1));
+    LineManagerResult result = manager.evaluate(inputs);
+    if (!expect((result.relayOutputBytes.value(line.outputRelay.module) & lineMask) != 0,
+                QStringLiteral("normally closed line relay should be energized when line is off")))
+        return false;
+
+    inputs.forceLinesOn = true;
+    result = manager.evaluate(inputs);
+    return expect((result.relayOutputBytes.value(line.outputRelay.module) & lineMask) == 0,
+                  QStringLiteral("normally closed line relay should drop when line is on"));
 }
 
 static bool manualEmergencyControllerLatchesUntilStop()
@@ -608,12 +836,22 @@ int main(int argc, char *argv[])
         && testScheduleStartsDailyFunctionalOnce()
         && testScheduleStartsWeekdayDuration()
         && testSchedulePersistsLegacyArrayFormat()
+        && testScheduleAcceptsArchivedTestTypeNames()
         && functionalTestPasses()
+        && functionalTestUsesRequestedWarmup()
+        && activeTestsRequestBatteryMode()
         && durationTestUsesExpandedTolerance()
+        && maintenanceCheckerReportsMissingTests()
+        && maintenanceCheckerAcceptsFreshTests()
+        && maintenanceCheckerReportsOldLineTest()
         && testInterruptedByVoltagePriority()
         && testStoppedByOperator()
         && lineManagerReadsManualStopButton()
         && lineManagerDrivesNormallyClosedFaultLamp()
+        && lineManagerDrivesDirectTestLamp()
+        && lineManagerForcesEnabledLinesOnDuringTest()
+        && lineManagerForcesSelectedLineOnDuringSetup()
+        && lineManagerUsesNormallyClosedLineOutputRelays()
         && manualEmergencyControllerLatchesUntilStop()
         && journalStorePersistsEntries()
         && lineManagerPersistsLastTestResults()

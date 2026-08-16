@@ -419,6 +419,34 @@ QJsonObject toJson(const BatterySnapshot &battery)
     };
 }
 
+QJsonObject toJson(const MaintenanceLineStatus &line)
+{
+    return {
+        {QStringLiteral("lineIndex"), line.lineIndex},
+        {QStringLiteral("lineName"), line.lineName},
+        {QStringLiteral("lastTestAt"), dateTimeOrNull(line.lastTestAt)},
+        {QStringLiteral("overdue"), line.overdue}
+    };
+}
+
+QJsonObject toJson(const MaintenanceSnapshot &maintenance)
+{
+    QJsonArray lines;
+    for (const MaintenanceLineStatus &line : maintenance.lines)
+        lines.append(toJson(line));
+
+    return {
+        {QStringLiteral("ok"), maintenance.ok},
+        {QStringLiteral("overdueLinesCount"), maintenance.overdueLinesCount},
+        {QStringLiteral("longTestOverdue"), maintenance.longTestOverdue},
+        {QStringLiteral("lastLongTestAt"), dateTimeOrNull(maintenance.lastLongTestAt)},
+        {QStringLiteral("lineLimitDays"), maintenance.lineLimitDays},
+        {QStringLiteral("longTestLimitDays"), maintenance.longTestLimitDays},
+        {QStringLiteral("summary"), maintenance.summary},
+        {QStringLiteral("lines"), lines}
+    };
+}
+
 QJsonObject toJson(const CabinetSnapshot &snapshot)
 {
     QJsonArray lines;
@@ -462,6 +490,7 @@ QJsonObject toJson(const CabinetSnapshot &snapshot)
         {QStringLiteral("battery"), toJson(snapshot.battery)},
         {QStringLiteral("lines"), lines},
         {QStringLiteral("testJournal"), testJournal},
+        {QStringLiteral("maintenance"), toJson(snapshot.maintenance)},
         {QStringLiteral("activeFaults"), faults}
     };
 }
@@ -591,6 +620,34 @@ BatterySnapshot batteryFromJson(const QJsonObject &obj)
     return battery;
 }
 
+MaintenanceLineStatus maintenanceLineStatusFromJson(const QJsonObject &obj)
+{
+    MaintenanceLineStatus line;
+    line.lineIndex = obj.value(QStringLiteral("lineIndex")).toInt();
+    line.lineName = obj.value(QStringLiteral("lineName")).toString();
+    line.lastTestAt = dateTimeFromJson(obj, QStringLiteral("lastTestAt"));
+    line.overdue = obj.value(QStringLiteral("overdue")).toBool(false);
+    return line;
+}
+
+MaintenanceSnapshot maintenanceFromJson(const QJsonObject &obj)
+{
+    MaintenanceSnapshot maintenance;
+    maintenance.ok = obj.value(QStringLiteral("ok")).toBool(true);
+    maintenance.overdueLinesCount = obj.value(QStringLiteral("overdueLinesCount")).toInt();
+    maintenance.longTestOverdue = obj.value(QStringLiteral("longTestOverdue")).toBool(false);
+    maintenance.lastLongTestAt = dateTimeFromJson(obj, QStringLiteral("lastLongTestAt"));
+    maintenance.lineLimitDays = obj.value(QStringLiteral("lineLimitDays")).toInt(30);
+    maintenance.longTestLimitDays = obj.value(QStringLiteral("longTestLimitDays")).toInt(365);
+    maintenance.summary = obj.value(QStringLiteral("summary")).toString();
+
+    const QJsonArray lines = obj.value(QStringLiteral("lines")).toArray();
+    for (const QJsonValue &value : lines)
+        maintenance.lines.append(maintenanceLineStatusFromJson(value.toObject()));
+
+    return maintenance;
+}
+
 CabinetSnapshot snapshotFromJson(const QJsonObject &obj)
 {
     CabinetSnapshot snapshot;
@@ -619,6 +676,8 @@ CabinetSnapshot snapshotFromJson(const QJsonObject &obj)
     const QJsonArray testJournal = obj.value(QStringLiteral("testJournal")).toArray();
     for (const QJsonValue &value : testJournal)
         snapshot.testJournal.append(testJournalEntryFromJson(value.toObject()));
+
+    snapshot.maintenance = maintenanceFromJson(obj.value(QStringLiteral("maintenance")).toObject());
 
     const QJsonArray faults = obj.value(QStringLiteral("activeFaults")).toArray();
     for (const QJsonValue &value : faults)

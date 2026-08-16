@@ -31,6 +31,7 @@ struct EngineInputs
     double temperature = std::numeric_limits<double>::quiet_NaN();
     BatterySnapshot battery;
     QVector<LineSnapshot> lines;
+    MaintenanceSnapshot maintenance;
 };
 
 class StateEngine

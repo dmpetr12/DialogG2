@@ -119,7 +119,7 @@ void TestController::startTest(const Candidate &candidate, const QDateTime &now)
     m_activeTest.source = candidate.source;
     m_activeTest.startedAt = now;
     m_activeTest.warmupSeconds = candidate.kind == TestKind::Functional
-        ? std::max(0, m_config.functionalWarmupSeconds)
+        ? std::max(0, candidate.durationSeconds > 0 ? candidate.durationSeconds : m_config.functionalWarmupSeconds)
         : 0;
     m_activeTest.durationSeconds = candidate.kind == TestKind::Duration
         ? std::max(1, candidate.durationSeconds)
@@ -182,7 +182,7 @@ TestController::Candidate TestController::highestRequestedTest(const TestControl
                        priority(TestSource::Manual, TestKind::Functional),
                        TestKind::Functional,
                        TestSource::Manual,
-                       0});
+                       inputs.manualFunctional.durationSeconds});
     candidates.append({inputs.scheduledDuration.active,
                        priority(TestSource::Scheduled, TestKind::Duration),
                        TestKind::Duration,
@@ -194,7 +194,7 @@ TestController::Candidate TestController::highestRequestedTest(const TestControl
                        priority(TestSource::Scheduled, TestKind::Functional),
                        TestKind::Functional,
                        TestSource::Scheduled,
-                       0});
+                       inputs.scheduledFunctional.durationSeconds});
 
     Candidate best;
     for (const Candidate &candidate : candidates) {
