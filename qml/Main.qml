@@ -282,6 +282,7 @@ ApplicationWindow {
             onJournalRequested: pageStack.replace(journalPageComponent)
             onSystemRequested: pageStack.replace(systemPageComponent)
             onLinesRequested: pageStack.replace(linesPageComponent)
+            onBatteryRequested: pageStack.replace(batteryPageComponent)
         }
     }
 
@@ -384,6 +385,14 @@ ApplicationWindow {
         id: linesPageComponent
 
         LinesPage {
+            onBackRequested: pageStack.replace(startPageComponent)
+        }
+    }
+
+    Component {
+        id: batteryPageComponent
+
+        BatteryPage {
             onBackRequested: pageStack.replace(startPageComponent)
         }
     }

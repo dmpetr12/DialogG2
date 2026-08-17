@@ -25,6 +25,7 @@ class PanelFacade : public QObject
     Q_PROPERTY(bool linesOk READ linesOk NOTIFY changed)
     Q_PROPERTY(bool batteryOk READ batteryOk NOTIFY changed)
     Q_PROPERTY(int batteryPercent READ batteryPercent NOTIFY changed)
+    Q_PROPERTY(QVariantMap battery READ battery NOTIFY changed)
     Q_PROPERTY(double inputVoltage READ inputVoltage NOTIFY changed)
     Q_PROPERTY(double inputCurrent READ inputCurrent NOTIFY changed)
     Q_PROPERTY(double inputFrequency READ inputFrequency NOTIFY changed)
@@ -48,6 +49,7 @@ public:
     bool linesOk() const;
     bool batteryOk() const;
     int batteryPercent() const;
+    QVariantMap battery() const;
     double inputVoltage() const;
     double inputCurrent() const;
     double inputFrequency() const;

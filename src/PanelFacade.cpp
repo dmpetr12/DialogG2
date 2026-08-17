@@ -83,6 +83,11 @@ int PanelFacade::batteryPercent() const
     return state().value(QStringLiteral("batteryPercent")).toInt(-1);
 }
 
+QVariantMap PanelFacade::battery() const
+{
+    return state().value(QStringLiteral("battery")).toObject().toVariantMap();
+}
+
 double PanelFacade::inputVoltage() const
 {
     return state().value(QStringLiteral("inletU")).toDouble(0.0);

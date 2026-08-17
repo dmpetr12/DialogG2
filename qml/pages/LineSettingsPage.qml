@@ -106,14 +106,19 @@ Page {
 
             Rectangle {
                 width: 580
-                height: 40
+                height: 48
+                color: "#ffffff"
+                border.color: "#9fb5ca"
+                border.width: 2
+                radius: 4
 
                 TextField {
                     id: lineNameField
-                    width: 580
+                    anchors.fill: parent
+                    anchors.margins: 2
                     text: lineDescription
                     font.pixelSize: 30
-                    readOnly: true
+                    selectByMouse: true
                 }
             }
 

@@ -13,6 +13,7 @@ Item {
     signal journalRequested()
     signal systemRequested()
     signal linesRequested()
+    signal batteryRequested()
     property var confirmedAction: null
 
     readonly property bool normalMode: panel.modeText === "Норма"
@@ -111,6 +112,8 @@ Item {
             value: panel.batteryOk ? "НОРМ" : "АВАР"
             ok: panel.batteryOk
             labelBadge: true
+            clickableBadge: true
+            onBadgeClicked: root.batteryRequested()
         }
 
         StateLine {

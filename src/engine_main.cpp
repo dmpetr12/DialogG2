@@ -493,6 +493,7 @@ private:
         }
 
         return {
+            {QStringLiteral("index"), line->index},
             {QStringLiteral("description"), line->name},
             {QStringLiteral("mpower"), std::isfinite(line->nominalPower) ? line->nominalPower : 0.0},
             {QStringLiteral("power"), std::isfinite(measuredPower) ? measuredPower : 0.0},
@@ -555,6 +556,7 @@ private:
             {QStringLiteral("linesOk"), !m_lastSnapshot.activeFaults.join(QString()).contains(QStringLiteral("линия"), Qt::CaseInsensitive)},
             {QStringLiteral("batteryOk"), m_lastSnapshot.battery.state == BatteryState::Normal},
             {QStringLiteral("batteryPercent"), m_lastSnapshot.battery.socPercent},
+            {QStringLiteral("battery"), toJson(m_lastSnapshot.battery)},
             {QStringLiteral("systemState"), m_lastSnapshot.health == SystemHealth::Normal ? 0 : 1},
             {QStringLiteral("cabinetMode"), static_cast<int>(m_lastSnapshot.mode)},
             {QStringLiteral("lineCount"), m_lineManager.lines().size()},

@@ -143,6 +143,7 @@ qt_add_qml_module(dialog-g2-hmi
         qml/pages/JournalPage.qml
         qml/pages/SystemPage.qml
         qml/pages/LinesPage.qml
+        qml/pages/BatteryPage.qml
     RESOURCES
         qml/assets/light-tech-logo.png
         qml/assets/Back.png
