@@ -4,15 +4,20 @@ set -euo pipefail
 REPO_URL="https://github.com/dmpetr12/DialogG2.git"
 BRANCH_NAME="${BRANCH_NAME:-master}"
 
-USER_NAME="${USER_NAME:-peter}"
-PROJECT_DIR="${PROJECT_DIR:-/home/$USER_NAME/DialogG2}"
+USER_NAME="${USER_NAME:-$(id -un)}"
+USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
+if [ -z "$USER_HOME" ]; then
+  USER_HOME="/home/$USER_NAME"
+fi
+
+PROJECT_DIR="${PROJECT_DIR:-$USER_HOME/DialogG2}"
 BUILD_DIR="$PROJECT_DIR/build"
 
 ENGINE_SERVICE="dialog-g2-engine.service"
-HMI_AUTOSTART_DIR="/home/$USER_NAME/.config/autostart"
+HMI_AUTOSTART_DIR="$USER_HOME/.config/autostart"
 HMI_AUTOSTART_FILE="$HMI_AUTOSTART_DIR/dialog-g2-hmi.desktop"
 
-OLD_PROJECT_DIR="/home/$USER_NAME/panelFull"
+OLD_PROJECT_DIR="$USER_HOME/panelFull"
 OLD_SERVICE_NAMES=(
   panelFull
   panel-full
@@ -25,8 +30,9 @@ OLD_SERVICE_NAMES=(
 echo "== Dialog G2 panel update =="
 echo "repo:    $REPO_URL"
 echo "branch:  $BRANCH_NAME"
+echo "user:    $USER_NAME"
 echo "project: $PROJECT_DIR"
-cd "/home/$USER_NAME"
+cd "$USER_HOME"
 
 if [ "$(id -u)" -eq 0 ]; then
   echo "Do not run this script as root. Run as $USER_NAME; sudo is used only where needed."
@@ -62,6 +68,7 @@ sudo apt install -y \
   qt6-declarative-dev \
   qt6-httpserver-dev \
   libcap2-bin \
+  psmisc \
   qt6-serialbus-dev \
   qt6-serialport-dev \
   qml6-module-qtquick \
@@ -85,6 +92,7 @@ cmake --build "$BUILD_DIR" -j"$(nproc)"
 echo "== Preparing runtime directories =="
 mkdir -p "$BUILD_DIR/logs" "$BUILD_DIR/state"
 sudo usermod -aG dialout "$USER_NAME" || true
+sudo fuser -k 502/tcp >/dev/null 2>&1 || true
 sudo setcap cap_net_bind_service=+ep "$BUILD_DIR/dialog-g2-engine" || true
 
 echo "== Installing engine systemd service =="
@@ -125,9 +133,9 @@ DESKTOP
 chmod 755 "$HMI_AUTOSTART_FILE"
 
 echo "== Cleaning old panelFull autostart files if present =="
-rm -f "/home/$USER_NAME/.config/autostart/panel.desktop" \
-      "/home/$USER_NAME/.config/autostart/panelFull.desktop" \
-      "/home/$USER_NAME/.config/autostart/apppanel.desktop"
+rm -f "$USER_HOME/.config/autostart/panel.desktop" \
+      "$USER_HOME/.config/autostart/panelFull.desktop" \
+      "$USER_HOME/.config/autostart/apppanel.desktop"
 
 echo "== Status =="
 sudo systemctl --no-pager --full status "$ENGINE_SERVICE" || true
