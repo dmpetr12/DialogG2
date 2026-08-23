@@ -13,6 +13,7 @@ ApplicationWindow {
     maximumWidth: 1024
     maximumHeight: 768
     visible: true
+    visibility: Window.FullScreen
     title: "Щит аварийного освещения Dialog G2"
     color: "#ffffff"
 
