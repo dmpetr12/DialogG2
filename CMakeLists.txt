@@ -29,8 +29,10 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-qt_standard_project_setup(REQUIRES 6.5)
-qt_policy(SET QTP0004 NEW)
+qt_standard_project_setup(REQUIRES 6.4)
+if (COMMAND qt_policy)
+    qt_policy(SET QTP0004 NEW)
+endif()
 
 add_library(dialog-g2-core STATIC
     src/engine/Adl200Meter.h
