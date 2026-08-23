@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QUrl>
 
 #include "PanelFacade.h"
 
@@ -19,7 +20,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("panel"), &panel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     engine.loadFromModule(QStringLiteral("DialogG2"), QStringLiteral("Main"));
+#else
+    engine.load(QUrl(QStringLiteral("qrc:/DialogG2/Main.qml")));
+#endif
 
     if (engine.rootObjects().isEmpty())
         return -1;
