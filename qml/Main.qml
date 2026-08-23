@@ -7,7 +7,7 @@ import "pages"
 ApplicationWindow {
     id: window
 
-    readonly property bool debugWindow: panel.logLevel === "DEBUG"
+    readonly property bool debugWindow: Qt.platform.os === "windows" || panel.logLevel === "DEBUG"
 
     width: debugWindow ? 1024 : Screen.width
     height: debugWindow ? 768 : Screen.height
