@@ -14,6 +14,8 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonParseError>
 #include <QTemporaryDir>
 
 #include <cstdio>
