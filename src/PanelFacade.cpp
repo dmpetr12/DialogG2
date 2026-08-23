@@ -118,6 +118,11 @@ double PanelFacade::temperature() const
     return state().value(QStringLiteral("temperature")).toDouble(0.0);
 }
 
+QString PanelFacade::logLevel() const
+{
+    return state().value(QStringLiteral("logLevel")).toString(QStringLiteral("INFO"));
+}
+
 void PanelFacade::refresh()
 {
     pollState();

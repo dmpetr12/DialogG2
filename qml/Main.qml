@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
 import "pages"
@@ -6,14 +7,17 @@ import "pages"
 ApplicationWindow {
     id: window
 
-    width: 1024
-    height: 768
-    minimumWidth: 1024
-    minimumHeight: 768
-    maximumWidth: 1024
-    maximumHeight: 768
+    readonly property bool debugWindow: panel.logLevel === "DEBUG"
+
+    width: debugWindow ? 1024 : Screen.width
+    height: debugWindow ? 768 : Screen.height
+    minimumWidth: debugWindow ? 1024 : 0
+    minimumHeight: debugWindow ? 768 : 0
+    maximumWidth: debugWindow ? 1024 : Screen.width
+    maximumHeight: debugWindow ? 768 : Screen.height
     visible: true
-    visibility: Window.FullScreen
+    visibility: debugWindow ? Window.Windowed : Window.FullScreen
+    flags: debugWindow ? Qt.Window : (Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
     title: "Щит аварийного освещения Dialog G2"
     color: "#ffffff"
 

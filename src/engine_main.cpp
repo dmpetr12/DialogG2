@@ -997,7 +997,7 @@ private:
             {QStringLiteral("inletF"), std::isfinite(m_lastSnapshot.inputFrequency) ? m_lastSnapshot.inputFrequency : 0.0},
             {QStringLiteral("temperature"), std::isfinite(m_lastSnapshot.temperature) ? m_lastSnapshot.temperature : 0.0},
             {QStringLiteral("temperatureAvailable"), std::isfinite(m_lastSnapshot.temperature)},
-            {QStringLiteral("logLevel"), m_demoMode ? QStringLiteral("DEBUG") : QStringLiteral("INFO")}
+            {QStringLiteral("logLevel"), m_config.logging().level}
         };
     }
 

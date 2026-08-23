@@ -32,6 +32,7 @@ class PanelFacade : public QObject
     Q_PROPERTY(double inputFrequency READ inputFrequency NOTIFY changed)
     Q_PROPERTY(double outputPower READ outputPower NOTIFY changed)
     Q_PROPERTY(double temperature READ temperature NOTIFY changed)
+    Q_PROPERTY(QString logLevel READ logLevel NOTIFY changed)
 
 public:
     explicit PanelFacade(QObject *parent = nullptr);
@@ -57,6 +58,7 @@ public:
     double inputFrequency() const;
     double outputPower() const;
     double temperature() const;
+    QString logLevel() const;
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE QVariantMap lineAt(int index) const;

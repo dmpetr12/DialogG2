@@ -43,6 +43,13 @@ static QJsonObject webServerToJson(const WebServerConfig &config)
     };
 }
 
+static QJsonObject loggingToJson(const LoggingConfig &config)
+{
+    return {
+        {QStringLiteral("level"), config.level}
+    };
+}
+
 static void loadModbusRtu(const QJsonObject &obj, ModbusRtuConfig *config)
 {
     if (!config)
@@ -97,6 +104,15 @@ static void loadWebServer(const QJsonObject &obj, WebServerConfig *config)
         config->root = obj.value(QStringLiteral("root")).toString(config->root);
 }
 
+static void loadLogging(const QJsonObject &obj, LoggingConfig *config)
+{
+    if (!config)
+        return;
+
+    if (obj.value(QStringLiteral("level")).isString())
+        config->level = obj.value(QStringLiteral("level")).toString(config->level).toUpper();
+}
+
 AppConfig::AppConfig()
 {
     m_meteringRtu.port = QStringLiteral("/dev/rs485_metering");
@@ -137,6 +153,7 @@ bool AppConfig::load(const QString &filePath, QString *error)
     loadModbusTcp(modbus.value(QStringLiteral("tcp")).toObject(), &m_modbusTcp);
     loadWebServer(root.value(QStringLiteral("web")).toObject(), &m_webServer);
     loadWebServer(root.value(QStringLiteral("webServer")).toObject(), &m_webServer);
+    loadLogging(root.value(QStringLiteral("logging")).toObject(), &m_logging);
 
     return true;
 }
@@ -157,7 +174,8 @@ bool AppConfig::save(const QString &filePath, QString *error) const
             {QStringLiteral("metering"), modbusRtuToJson(m_meteringRtu)},
             {QStringLiteral("tcp"), modbusTcpToJson(m_modbusTcp)}
         }},
-        {QStringLiteral("web"), webServerToJson(m_webServer)}
+        {QStringLiteral("web"), webServerToJson(m_webServer)},
+        {QStringLiteral("logging"), loggingToJson(m_logging)}
     };
 
     QSaveFile file(filePath);
@@ -195,6 +213,11 @@ const ModbusTcpConfig &AppConfig::modbusTcp() const
 const WebServerConfig &AppConfig::webServer() const
 {
     return m_webServer;
+}
+
+const LoggingConfig &AppConfig::logging() const
+{
+    return m_logging;
 }
 
 } // namespace DialogG2

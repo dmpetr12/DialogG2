@@ -32,6 +32,11 @@ struct WebServerConfig
     QString root = QStringLiteral("web");
 };
 
+struct LoggingConfig
+{
+    QString level = QStringLiteral("INFO");
+};
+
 class AppConfig
 {
 public:
@@ -44,12 +49,14 @@ public:
     const ModbusRtuConfig &meteringRtu() const;
     const ModbusTcpConfig &modbusTcp() const;
     const WebServerConfig &webServer() const;
+    const LoggingConfig &logging() const;
 
 private:
     ModbusRtuConfig m_relayRtu;
     ModbusRtuConfig m_meteringRtu;
     ModbusTcpConfig m_modbusTcp;
     WebServerConfig m_webServer;
+    LoggingConfig m_logging;
 };
 
 } // namespace DialogG2
