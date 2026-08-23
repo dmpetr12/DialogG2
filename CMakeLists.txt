@@ -111,10 +111,6 @@ target_link_libraries(test-controller-tests PRIVATE
 )
 
 add_custom_command(TARGET dialog-g2-engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:dialog-g2-engine>
-        $<TARGET_FILE_DIR:dialog-g2-engine>
-    COMMAND_EXPAND_LISTS
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-engine>/config"
     COMMAND ${CMAKE_COMMAND}
         -D "SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/config/app.json"
@@ -128,6 +124,15 @@ add_custom_command(TARGET dialog-g2-engine POST_BUILD
         "${CMAKE_CURRENT_SOURCE_DIR}/web"
         "$<TARGET_FILE_DIR:dialog-g2-engine>/web"
 )
+
+if (WIN32)
+    add_custom_command(TARGET dialog-g2-engine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:dialog-g2-engine>
+            $<TARGET_FILE_DIR:dialog-g2-engine>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 qt_add_executable(dialog-g2-hmi
     src/main.cpp
@@ -167,14 +172,14 @@ target_link_libraries(dialog-g2-hmi PRIVATE
     Qt6::Network
 )
 
-add_custom_command(TARGET dialog-g2-hmi POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:dialog-g2-hmi>
-        $<TARGET_FILE_DIR:dialog-g2-hmi>
-    COMMAND_EXPAND_LISTS
-)
-
 if (WIN32)
+    add_custom_command(TARGET dialog-g2-hmi POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:dialog-g2-hmi>
+            $<TARGET_FILE_DIR:dialog-g2-hmi>
+        COMMAND_EXPAND_LISTS
+    )
+
     add_custom_command(TARGET dialog-g2-hmi POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
