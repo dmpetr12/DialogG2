@@ -67,7 +67,6 @@ sudo apt install -y \
   qt6-base-dev \
   qt6-declarative-dev \
   qt6-httpserver-dev \
-  libcap2-bin \
   psmisc \
   qt6-serialbus-dev \
   qt6-serialport-dev \
@@ -93,7 +92,11 @@ echo "== Preparing runtime directories =="
 mkdir -p "$BUILD_DIR/logs" "$BUILD_DIR/state"
 sudo usermod -aG dialout "$USER_NAME" || true
 sudo fuser -k 502/tcp >/dev/null 2>&1 || true
-sudo setcap cap_net_bind_service=+ep "$BUILD_DIR/dialog-g2-engine" || true
+if command -v setcap >/dev/null 2>&1; then
+  sudo setcap cap_net_bind_service=+ep "$BUILD_DIR/dialog-g2-engine" || true
+else
+  echo "setcap not found; service may need root or a preinstalled libcap2-bin to bind port 502"
+fi
 
 echo "== Installing engine systemd service =="
 sudo tee "/etc/systemd/system/$ENGINE_SERVICE" >/dev/null <<SERVICE
