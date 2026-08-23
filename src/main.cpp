@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     engine.loadFromModule(QStringLiteral("DialogG2"), QStringLiteral("Main"));
 #else
-    engine.load(QUrl(QStringLiteral("qrc:/DialogG2/Main.qml")));
+    const QUrl mainQmlUrl(QStringLiteral("qrc:/qt/qml/DialogG2/Main.qml"));
+    engine.load(mainQmlUrl);
 #endif
 
     if (engine.rootObjects().isEmpty())
