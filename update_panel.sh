@@ -58,7 +58,7 @@ pkill -x dialog-g2-hmi >/dev/null 2>&1 || true
 
 echo "== Installing build dependencies =="
 sudo apt update
-sudo apt install -y \
+sudo apt install -y --no-upgrade \
   build-essential \
   cmake \
   git \
