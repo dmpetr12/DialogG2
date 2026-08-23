@@ -4,6 +4,9 @@ import QtQuick.Layouts
 
 Page {
     id: lineEditPage
+    background: Rectangle {
+        color: "#ffffff"
+    }
 
     property int lineIndex: 0
     property int lineMode: 0
@@ -98,6 +101,7 @@ Page {
 
         Text {
             text: "Настройка линии: " + lineDescription
+            color: "#111111"
             font.pixelSize: 30
         }
 
@@ -108,6 +112,7 @@ Page {
 
             Text {
                 text: "Описание:"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
@@ -125,8 +130,12 @@ Page {
                     anchors.fill: parent
                     anchors.margins: 2
                     text: lineDescription
+                    color: "#111111"
                     font.pixelSize: 30
                     selectByMouse: true
+                    background: Rectangle {
+                        color: "transparent"
+                    }
                 }
             }
 
@@ -210,6 +219,7 @@ Page {
 
             Text {
                 text: "Установочная мощность, Вт:"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
@@ -219,12 +229,26 @@ Page {
 
                 Text {
                     font.pixelSize: 30
+                    color: "#111111"
                     text: lineMpower.toFixed(1)
                 }
 
                 Button {
                     text: "ввести значение"
                     font.pixelSize: 30
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#111111"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 30
+                    }
+                    background: Rectangle {
+                        radius: 4
+                        color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                        border.color: "#9a9a9a"
+                        border.width: 1
+                    }
                     onClicked: lineEditPage.inputRequested(
                                    "Введите мощность",
                                    "lineMpower",
@@ -236,42 +260,49 @@ Page {
             Text {
                 Layout.row: 5
                 text: "Мощность, Вт:"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
 
             Label {
                 text: measuredAvailable ? measuredPower.toFixed(1) : "—"
+                color: "#111111"
                 font.pixelSize: 30
             }
 
             Text {
                 Layout.row: 6
                 text: "Напряжение, В:"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
 
             Label {
                 text: measuredAvailable ? measuredVoltage.toFixed(1) : "—"
+                color: "#111111"
                 font.pixelSize: 30
             }
 
             Text {
                 Layout.row: 7
                 text: "Ток, А:"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
 
             Label {
                 text: measuredAvailable ? measuredCurrent.toFixed(3) : "—"
+                color: "#111111"
                 font.pixelSize: 30
             }
 
             Text {
                 Layout.row: 8
                 text: "Допуск, %"
+                color: "#111111"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
             }
@@ -281,12 +312,26 @@ Page {
 
                 Text {
                     font.pixelSize: 30
+                    color: "#111111"
                     text: lineTolerance.toFixed(0)
                 }
 
                 Button {
                     text: "ввести значение"
                     font.pixelSize: 30
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#111111"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 30
+                    }
+                    background: Rectangle {
+                        radius: 4
+                        color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                        border.color: "#9a9a9a"
+                        border.width: 1
+                    }
                     onClicked: lineEditPage.inputRequested(
                                    "Введите допуск, %",
                                    "lineTolerance",
@@ -297,6 +342,7 @@ Page {
 
             Text {
                 text: "Режим работы:"
+                color: "#111111"
                 font.pixelSize: 35
                 Layout.alignment: Qt.AlignRight
             }
@@ -309,13 +355,37 @@ Page {
                     id: control
                     anchors.fill: parent
                     font.pixelSize: 35
+                    contentItem: Text {
+                        leftPadding: 8
+                        rightPadding: 36
+                        text: control.displayText
+                        color: "#111111"
+                        font.pixelSize: 35
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    background: Rectangle {
+                        color: "#ffffff"
+                        border.color: "#9a9a9a"
+                        border.width: 1
+                        radius: 4
+                    }
 
                     delegate: ItemDelegate {
                         width: control.width
                         text: modelData
+                        font.pixelSize: 28
                         font.weight: control.currentIndex === index ? Font.DemiBold : Font.Normal
                         highlighted: control.highlightedIndex === index
                         hoverEnabled: control.hoverEnabled
+                        contentItem: Text {
+                            text: modelData
+                            color: "#111111"
+                            font.pixelSize: 28
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            color: highlighted ? "#dce9f7" : "#ffffff"
+                        }
                     }
 
                     model: ["постоянный", "непостоянный", "линия отключена"]
@@ -412,6 +482,20 @@ Page {
                         height: 72
                         text: "Отмена"
                         font.pixelSize: 30
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#b00020"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 30
+                            font.family: "Arial"
+                        }
+                        background: Rectangle {
+                            radius: 8
+                            color: "#fff8f8"
+                            border.color: "#d79a9a"
+                            border.width: 2
+                        }
                         onClicked: deleteConfirmPopup.close()
                     }
 

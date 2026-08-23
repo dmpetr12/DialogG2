@@ -68,6 +68,20 @@ Rectangle {
                     text: index + 1
                     Layout.preferredWidth: 80
                     Layout.preferredHeight: 80
+                    font.pixelSize: 30
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#111111"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 30
+                    }
+                    background: Rectangle {
+                        radius: 4
+                        color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                        border.color: "#9a9a9a"
+                        border.width: 1
+                    }
                     onClicked: root.passwordBuffer += text
                 }
             }
@@ -76,6 +90,20 @@ Rectangle {
                 text: "Clear"
                 Layout.preferredWidth: 80
                 Layout.preferredHeight: 80
+                font.pixelSize: 23
+                contentItem: Text {
+                    text: parent.text
+                    color: "#111111"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 23
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                    border.color: "#9a9a9a"
+                    border.width: 1
+                }
                 onClicked: root.passwordBuffer = ""
             }
 
@@ -83,6 +111,20 @@ Rectangle {
                 text: "0"
                 Layout.preferredWidth: 80
                 Layout.preferredHeight: 80
+                font.pixelSize: 30
+                contentItem: Text {
+                    text: parent.text
+                    color: "#111111"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 30
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                    border.color: "#9a9a9a"
+                    border.width: 1
+                }
                 onClicked: root.passwordBuffer += "0"
             }
 
@@ -90,6 +132,20 @@ Rectangle {
                 text: "⌫"
                 Layout.preferredWidth: 80
                 Layout.preferredHeight: 80
+                font.pixelSize: 30
+                contentItem: Text {
+                    text: parent.text
+                    color: "#111111"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 30
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                    border.color: "#9a9a9a"
+                    border.width: 1
+                }
                 onClicked: {
                     if (root.passwordBuffer.length > 0)
                         root.passwordBuffer = root.passwordBuffer.slice(0, -1)
@@ -102,8 +158,22 @@ Rectangle {
 
             Button {
                 text: "ОТМЕНА"
-                width: 125
+                width: 150
                 height: 60
+                font.pixelSize: 26
+                contentItem: Text {
+                    text: parent.text
+                    color: "#111111"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 26
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                    border.color: "#9a9a9a"
+                    border.width: 1
+                }
 
                 onClicked: {
                     root.passwordBuffer = ""
@@ -113,8 +183,22 @@ Rectangle {
 
             Button {
                 text: "OK"
-                width: 125
+                width: 150
                 height: 60
+                font.pixelSize: 28
+                contentItem: Text {
+                    text: parent.text
+                    color: "#111111"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 28
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: parent.pressed ? "#d6d6d6" : "#f3f3f3"
+                    border.color: "#9a9a9a"
+                    border.width: 1
+                }
 
                 onClicked: {
                     if (panel.checkPassword(root.passwordBuffer)) {

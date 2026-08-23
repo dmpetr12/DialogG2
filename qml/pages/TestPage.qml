@@ -258,6 +258,14 @@ Item {
                         height: 72
                         text: "Отмена"
                         font.pixelSize: 30
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#17395c"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 30
+                            font.family: "Arial"
+                        }
                         background: Rectangle {
                             radius: 8
                             color: "#f6f8fb"

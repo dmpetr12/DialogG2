@@ -292,8 +292,10 @@ ApplicationWindow {
 
         Rectangle {
             anchors.fill: parent
-            color: "#333333"
+            color: "#f7f8fa"
             radius: 10
+            border.color: "#9fb5ca"
+            border.width: 2
 
             Column {
                 anchors.fill: parent
@@ -302,7 +304,7 @@ ApplicationWindow {
 
                 Text {
                     text: digitalPopup.nameP
-                    color: "white"
+                    color: "#111111"
                     font.pixelSize: 30
                 }
 
@@ -311,7 +313,14 @@ ApplicationWindow {
                     text: ""
                     readOnly: true
                     font.pixelSize: 40
+                    color: "#111111"
                     inputMethodHints: Qt.ImhPreferNumbers
+                    background: Rectangle {
+                        color: "#ffffff"
+                        border.color: "#9fb5ca"
+                        border.width: 2
+                        radius: 4
+                    }
                 }
 
                 GridLayout {
@@ -325,6 +334,19 @@ ApplicationWindow {
                         delegate: Button {
                             text: modelData
                             font.pixelSize: 34
+                            contentItem: Text {
+                                text: parent.text
+                                color: "#111111"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: 34
+                            }
+                            background: Rectangle {
+                                radius: 4
+                                color: parent.pressed ? "#d6d6d6" : "#ffffff"
+                                border.color: "#9a9a9a"
+                                border.width: 1
+                            }
 
                             onClicked: {
                                 if (text === "←")
@@ -341,13 +363,41 @@ ApplicationWindow {
 
                     Button {
                         text: "Отмена"
-                        font.pixelSize: 40
+                        width: 190
+                        height: 64
+                        font.pixelSize: 30
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#111111"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 30
+                        }
+                        background: Rectangle {
+                            radius: 6
+                            color: parent.pressed ? "#d6d6d6" : "#ffffff"
+                            border.color: "#9a9a9a"
+                            border.width: 1
+                        }
                         onClicked: digitalPopup.close()
                     }
 
                     Button {
                         text: " OK "
-                        font.pixelSize: 40
+                        width: 130
+                        height: 64
+                        font.pixelSize: 30
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#ffffff"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 30
+                        }
+                        background: Rectangle {
+                            radius: 6
+                            color: parent.pressed ? "#244f7c" : "#315f8f"
+                        }
 
                         onClicked: {
                             var cont = true
