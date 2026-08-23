@@ -23,6 +23,26 @@ static QJsonObject modbusRtuToJson(const ModbusRtuConfig &config)
     };
 }
 
+static QJsonObject modbusTcpToJson(const ModbusTcpConfig &config)
+{
+    return {
+        {QStringLiteral("enabled"), config.enabled},
+        {QStringLiteral("bind"), config.bind},
+        {QStringLiteral("port"), config.port},
+        {QStringLiteral("serverAddress"), config.serverAddress}
+    };
+}
+
+static QJsonObject webServerToJson(const WebServerConfig &config)
+{
+    return {
+        {QStringLiteral("enabled"), config.enabled},
+        {QStringLiteral("bind"), config.bind},
+        {QStringLiteral("port"), config.port},
+        {QStringLiteral("root"), config.root}
+    };
+}
+
 static void loadModbusRtu(const QJsonObject &obj, ModbusRtuConfig *config)
 {
     if (!config)
@@ -45,6 +65,36 @@ static void loadModbusRtu(const QJsonObject &obj, ModbusRtuConfig *config)
     if (obj.value(QStringLiteral("busOfflineFailureThreshold")).isDouble())
         config->busOfflineFailureThreshold = obj.value(QStringLiteral("busOfflineFailureThreshold"))
             .toInt(config->busOfflineFailureThreshold);
+}
+
+static void loadModbusTcp(const QJsonObject &obj, ModbusTcpConfig *config)
+{
+    if (!config)
+        return;
+
+    if (obj.value(QStringLiteral("enabled")).isBool())
+        config->enabled = obj.value(QStringLiteral("enabled")).toBool(config->enabled);
+    if (obj.value(QStringLiteral("bind")).isString())
+        config->bind = obj.value(QStringLiteral("bind")).toString(config->bind);
+    if (obj.value(QStringLiteral("port")).isDouble())
+        config->port = obj.value(QStringLiteral("port")).toInt(config->port);
+    if (obj.value(QStringLiteral("serverAddress")).isDouble())
+        config->serverAddress = obj.value(QStringLiteral("serverAddress")).toInt(config->serverAddress);
+}
+
+static void loadWebServer(const QJsonObject &obj, WebServerConfig *config)
+{
+    if (!config)
+        return;
+
+    if (obj.value(QStringLiteral("enabled")).isBool())
+        config->enabled = obj.value(QStringLiteral("enabled")).toBool(config->enabled);
+    if (obj.value(QStringLiteral("bind")).isString())
+        config->bind = obj.value(QStringLiteral("bind")).toString(config->bind);
+    if (obj.value(QStringLiteral("port")).isDouble())
+        config->port = obj.value(QStringLiteral("port")).toInt(config->port);
+    if (obj.value(QStringLiteral("root")).isString())
+        config->root = obj.value(QStringLiteral("root")).toString(config->root);
 }
 
 AppConfig::AppConfig()
@@ -84,6 +134,9 @@ bool AppConfig::load(const QString &filePath, QString *error)
 
     loadModbusRtu(modbus.value(QStringLiteral("internalIo")).toObject(), &m_relayRtu);
     loadModbusRtu(modbus.value(QStringLiteral("internalMetering")).toObject(), &m_meteringRtu);
+    loadModbusTcp(modbus.value(QStringLiteral("tcp")).toObject(), &m_modbusTcp);
+    loadWebServer(root.value(QStringLiteral("web")).toObject(), &m_webServer);
+    loadWebServer(root.value(QStringLiteral("webServer")).toObject(), &m_webServer);
 
     return true;
 }
@@ -101,8 +154,10 @@ bool AppConfig::save(const QString &filePath, QString *error) const
         {QStringLiteral("schemaVersion"), 1},
         {QStringLiteral("modbus"), QJsonObject{
             {QStringLiteral("relay"), modbusRtuToJson(m_relayRtu)},
-            {QStringLiteral("metering"), modbusRtuToJson(m_meteringRtu)}
-        }}
+            {QStringLiteral("metering"), modbusRtuToJson(m_meteringRtu)},
+            {QStringLiteral("tcp"), modbusTcpToJson(m_modbusTcp)}
+        }},
+        {QStringLiteral("web"), webServerToJson(m_webServer)}
     };
 
     QSaveFile file(filePath);
@@ -130,6 +185,16 @@ const ModbusRtuConfig &AppConfig::relayRtu() const
 const ModbusRtuConfig &AppConfig::meteringRtu() const
 {
     return m_meteringRtu;
+}
+
+const ModbusTcpConfig &AppConfig::modbusTcp() const
+{
+    return m_modbusTcp;
+}
+
+const WebServerConfig &AppConfig::webServer() const
+{
+    return m_webServer;
 }
 
 } // namespace DialogG2

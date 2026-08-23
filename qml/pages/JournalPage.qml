@@ -9,6 +9,7 @@ Rectangle {
 
     property var journalModel: []
     property int currentRow: -1
+    property string exportStatus: ""
 
     width: parent ? parent.width : 1024
     height: parent ? parent.height : 648
@@ -105,9 +106,34 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            Item {
-                Layout.preferredWidth: 82
-                Layout.preferredHeight: 72
+            Rectangle {
+                Layout.preferredWidth: 176
+                Layout.preferredHeight: 82
+                radius: 6
+                color: "#c9c9c9"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "ЗАПИСЬ\nНА ФЛЕШКУ"
+                    color: "#111111"
+                    font.pixelSize: 21
+                    font.bold: true
+                    font.family: "Arial"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: parent.color = "#a9a9a9"
+                    onReleased: parent.color = "#c9c9c9"
+                    onCanceled: parent.color = "#c9c9c9"
+                    onClicked: {
+                        root.exportStatus = panel.exportTestJournalToUsb()
+                        exportStatusPopup.open()
+                        exportStatusTimer.restart()
+                    }
+                }
             }
         }
 
@@ -124,11 +150,11 @@ Rectangle {
                 anchors.rightMargin: 8
                 spacing: 8
 
-                HeaderCell { text: "Завершен"; Layout.preferredWidth: 170 }
-                HeaderCell { text: "Тест"; Layout.preferredWidth: 220 }
-                HeaderCell { text: "Источник"; Layout.preferredWidth: 130 }
-                HeaderCell { text: "Итог"; Layout.preferredWidth: 190 }
-                HeaderCell { text: "Линий"; Layout.fillWidth: true }
+                HeaderCell { text: "Завершен"; Layout.preferredWidth: 215 }
+                HeaderCell { text: "Тест"; Layout.preferredWidth: 205 }
+                HeaderCell { text: "Источник"; Layout.preferredWidth: 125 }
+                HeaderCell { text: "Итог"; Layout.fillWidth: true }
+                HeaderCell { text: "Линий"; Layout.preferredWidth: 70 }
             }
         }
 
@@ -160,17 +186,17 @@ Rectangle {
                     anchors.rightMargin: 8
                     spacing: 8
 
-                    ValueCell { text: root.formatDateTime(modelData.finishedAt); Layout.preferredWidth: 170 }
-                    ValueCell { text: modelData.kindText || "-"; Layout.preferredWidth: 220 }
-                    ValueCell { text: modelData.sourceText || "-"; Layout.preferredWidth: 130 }
+                    ValueCell { text: root.formatDateTime(modelData.finishedAt); Layout.preferredWidth: 215 }
+                    ValueCell { text: modelData.kindText || "-"; Layout.preferredWidth: 205 }
+                    ValueCell { text: modelData.sourceText || "-"; Layout.preferredWidth: 125 }
                     ValueCell {
                         text: modelData.statusText || "-"
                         color: modelData.statusCode === "passed" ? "#0d8a43" : "#c43b32"
-                        Layout.preferredWidth: 190
+                        Layout.fillWidth: true
                     }
                     ValueCell {
                         text: modelData.lines ? modelData.lines.length.toString() : "0"
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: 70
                     }
                 }
             }
@@ -205,7 +231,7 @@ Rectangle {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 34
+                    Layout.preferredHeight: 38
                     spacing: 12
 
                     DetailText {
@@ -213,21 +239,21 @@ Rectangle {
                             var entry = root.selectedEntry()
                             return entry ? ("Начало: " + root.formatDateTime(entry.startedAt)) : ""
                         }
-                        Layout.preferredWidth: 245
+                        Layout.preferredWidth: 270
                     }
                     DetailText {
                         text: {
                             var entry = root.selectedEntry()
                             return entry ? ("Конец: " + root.formatDateTime(entry.finishedAt)) : ""
                         }
-                        Layout.preferredWidth: 245
+                        Layout.preferredWidth: 270
                     }
                     DetailText {
                         text: {
                             var entry = root.selectedEntry()
                             return entry ? ("Длит.: " + root.durationText(entry)) : ""
                         }
-                        Layout.preferredWidth: 150
+                        Layout.preferredWidth: 115
                     }
                     DetailText {
                         text: {
@@ -315,6 +341,46 @@ Rectangle {
         }
     }
 
+    Popup {
+        id: exportStatusPopup
+
+        width: Math.min(440, root.width - 48)
+        height: 112
+        x: (root.width - width) / 2
+        y: 118
+        modal: false
+        focus: false
+        closePolicy: Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            radius: 6
+            color: "#ffffff"
+            border.color: root.exportStatus.indexOf("Записано") === 0 ? "#0d8a43" : "#c43b32"
+            border.width: 3
+        }
+
+        contentItem: Text {
+            anchors.fill: parent
+            anchors.margins: 14
+            text: root.exportStatus
+            color: root.exportStatus.indexOf("Записано") === 0 ? "#0d8a43" : "#c43b32"
+            font.pixelSize: 24
+            font.family: "Arial"
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+        }
+    }
+
+    Timer {
+        id: exportStatusTimer
+        interval: 2500
+        repeat: false
+        onTriggered: exportStatusPopup.close()
+    }
+
     component HeaderCell: Text {
         color: "#111111"
         font.pixelSize: 22
@@ -326,7 +392,7 @@ Rectangle {
 
     component ValueCell: Text {
         color: "#111111"
-        font.pixelSize: 22
+        font.pixelSize: 20
         font.family: "Arial"
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -334,7 +400,7 @@ Rectangle {
 
     component DetailText: Text {
         color: "#111111"
-        font.pixelSize: 21
+        font.pixelSize: 18
         font.family: "Arial"
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight

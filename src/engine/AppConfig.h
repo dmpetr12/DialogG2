@@ -16,6 +16,22 @@ struct ModbusRtuConfig
     int busOfflineFailureThreshold = 3;
 };
 
+struct ModbusTcpConfig
+{
+    bool enabled = true;
+    QString bind = QStringLiteral("0.0.0.0");
+    int port = 502;
+    int serverAddress = 1;
+};
+
+struct WebServerConfig
+{
+    bool enabled = true;
+    QString bind = QStringLiteral("0.0.0.0");
+    int port = 8080;
+    QString root = QStringLiteral("web");
+};
+
 class AppConfig
 {
 public:
@@ -26,10 +42,14 @@ public:
 
     const ModbusRtuConfig &relayRtu() const;
     const ModbusRtuConfig &meteringRtu() const;
+    const ModbusTcpConfig &modbusTcp() const;
+    const WebServerConfig &webServer() const;
 
 private:
     ModbusRtuConfig m_relayRtu;
     ModbusRtuConfig m_meteringRtu;
+    ModbusTcpConfig m_modbusTcp;
+    WebServerConfig m_webServer;
 };
 
 } // namespace DialogG2

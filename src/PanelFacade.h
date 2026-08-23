@@ -26,6 +26,7 @@ class PanelFacade : public QObject
     Q_PROPERTY(bool batteryOk READ batteryOk NOTIFY changed)
     Q_PROPERTY(int batteryPercent READ batteryPercent NOTIFY changed)
     Q_PROPERTY(QVariantMap battery READ battery NOTIFY changed)
+    Q_PROPERTY(QVariantMap maintenance READ maintenance NOTIFY changed)
     Q_PROPERTY(double inputVoltage READ inputVoltage NOTIFY changed)
     Q_PROPERTY(double inputCurrent READ inputCurrent NOTIFY changed)
     Q_PROPERTY(double inputFrequency READ inputFrequency NOTIFY changed)
@@ -50,6 +51,7 @@ public:
     bool batteryOk() const;
     int batteryPercent() const;
     QVariantMap battery() const;
+    QVariantMap maintenance() const;
     double inputVoltage() const;
     double inputCurrent() const;
     double inputFrequency() const;
@@ -59,6 +61,7 @@ public:
     Q_INVOKABLE void refresh();
     Q_INVOKABLE QVariantMap lineAt(int index) const;
     Q_INVOKABLE bool addLine();
+    Q_INVOKABLE bool removeLine(int index);
     Q_INVOKABLE bool updateLine(int index, const QVariantMap &lineData);
     Q_INVOKABLE bool saveLines();
     Q_INVOKABLE bool applyLineModes();
@@ -70,6 +73,8 @@ public:
     Q_INVOKABLE bool stopManualEmergency();
     Q_INVOKABLE QVariantList journal();
     Q_INVOKABLE QVariantList readLogs(int offset = -200, int limit = 200);
+    Q_INVOKABLE QString exportSystemLogToUsb();
+    Q_INVOKABLE QString exportTestJournalToUsb();
     Q_INVOKABLE QVariantList getAllTests();
     Q_INVOKABLE bool addTest(const QVariantMap &data);
     Q_INVOKABLE bool removeTest(int index);

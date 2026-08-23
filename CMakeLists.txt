@@ -12,6 +12,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Quick
     QuickControls2
     Network
+    HttpServer
     SerialPort
     SerialBus
 )
@@ -72,6 +73,8 @@ add_library(dialog-g2-core STATIC
     src/engine/ModbusBusMonitor.cpp
     src/engine/ModbusRtuCodec.h
     src/engine/ModbusRtuCodec.cpp
+    src/engine/ModbusTcpServer.h
+    src/engine/ModbusTcpServer.cpp
     src/engine/ModbusController.h
     src/engine/ModbusController.cpp
 )
@@ -94,6 +97,7 @@ qt_add_executable(dialog-g2-engine
 
 target_link_libraries(dialog-g2-engine PRIVATE
     dialog-g2-core
+    Qt6::HttpServer
 )
 
 qt_add_executable(test-controller-tests
@@ -118,6 +122,9 @@ add_custom_command(TARGET dialog-g2-engine POST_BUILD
         -D "SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/config/lines.json"
         -D "DEST=$<TARGET_FILE_DIR:dialog-g2-engine>/config/lines.json"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/copy_if_missing.cmake"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/web"
+        "$<TARGET_FILE_DIR:dialog-g2-engine>/web"
 )
 
 qt_add_executable(dialog-g2-hmi
@@ -163,13 +170,16 @@ add_custom_command(TARGET dialog-g2-hmi POST_BUILD
         $<TARGET_RUNTIME_DLLS:dialog-g2-hmi>
         $<TARGET_FILE_DIR:dialog-g2-hmi>
     COMMAND_EXPAND_LISTS
-    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${QT_INSTALL_PLUGINS}/platforms/$<IF:$<CONFIG:Debug>,qwindowsd.dll,qwindows.dll>"
-        "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
 )
 
 if (WIN32)
+    add_custom_command(TARGET dialog-g2-hmi POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${QT_INSTALL_PLUGINS}/platforms/$<IF:$<CONFIG:Debug>,qwindowsd.dll,qwindows.dll>"
+            "$<TARGET_FILE_DIR:dialog-g2-hmi>/platforms"
+    )
+
     add_custom_command(TARGET dialog-g2-hmi POST_BUILD
         COMMAND "${QT_INSTALL_BINS}/windeployqt.exe"
             --no-translations

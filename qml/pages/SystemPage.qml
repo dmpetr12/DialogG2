@@ -9,6 +9,7 @@ Rectangle {
 
     property var logLines: []
     property bool logVisible: false
+    property string exportStatus: ""
     readonly property string batteryText: panel.batteryPercent >= 0 ? panel.batteryPercent + "%" : "-"
     readonly property string cabinetModeText: panel.modeText === "Норма" ? "РАБОЧИЙ" : panel.modeText.toUpperCase()
 
@@ -80,6 +81,37 @@ Rectangle {
                     onClicked: {
                         root.refreshLogs()
                         root.logVisible = true
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 176
+                Layout.preferredHeight: 82
+                radius: 6
+                visible: root.logVisible
+                color: "#c9c9c9"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "ЗАПИСЬ\nНА ФЛЕШКУ"
+                    color: "#111111"
+                    font.pixelSize: 21
+                    font.bold: true
+                    font.family: "Arial"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: parent.color = "#a9a9a9"
+                    onReleased: parent.color = "#c9c9c9"
+                    onCanceled: parent.color = "#c9c9c9"
+                    onClicked: {
+                        root.exportStatus = panel.exportSystemLogToUsb()
+                        exportStatusPopup.open()
+                        exportStatusTimer.restart()
                     }
                 }
             }
@@ -205,11 +237,44 @@ Rectangle {
         }
     }
 
+    Popup {
+        id: exportStatusPopup
+
+        width: Math.min(440, root.width - 48)
+        height: 112
+        x: (root.width - width) / 2
+        y: 118
+        modal: false
+        focus: false
+        closePolicy: Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            radius: 6
+            color: "#ffffff"
+            border.color: root.exportStatus.indexOf("Записано") === 0 ? "#0d8a43" : "#c43b32"
+            border.width: 3
+        }
+
+        contentItem: Text {
+            anchors.fill: parent
+            anchors.margins: 14
+            text: root.exportStatus
+            color: root.exportStatus.indexOf("Записано") === 0 ? "#0d8a43" : "#c43b32"
+            font.pixelSize: 24
+            font.family: "Arial"
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+        }
+    }
+
     Timer {
-        interval: 5000
-        repeat: true
-        running: root.visible && root.logVisible
-        onTriggered: root.refreshLogs()
+        id: exportStatusTimer
+        interval: 2500
+        repeat: false
+        onTriggered: exportStatusPopup.close()
     }
 
     component ParameterBox: Rectangle {

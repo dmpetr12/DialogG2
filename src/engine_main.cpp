@@ -1,16 +1,29 @@
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QHash>
+#include <QHttpServer>
+#include <QHttpServerRequest>
+#include <QHttpServerResponder>
+#include <QHttpServerResponse>
 #include <QIODevice>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QMimeDatabase>
 #include <QProcess>
+#include <QRandomGenerator>
+#include <QSaveFile>
+#include <QStringList>
+#include <QStorageInfo>
+#include <QTcpServer>
 #include <QTimer>
+#include <QUrlQuery>
 
 #include <algorithm>
 #include <cmath>
@@ -31,6 +44,7 @@
 #include "engine/ManualEmergencyController.h"
 #include "engine/MeteringBusController.h"
 #include "engine/ModbusController.h"
+#include "engine/ModbusTcpServer.h"
 #include "engine/StateEngine.h"
 #include "engine/StateFileStore.h"
 #include "engine/TestController.h"
@@ -41,9 +55,17 @@
 
 using namespace DialogG2;
 
+static constexpr int SystemLogArchiveCount = 5;
+static constexpr int MaxStoredTestJournalEntries = 1000;
+
 static QString defaultStatePath()
 {
     return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("state/current_state.json"));
+}
+
+static QString defaultRuntimeTimingPath()
+{
+    return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("state/runtime_timing.json"));
 }
 
 static QString defaultLogPath()
@@ -74,6 +96,15 @@ static QString defaultAppConfigPath()
 static QString ipcServerName()
 {
     return QStringLiteral("emergency_panel_backend");
+}
+
+static bool trimTestJournal(QVector<TestJournalEntry> *entries)
+{
+    if (!entries || entries->size() <= MaxStoredTestJournalEntries)
+        return false;
+
+    entries->erase(entries->begin(), entries->end() - MaxStoredTestJournalEntries);
+    return true;
 }
 
 static QJsonObject okResponse()
@@ -184,8 +215,11 @@ public:
                 LOG_WARN(QStringLiteral("Default line config not saved: %1").arg(error));
         }
 
-        if (!m_journalStore.read(&m_storedJournal, &error))
+        if (!m_journalStore.read(&m_storedJournal, &error)) {
             LOG_WARN(QStringLiteral("Test journal not loaded: %1").arg(error));
+        } else if (trimTestJournal(&m_storedJournal) && !m_journalStore.write(m_storedJournal, &error)) {
+            LOG_WARN(QStringLiteral("Test journal not trimmed: %1").arg(error));
+        }
 
         if (!m_scheduleManager.load(defaultTestSchedulePath(), &error)) {
             LOG_WARN(QStringLiteral("Test schedule not loaded: %1. Creating empty schedule").arg(error));
@@ -219,6 +253,15 @@ public:
 
     void start()
     {
+        logPreviousRuntimeTiming();
+
+        m_startedAt = QDateTime::currentDateTimeUtc();
+        m_lastHeartbeat = m_startedAt;
+        LOG_INFO(QStringLiteral("Runtime timing: startedAt=%1, lastHeartbeat=%2")
+                     .arg(m_startedAt.toString(Qt::ISODate),
+                          m_lastHeartbeat.toString(Qt::ISODate)));
+        writeRuntimeTiming(true);
+
         if (m_demoMode) {
             LOG_INFO(QStringLiteral("Demo mode enabled: hardware polling is disabled"));
         } else {
@@ -230,6 +273,8 @@ public:
         }
 
         m_tickTimer.start();
+        startModbusTcpServer();
+        startWebServer();
         startIpcServer();
         tick();
     }
@@ -253,6 +298,335 @@ private:
         }
 
         LOG_INFO(QStringLiteral("IPC server started: %1").arg(ipcServerName()));
+    }
+
+    void startModbusTcpServer()
+    {
+        const ModbusTcpConfig &tcp = m_config.modbusTcp();
+        if (!tcp.enabled) {
+            LOG_INFO(QStringLiteral("Modbus TCP server disabled"));
+            return;
+        }
+
+        connect(&m_modbusTcpServer, &ModbusTcpServer::logMessage, this, [](const QString &message) {
+            LOG_INFO(message);
+        });
+        connect(&m_modbusTcpServer, &ModbusTcpServer::manualEmergencyStartRequested, this, [this]() {
+            m_hmiManualEmergencyStartRequested = true;
+        });
+        connect(&m_modbusTcpServer, &ModbusTcpServer::manualEmergencyStopRequested, this, [this]() {
+            m_hmiManualEmergencyStopRequested = true;
+        });
+        connect(&m_modbusTcpServer, &ModbusTcpServer::stopTestRequested, this, [this]() {
+            m_stopTestRequested = true;
+        });
+        connect(&m_modbusTcpServer, &ModbusTcpServer::functionalTestRequested, this, [this]() {
+            m_manualFunctionalRequest = {true, 0};
+        });
+        connect(&m_modbusTcpServer, &ModbusTcpServer::durationTestRequested, this, [this]() {
+            m_manualDurationRequest = {true, m_testControllerDefaultDurationSec};
+        });
+
+        if (!m_modbusTcpServer.start(tcp.bind, tcp.port, tcp.serverAddress))
+            LOG_WARN(QStringLiteral("Modbus TCP server not started"));
+    }
+
+    void startWebServer()
+    {
+        const WebServerConfig &web = m_config.webServer();
+        if (!web.enabled) {
+            LOG_INFO(QStringLiteral("Web server disabled"));
+            return;
+        }
+
+        setupWebRoutes();
+
+        auto *tcpServer = new QTcpServer(this);
+        const QHostAddress address(web.bind.trimmed().isEmpty()
+                                       ? QStringLiteral("0.0.0.0")
+                                       : web.bind);
+        if (!tcpServer->listen(address, static_cast<quint16>(web.port))) {
+            LOG_WARN(QStringLiteral("Web server listen failed on %1:%2: %3")
+                         .arg(web.bind)
+                         .arg(web.port)
+                         .arg(tcpServer->errorString()));
+            tcpServer->deleteLater();
+            return;
+        }
+
+        m_webRoot = QDir::isAbsolutePath(web.root)
+            ? QDir::cleanPath(web.root)
+            : QDir(QCoreApplication::applicationDirPath()).filePath(web.root);
+        m_webServer.bind(tcpServer);
+        LOG_INFO(QStringLiteral("Web server started: http://%1:%2, root=%3")
+                     .arg(web.bind)
+                     .arg(web.port)
+                     .arg(m_webRoot));
+    }
+
+    void setupWebRoutes()
+    {
+        m_webServer.route(QStringLiteral("/api/health"), [this]() {
+            return webJsonOk({{QStringLiteral("status"), QStringLiteral("ok")}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/state"), [this]() {
+            return webJsonOk({{QStringLiteral("data"), stateForHmi()}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/lines"), [this]() {
+            QJsonArray lines;
+            for (int i = 0; i < m_lineManager.lines().size(); ++i)
+                lines.append(lineAtForHmi(i));
+            return webJsonOk({{QStringLiteral("data"), lines}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/lines/<arg>"), [this](int index) {
+            const QJsonObject line = lineAtForHmi(index);
+            if (line.isEmpty())
+                return webJsonError(QStringLiteral("line not found"), QHttpServerResponder::StatusCode::NotFound);
+            return webJsonOk({{QStringLiteral("data"), line}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/login"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+
+            const QString password = body.value(QStringLiteral("password")).toString();
+            if (password.isEmpty() || m_passwordManager.password() != password)
+                return webJsonError(QStringLiteral("invalid password"), QHttpServerResponder::StatusCode::Unauthorized);
+
+            const QByteArray seed = password.toUtf8()
+                + QByteArray::number(QDateTime::currentMSecsSinceEpoch())
+                + QByteArray::number(QRandomGenerator::global()->generate64());
+            m_webAuthToken = QString::fromLatin1(
+                QCryptographicHash::hash(seed, QCryptographicHash::Sha256).toHex());
+            return webJsonOk({{QStringLiteral("token"), m_webAuthToken}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/manual-emergency/start"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            m_hmiManualEmergencyStartRequested = true;
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/manual-emergency/stop"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            m_hmiManualEmergencyStopRequested = true;
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/test/stop"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            m_stopTestRequested = true;
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/test/start-functional"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            webRequestJson(request, &body);
+            const int warmupSec = std::clamp(body.value(QStringLiteral("warmupSec")).toInt(0), 0, 59 * 60);
+            m_manualFunctionalRequest = {true, warmupSec};
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/test/start-duration"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            webRequestJson(request, &body);
+            const int durationSec = std::clamp(body.value(QStringLiteral("durationSec")).toInt(m_testControllerDefaultDurationSec),
+                                               1,
+                                               3 * 3600);
+            m_manualDurationRequest = {true, durationSec};
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/journal"), [this]() {
+            return webJsonOk({{QStringLiteral("data"), journalForHmi()}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/logs"), [this](const QHttpServerRequest &request) {
+            const QUrlQuery query(request.url());
+            const int offset = query.queryItemValue(QStringLiteral("offset")).toInt();
+            const int limit = query.queryItemValue(QStringLiteral("limit")).toInt();
+            return webJsonOk({{QStringLiteral("data"), logsForHmi(offset, limit > 0 ? limit : 200)}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/schedule"), [this]() {
+            QJsonArray entries;
+            for (const TestScheduleEntry &entry : m_scheduleManager.entries())
+                entries.append(scheduleEntryToHmi(entry));
+            return webJsonOk({{QStringLiteral("data"), entries}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/schedule/add"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+
+            QString error;
+            const TestScheduleEntry entry = scheduleEntryFromHmi(body);
+            const bool ok = m_scheduleManager.addEntry(entry, &error)
+                && m_scheduleManager.save(defaultTestSchedulePath(), &error);
+            if (!ok)
+                return webJsonError(error.isEmpty() ? QStringLiteral("schedule add failed") : error);
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/schedule/<arg>/update"), QHttpServerRequest::Method::Post,
+                          [this](int index, const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+
+            bool ok = true;
+            QString error;
+            for (auto it = body.constBegin(); it != body.constEnd(); ++it)
+                ok = ok && m_scheduleManager.updateEntryProperty(index, it.key(), it.value().toVariant(), &error);
+            ok = ok && m_scheduleManager.save(defaultTestSchedulePath(), &error);
+            return ok ? webJsonOk() : webJsonError(error.isEmpty() ? QStringLiteral("schedule update failed") : error);
+        });
+
+        m_webServer.route(QStringLiteral("/api/schedule/<arg>/remove"), QHttpServerRequest::Method::Post,
+                          [this](int index, const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QString error;
+            const bool ok = m_scheduleManager.removeEntry(index, &error)
+                && m_scheduleManager.save(defaultTestSchedulePath(), &error);
+            return ok ? webJsonOk() : webJsonError(error.isEmpty() ? QStringLiteral("schedule remove failed") : error);
+        });
+
+        m_webServer.route(QStringLiteral("/api/password/change"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+            const QString password = body.value(QStringLiteral("password")).toString().trimmed();
+            if (password.isEmpty())
+                return webJsonError(QStringLiteral("empty password"));
+            m_passwordManager.setPassword(password);
+            m_webAuthToken.clear();
+            return webJsonOk();
+        });
+
+        m_webServer.route(QStringLiteral("/api/system/time"), QHttpServerRequest::Method::Post,
+                          [this](const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+            const qint64 msec = body.value(QStringLiteral("msec")).toVariant().toLongLong();
+            return setSystemTimeFromHmi(msec)
+                ? webJsonOk()
+                : webJsonError(QStringLiteral("failed to set system time"));
+        });
+
+        m_webServer.route(QStringLiteral("/"), [this]() {
+            return webStaticFile(QStringLiteral("index.html"));
+        });
+
+        m_webServer.route(QStringLiteral("/<arg>"), [this](const QString &fileName) {
+            return webStaticFile(fileName);
+        });
+    }
+
+    QHttpServerResponse webJsonOk(const QJsonObject &payload = {}) const
+    {
+        QJsonObject object = payload;
+        object.insert(QStringLiteral("ok"), true);
+        return QHttpServerResponse(object);
+    }
+
+    QHttpServerResponse webJsonError(const QString &message,
+                                     QHttpServerResponder::StatusCode status = QHttpServerResponder::StatusCode::BadRequest) const
+    {
+        const QJsonObject object = {
+            {QStringLiteral("ok"), false},
+            {QStringLiteral("error"), message}
+        };
+        return QHttpServerResponse(QJsonDocument(object).toJson(QJsonDocument::Compact),
+                                   QByteArrayLiteral("application/json"),
+                                   status);
+    }
+
+    QHttpServerResponse webUnauthorized() const
+    {
+        return webJsonError(QStringLiteral("unauthorized"), QHttpServerResponder::StatusCode::Unauthorized);
+    }
+
+    bool webRequestJson(const QHttpServerRequest &request, QJsonObject *object) const
+    {
+        QJsonParseError error;
+        const QJsonDocument doc = QJsonDocument::fromJson(request.body(), &error);
+        if (error.error != QJsonParseError::NoError || !doc.isObject())
+            return false;
+        if (object)
+            *object = doc.object();
+        return true;
+    }
+
+    QString webBearerToken(const QHttpServerRequest &request) const
+    {
+        const QByteArray authorization = request.value(QByteArrayLiteral("Authorization"));
+        const QByteArray prefix = QByteArrayLiteral("Bearer ");
+        if (!authorization.startsWith(prefix))
+            return {};
+        return QString::fromLatin1(authorization.mid(prefix.size()));
+    }
+
+    bool webCheckAuth(const QHttpServerRequest &request) const
+    {
+        return !m_webAuthToken.isEmpty() && webBearerToken(request) == m_webAuthToken;
+    }
+
+    QHttpServerResponse webStaticFile(const QString &fileName) const
+    {
+        QString safeName = fileName;
+        if (safeName.isEmpty() || safeName == QStringLiteral("/"))
+            safeName = QStringLiteral("index.html");
+        if (safeName.contains(QStringLiteral(".."))
+            || safeName.startsWith(QLatin1Char('/'))
+            || safeName.startsWith(QLatin1Char('\\'))) {
+            return QHttpServerResponse(QByteArrayLiteral("not found"),
+                                       QHttpServerResponder::StatusCode::NotFound);
+        }
+
+        const QString fullPath = QDir(m_webRoot).filePath(safeName);
+        QFileInfo info(fullPath);
+        if (!info.exists() || !info.isFile())
+            return QHttpServerResponse(QByteArrayLiteral("not found"),
+                                       QHttpServerResponder::StatusCode::NotFound);
+
+        QFile file(fullPath);
+        if (!file.open(QIODevice::ReadOnly))
+            return QHttpServerResponse(QByteArrayLiteral("cannot open file"),
+                                       QHttpServerResponder::StatusCode::InternalServerError);
+
+        QMimeDatabase mimeDatabase;
+        const QByteArray mime = mimeDatabase.mimeTypeForFile(info).name().toUtf8();
+        return QHttpServerResponse(mime, file.readAll(), QHttpServerResponder::StatusCode::Ok);
     }
 
     void processIpcMessage(QLocalSocket *socket, const QByteArray &data)
@@ -289,9 +663,17 @@ private:
             LineConfig line = m_lineManager.makeNextLine(LineKind::Constant);
             const bool ok = m_lineManager.addLine(line, &error)
                 && m_lineManager.saveConfig(defaultLinesConfigPath(), &error);
-            if (!ok)
+            if (ok)
+                markMaintenanceDirty();
+            else
                 LOG_WARN(QStringLiteral("Line not added: %1").arg(error));
             sendIpcJson(socket, {{QStringLiteral("ok"), ok}});
+            return;
+        }
+
+        if (command == QStringLiteral("removeLine")) {
+            const int index = request.value(QStringLiteral("index")).toInt(-1);
+            sendIpcJson(socket, {{QStringLiteral("ok"), removeLineFromHmi(index)}});
             return;
         }
 
@@ -340,9 +722,11 @@ private:
 
         if (command == QStringLiteral("setLineSetupActive")) {
             const int hmiIndex = request.value(QStringLiteral("index")).toInt(-1);
-            if (request.value(QStringLiteral("active")).toBool(false) && hmiIndex >= 0)
-                m_hmiSetupLineIndex = hmiIndex + 1;
-            else if (m_hmiSetupLineIndex == hmiIndex + 1 || hmiIndex < 0)
+            const bool validLine = hmiIndex >= 0 && hmiIndex < m_lineManager.lines().size();
+            const int lineIndex = validLine ? m_lineManager.lines().at(hmiIndex).index : 0;
+            if (request.value(QStringLiteral("active")).toBool(false) && validLine)
+                m_hmiSetupLineIndex = lineIndex;
+            else if (m_hmiSetupLineIndex == lineIndex || hmiIndex < 0)
                 m_hmiSetupLineIndex = 0;
             sendIpcJson(socket, okResponse());
             return;
@@ -453,6 +837,26 @@ private:
             return;
         }
 
+        if (command == QStringLiteral("exportSystemLog")) {
+            int exportedCount = 0;
+            QString error;
+            const bool ok = exportSystemLogsToUsb(&exportedCount, &error);
+            sendIpcJson(socket, ok
+                                    ? QJsonObject{{QStringLiteral("ok"), true}, {QStringLiteral("fileCount"), exportedCount}}
+                                    : errorResponse(error));
+            return;
+        }
+
+        if (command == QStringLiteral("exportTestJournal")) {
+            QString exportedFileName;
+            QString error;
+            const bool ok = exportFileToUsb(defaultTestJournalPath(), QStringLiteral("test-journal"), QStringLiteral("json"), &exportedFileName, &error);
+            sendIpcJson(socket, ok
+                                    ? QJsonObject{{QStringLiteral("ok"), true}, {QStringLiteral("fileName"), exportedFileName}}
+                                    : errorResponse(error));
+            return;
+        }
+
         if (command == QStringLiteral("journal")) {
             sendIpcJson(socket, {
                 {QStringLiteral("ok"), true},
@@ -473,10 +877,10 @@ private:
 
     QJsonObject lineAtForHmi(int hmiIndex) const
     {
-        const LineConfig *line = m_lineManager.line(hmiIndex + 1);
-        if (!line)
+        if (hmiIndex < 0 || hmiIndex >= m_lineManager.lines().size())
             return {};
 
+        const LineConfig *line = &m_lineManager.lines().at(hmiIndex);
         double measuredPower = std::numeric_limits<double>::quiet_NaN();
         double measuredVoltage = std::numeric_limits<double>::quiet_NaN();
         double measuredCurrent = std::numeric_limits<double>::quiet_NaN();
@@ -510,10 +914,10 @@ private:
 
     bool updateLineFromHmi(int hmiIndex, const QJsonObject &lineData)
     {
-        const LineConfig *existing = m_lineManager.line(hmiIndex + 1);
-        if (!existing)
+        if (hmiIndex < 0 || hmiIndex >= m_lineManager.lines().size())
             return false;
 
+        const LineConfig *existing = &m_lineManager.lines().at(hmiIndex);
         LineConfig line = *existing;
         if (lineData.contains(QStringLiteral("description")))
             line.name = lineData.value(QStringLiteral("description")).toString(line.name);
@@ -526,8 +930,30 @@ private:
 
         QString error;
         const bool ok = m_lineManager.updateLine(line, &error);
-        if (!ok)
+        if (ok)
+            markMaintenanceDirty();
+        else
             LOG_WARN(QStringLiteral("Line update failed: %1").arg(error));
+        return ok;
+    }
+
+    bool removeLineFromHmi(int hmiIndex)
+    {
+        if (hmiIndex < 0 || hmiIndex >= m_lineManager.lines().size())
+            return false;
+
+        const int lineIndex = m_lineManager.lines().at(hmiIndex).index;
+        if (m_hmiSetupLineIndex == lineIndex)
+            m_hmiSetupLineIndex = 0;
+
+        QString error;
+        const bool ok = m_lineManager.removeLine(lineIndex, &error)
+            && m_lineManager.saveConfig(defaultLinesConfigPath(), &error);
+        if (ok) {
+            markMaintenanceDirty();
+        } else {
+            LOG_WARN(QStringLiteral("Line remove failed: %1").arg(error));
+        }
         return ok;
     }
 
@@ -546,6 +972,9 @@ private:
             {QStringLiteral("connected"), true},
             {QStringLiteral("busConnected"), m_relayBusStatus.online && m_meteringBusStatus.online},
             {QStringLiteral("testRunning"), testRunning},
+            {QStringLiteral("testKind"), static_cast<int>(m_lastSnapshot.testKind)},
+            {QStringLiteral("testKindCode"), testKindCode(m_lastSnapshot.testKind)},
+            {QStringLiteral("testKindText"), testKindText(m_lastSnapshot.testKind)},
             {QStringLiteral("testPlannedSec"), m_lastSnapshot.activeTest.durationSeconds},
             {QStringLiteral("testRemainingSec"), remainingSec},
             {QStringLiteral("modeText"), modeText(m_lastSnapshot.mode)},
@@ -557,6 +986,7 @@ private:
             {QStringLiteral("batteryOk"), m_lastSnapshot.battery.state == BatteryState::Normal},
             {QStringLiteral("batteryPercent"), m_lastSnapshot.battery.socPercent},
             {QStringLiteral("battery"), toJson(m_lastSnapshot.battery)},
+            {QStringLiteral("maintenance"), toJson(m_lastSnapshot.maintenance)},
             {QStringLiteral("systemState"), m_lastSnapshot.health == SystemHealth::Normal ? 0 : 1},
             {QStringLiteral("cabinetMode"), static_cast<int>(m_lastSnapshot.mode)},
             {QStringLiteral("lineCount"), m_lineManager.lines().size()},
@@ -621,9 +1051,127 @@ private:
         const int lineCount = static_cast<int>(allLines.size());
         const int start = offset < 0 ? std::max(0, lineCount + offset) : std::max(0, offset);
         const int end = std::min(lineCount, start + std::max(0, limit));
-        for (int i = start; i < end; ++i)
-            lines.append(QString::fromUtf8(allLines.at(i)).trimmed());
+        for (int i = end - 1; i >= start; --i) {
+            const QString line = QString::fromUtf8(allLines.at(i)).trimmed();
+            if (!line.isEmpty())
+                lines.append(line);
+        }
         return lines;
+    }
+
+    QString usbMountPath() const
+    {
+        const QString applicationRoot = QFileInfo(QCoreApplication::applicationDirPath()).absoluteDir().rootPath();
+        const auto volumes = QStorageInfo::mountedVolumes();
+        for (const QStorageInfo &volume : volumes) {
+            if (!volume.isValid() || !volume.isReady() || volume.isReadOnly())
+                continue;
+
+            const QString rootPath = QDir::cleanPath(volume.rootPath());
+            const bool likelyUnixUsb = rootPath.startsWith(QStringLiteral("/media/"))
+                || rootPath.startsWith(QStringLiteral("/run/media/"))
+                || rootPath.startsWith(QStringLiteral("/mnt/"));
+            const bool likelyWindowsUsb = rootPath.endsWith(QStringLiteral(":/")) && rootPath != applicationRoot;
+            if (likelyUnixUsb || likelyWindowsUsb)
+                return rootPath;
+        }
+
+        return {};
+    }
+
+    QStringList systemLogPaths() const
+    {
+        QStringList paths;
+        const QString logPath = defaultLogPath();
+        paths.append(logPath);
+
+        const QFileInfo info(logPath);
+        const QString dir = info.absolutePath();
+        const QString baseName = info.completeBaseName();
+        const QString suffix = info.suffix().isEmpty() ? QStringLiteral("log") : info.suffix();
+        for (int index = 1; index <= SystemLogArchiveCount; ++index)
+            paths.append(QDir(dir).filePath(QStringLiteral("%1_%2.%3").arg(baseName).arg(index).arg(suffix)));
+
+        return paths;
+    }
+
+    bool exportSystemLogsToUsb(int *exportedCount, QString *error) const
+    {
+        const QString mountPath = usbMountPath();
+        if (mountPath.isEmpty()) {
+            if (error)
+                *error = QStringLiteral("Флешка не найдена");
+            return false;
+        }
+
+        const QString timestamp = QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss"));
+        int count = 0;
+        const QStringList paths = systemLogPaths();
+        for (int index = 0; index < paths.size(); ++index) {
+            const QString sourcePath = paths.at(index);
+            if (!QFile::exists(sourcePath))
+                continue;
+
+            const QString fileName = index == 0
+                ? QStringLiteral("system-log_%1.log").arg(timestamp)
+                : QStringLiteral("system-log_%1_%2.log").arg(timestamp).arg(index);
+            const QString destinationPath = QDir(mountPath).filePath(fileName);
+            QFile::remove(destinationPath);
+            if (!QFile::copy(sourcePath, destinationPath)) {
+                if (error)
+                    *error = QStringLiteral("Ошибка записи на флешку");
+                return false;
+            }
+
+            ++count;
+            LOG_INFO(QStringLiteral("Exported %1 to USB: %2").arg(sourcePath, destinationPath));
+        }
+
+        if (count == 0) {
+            if (error)
+                *error = QStringLiteral("Файлы системного лога не найдены");
+            return false;
+        }
+
+        if (exportedCount)
+            *exportedCount = count;
+        return true;
+    }
+
+    bool exportFileToUsb(const QString &sourcePath,
+                         const QString &filePrefix,
+                         const QString &extension,
+                         QString *exportedFileName,
+                         QString *error) const
+    {
+        if (!QFile::exists(sourcePath)) {
+            if (error)
+                *error = QStringLiteral("Файл лога не найден");
+            return false;
+        }
+
+        const QString mountPath = usbMountPath();
+        if (mountPath.isEmpty()) {
+            if (error)
+                *error = QStringLiteral("Флешка не найдена");
+            return false;
+        }
+
+        const QString fileName = QStringLiteral("%1_%2.%3")
+            .arg(filePrefix, QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_HHmmss")), extension);
+        const QString destinationPath = QDir(mountPath).filePath(fileName);
+
+        QFile::remove(destinationPath);
+        if (!QFile::copy(sourcePath, destinationPath)) {
+            if (error)
+                *error = QStringLiteral("Ошибка записи на флешку");
+            return false;
+        }
+
+        if (exportedFileName)
+            *exportedFileName = fileName;
+        LOG_INFO(QStringLiteral("Exported %1 to USB: %2").arg(sourcePath, destinationPath));
+        return true;
     }
 
     void setupRelayBus(int moduleCount)
@@ -824,8 +1372,7 @@ private:
                     line.outputState = LineOutputState::On;
             }
         }
-        const MaintenanceSnapshot maintenance =
-            m_maintenanceChecker.evaluate(snapshotLines, m_storedJournal, now);
+        const MaintenanceSnapshot maintenance = maintenanceSnapshot(snapshotLines, now);
 
         EngineInputs engineInputs;
         engineInputs.voltageControlOk = lineResult.voltageControlOk;
@@ -851,23 +1398,48 @@ private:
 
         const CabinetSnapshot snapshot = m_stateEngine.evaluate(engineInputs);
         m_lastSnapshot = snapshot;
+        m_modbusTcpServer.updateSnapshot(snapshot);
         writeState(snapshot);
         driveRelays(snapshot, lineInputs.modules);
-        writeDebugHeartbeat(snapshot);
+        rememberHeartbeat();
     }
 
     void persistTestResults(const QVector<TestJournalEntry> &entries)
     {
+        if (entries.isEmpty())
+            return;
+
+        m_storedJournal += entries;
+        trimTestJournal(&m_storedJournal);
+
         QString error;
-        if (!m_journalStore.append(entries, &error)) {
+        if (!m_journalStore.write(m_storedJournal, &error)) {
             LOG_WARN(QStringLiteral("Test journal not saved: %1").arg(error));
             return;
         }
 
-        m_storedJournal += entries;
         m_lineManager.applyTestResults(entries);
+        markMaintenanceDirty();
         if (!m_lineManager.saveConfig(defaultLinesConfigPath(), &error))
             LOG_WARN(QStringLiteral("Line test results not saved: %1").arg(error));
+    }
+
+    MaintenanceSnapshot maintenanceSnapshot(const QVector<LineSnapshot> &lines, const QDateTime &now)
+    {
+        if (!m_maintenanceDirty && m_nextMaintenanceCheckAt.isValid() && now < m_nextMaintenanceCheckAt)
+            return m_cachedMaintenance;
+
+        m_cachedMaintenance = m_maintenanceChecker.evaluate(lines, m_storedJournal, now);
+        m_nextMaintenanceCheckAt = now.addDays(1);
+        m_maintenanceDirty = false;
+        LOG_INFO(QStringLiteral("Maintenance check: %1").arg(m_cachedMaintenance.summary));
+        return m_cachedMaintenance;
+    }
+
+    void markMaintenanceDirty()
+    {
+        m_maintenanceDirty = true;
+        m_nextMaintenanceCheckAt = {};
     }
 
     bool hasLeakageFault(const QVector<LineSnapshot> &lines) const
@@ -928,17 +1500,62 @@ private:
         }
     }
 
-    void writeDebugHeartbeat(const CabinetSnapshot &snapshot)
+    void rememberHeartbeat()
     {
-        const QDateTime now = QDateTime::currentDateTimeUtc();
-        if (m_lastDebugHeartbeat.isValid() && m_lastDebugHeartbeat.msecsTo(now) < 60000)
+        m_lastHeartbeat = QDateTime::currentDateTimeUtc();
+        writeRuntimeTiming(false);
+    }
+
+    void logPreviousRuntimeTiming() const
+    {
+        QFile file(defaultRuntimeTimingPath());
+        if (!file.open(QIODevice::ReadOnly))
             return;
 
-        m_lastDebugHeartbeat = now;
-        LOG_DEBUG(QStringLiteral("heartbeat: %1 / %2, state=%3")
-                      .arg(modeText(snapshot.mode),
-                           healthText(snapshot.health),
-                           m_stateStore.filePath()));
+        QJsonParseError error;
+        const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+        if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+            LOG_WARN(QStringLiteral("Previous runtime timing not readable: %1").arg(error.errorString()));
+            return;
+        }
+
+        const QJsonObject object = doc.object();
+        LOG_INFO(QStringLiteral("Previous runtime timing: startedAt=%1, lastHeartbeat=%2")
+                     .arg(object.value(QStringLiteral("startedAt")).toString(QStringLiteral("-")),
+                          object.value(QStringLiteral("lastHeartbeat")).toString(QStringLiteral("-"))));
+    }
+
+    void writeRuntimeTiming(bool force)
+    {
+        if (!force && m_lastRuntimeTimingWrite.isValid() && m_lastRuntimeTimingWrite.msecsTo(m_lastHeartbeat) < 60000)
+            return;
+
+        const QString filePath = defaultRuntimeTimingPath();
+        const QFileInfo info(filePath);
+        if (!QDir().mkpath(info.absolutePath())) {
+            LOG_WARN(QStringLiteral("Runtime timing directory not created: %1").arg(info.absolutePath()));
+            return;
+        }
+
+        const QJsonObject object = {
+            {QStringLiteral("schemaVersion"), 1},
+            {QStringLiteral("startedAt"), m_startedAt.toString(Qt::ISODate)},
+            {QStringLiteral("lastHeartbeat"), m_lastHeartbeat.toString(Qt::ISODate)}
+        };
+
+        QSaveFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly)) {
+            LOG_WARN(QStringLiteral("Runtime timing not opened: %1").arg(file.errorString()));
+            return;
+        }
+
+        file.write(QJsonDocument(object).toJson(QJsonDocument::Compact));
+        if (!file.commit()) {
+            LOG_WARN(QStringLiteral("Runtime timing not saved: %1").arg(file.errorString()));
+            return;
+        }
+
+        m_lastRuntimeTimingWrite = m_lastHeartbeat;
     }
 
     AppConfig m_config;
@@ -952,14 +1569,21 @@ private:
     StateFileStore m_stateStore;
     TestJournalStore m_journalStore;
     QVector<TestJournalEntry> m_storedJournal;
+    MaintenanceSnapshot m_cachedMaintenance;
+    QDateTime m_nextMaintenanceCheckAt;
+    bool m_maintenanceDirty = true;
 
     ModbusController m_relayBus;
     MeteringBusController m_meteringBus;
+    ModbusTcpServer m_modbusTcpServer;
     ModbusBusStatus m_relayBusStatus;
     ModbusBusStatus m_meteringBusStatus;
 
     QTimer m_tickTimer;
     QLocalServer m_ipcServer;
+    QHttpServer m_webServer;
+    QString m_webRoot;
+    QString m_webAuthToken;
     bool m_demoMode = false;
     TestRequest m_manualFunctionalRequest;
     TestRequest m_manualDurationRequest;
@@ -984,7 +1608,9 @@ private:
     CabinetMode m_lastLoggedMode = static_cast<CabinetMode>(-1);
     SystemHealth m_lastLoggedHealth = static_cast<SystemHealth>(-1);
     CabinetSnapshot m_lastSnapshot;
-    QDateTime m_lastDebugHeartbeat;
+    QDateTime m_startedAt;
+    QDateTime m_lastHeartbeat;
+    QDateTime m_lastRuntimeTimingWrite;
 };
 
 int main(int argc, char *argv[])

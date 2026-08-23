@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dialog G2 Remote</title>
+  <style>
+    :root {
+      --bg: #f4f6f2;
+      --top: #c9dfc2;
+      --panel: #ffffff;
+      --tile: #f9faf7;
+      --button: #cfcfcf;
+      --text: #080d08;
+      --muted: #606a60;
+      --line: #d5dacd;
+      --ok: #18bf68;
+      --bad: #df3e35;
+      --warn: #d99316;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      min-height: 112px;
+      padding: 12px 28px 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background: var(--top);
+    }
+
+    .brand {
+      color: #515a52;
+      font-size: 27px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .clock {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-size: 38px;
+      white-space: nowrap;
+    }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    button, input {
+      font: inherit;
+      border: 0;
+      border-radius: 10px;
+      color: var(--text);
+    }
+
+    button {
+      min-height: 58px;
+      padding: 0 18px;
+      background: var(--button);
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(0.96); }
+    button.active { outline: 4px solid #78a7dc; }
+    button.danger { background: var(--bad); color: #fff; }
+    button.warn { background: var(--warn); color: #fff; }
+    button.primary { background: #2f6f54; color: #fff; }
+    button.small { min-height: 42px; font-size: 18px; padding: 0 14px; }
+    button:disabled { opacity: 0.45; cursor: default; }
+
+    input {
+      height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 18px;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(120px, 0.7fr);
+      gap: 8px;
+    }
+
+    .view { display: none; }
+    .view.active { display: grid; gap: 12px; }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(520px, 645px) 340px;
+      justify-content: start;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .status-column, .system-column {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tile {
+      min-height: 76px;
+      display: grid;
+      grid-template-columns: minmax(130px, 0.9fr) minmax(105px, 0.7fr) minmax(145px, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 13px 15px;
+      background: var(--tile);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .tile.test-mode {
+      background: #fff4d7;
+      border-color: #e2b94d;
+    }
+
+    .tile-title {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .dot {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--ok);
+    }
+
+    .dot.bad { background: var(--bad); }
+    .dot.warn { background: var(--warn); }
+
+    .tile-value {
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .tile-note {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .measure {
+      padding: 13px 15px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 18px;
+      font-size: 25px;
+    }
+
+    .measure span:first-child {
+      color: var(--muted);
+    }
+
+    .command-panel, .panel {
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .command-panel {
+      display: grid;
+      gap: 10px;
+    }
+
+    .command-panel[hidden] {
+      display: none;
+    }
+
+    .command-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 36px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .command-grid button {
+      width: 230px;
+      min-height: 54px;
+      font-size: 21px;
+    }
+
+    .message {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 18px;
+      margin-top: 8px;
+    }
+
+    .page-head {
+      display: block;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 36px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      table-layout: fixed;
+      font-size: 19px;
+    }
+
+    th {
+      padding: 8px;
+      background: #efefef;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    td {
+      padding: 11px 8px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    td:first-child { border-left: 1px solid var(--line); border-radius: 8px 0 0 8px; }
+    td:last-child { border-right: 1px solid var(--line); border-radius: 0 8px 8px 0; }
+
+    .log {
+      min-height: 520px;
+      max-height: 620px;
+      overflow: auto;
+      padding: 12px;
+      background: #111713;
+      color: #e7f1e8;
+      border-radius: 8px;
+      font: 16px/1.55 Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 960px) {
+      header { grid-template-columns: 1fr; }
+      h1 { font-size: 27px; }
+      .clock { font-size: 28px; gap: 18px; }
+      .nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .dashboard { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; }
+      .command-grid { justify-content: flex-start; }
+      .command-grid button { width: 210px; }
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 10px 12px; min-height: 94px; }
+      .brand { font-size: 20px; }
+      h1 { font-size: 21px; }
+      .clock { font-size: 20px; gap: 10px; }
+      main { padding: 8px; }
+      .nav { grid-template-columns: 1fr 1fr; }
+      button { min-height: 50px; font-size: 19px; }
+      .command-grid { justify-content: stretch; }
+      .command-grid button { width: 100%; }
+      .dashboard { grid-template-columns: 1fr; }
+      .tile { grid-template-columns: 1fr; }
+      .tile-value { font-size: 32px; }
+      .measure { font-size: 22px; }
+      .page-head { grid-template-columns: 82px 1fr; }
+      .page-head > :last-child { grid-column: 1 / -1; }
+      .page-title { font-size: 27px; }
+      th, td { font-size: 14px; padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brand">Световые технологии</div>
+      <h1>Щит аварийного освещения "Диалог G2"</h1>
+    </div>
+    <div class="clock">
+      <span id="temperature">--°C</span>
+      <span id="time">--:--</span>
+      <span id="date">--.--.----</span>
+    </div>
+  </header>
+
+  <main>
+    <nav class="nav">
+      <button data-view="dashboard" class="active">Главная</button>
+      <button data-view="lines">Линии</button>
+      <button data-view="journal">Журнал</button>
+      <button data-view="schedule">Расписание</button>
+      <button data-view="logs">Логи</button>
+      <button id="loginBtn" class="primary">Вход</button>
+    </nav>
+
+    <div id="commandPanel" class="command-panel">
+      <div class="command-grid">
+        <button id="fireBtn" class="danger" data-auth>Пуск аварии</button>
+        <button id="functionalBtn" class="warn" data-auth>Тест исправности</button>
+        <button id="durationBtn" class="warn" data-auth>Тест длительности</button>
+      </div>
+      <div id="message" class="message"></div>
+    </div>
+
+    <section id="dashboard" class="view active">
+      <div class="dashboard">
+        <div class="status-column">
+          <div id="modeTile" class="tile">
+            <div class="tile-title"><span id="modeDot" class="dot"></span><span>Режим</span></div>
+            <div id="mode" class="tile-value">--</div>
+            <div id="testInfo" class="tile-note">Тест не выполняется</div>
+          </div>
+          <div class="tile">
+            <div class="tile-title"><span id="systemDot" class="dot"></span><span>Система</span></div>
+            <div id="systemState" class="tile-value">--</div>
+            <div id="systemNote" class="tile-note">--</div>
+          </div>
+          <div class="tile">
+            <div class="tile-title"><span id="batteryDot" class="dot"></span><span>Батарея</span></div>
+            <div id="batteryState" class="tile-value">--</div>
+            <div id="batteryNote" class="tile-note">--</div>
+          </div>
+          <div class="tile">
+            <div class="tile-title"><span id="linesDot" class="dot"></span><span>Линии</span></div>
+            <div id="linesState" class="tile-value">--</div>
+            <div id="linesNote" class="tile-note">--</div>
+          </div>
+          <div class="tile">
+            <div class="tile-title"><span id="busDot" class="dot"></span><span>Связь</span></div>
+            <div id="busState" class="tile-value">--</div>
+            <div class="tile-note">MODBUS/измерения</div>
+          </div>
+        </div>
+
+        <div class="system-column">
+          <div class="summary">
+            <div class="measure"><span>Напряжение</span><b><span id="u">0</span> В</b></div>
+            <div class="measure"><span>Мощность</span><b><span id="p">0</span> Вт</b></div>
+            <div class="measure"><span>Заряд</span><b><span id="battery">--</span></b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lines" class="view">
+      <div class="page-head">
+        <div class="page-title">Линии</div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr><th>№</th><th>Линия</th><th>Тип</th><th>Выход</th><th>Итог</th></tr>
+          </thead>
+          <tbody id="linesRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="journal" class="view">
+      <div class="page-head">
+        <div class="page-title">Журнал</div>
+      </div>
+      <div class="panel">
+        <div class="page-title" style="text-align:left;font-size:26px">Контроль обслуживания</div>
+        <table>
+          <thead>
+            <tr><th>Линия</th><th>Последний тест</th><th>Статус</th></tr>
+          </thead>
+          <tbody id="maintenanceRows"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="page-title" style="text-align:left;font-size:26px">Журнал тестов</div>
+        <table>
+          <thead>
+            <tr><th>Завершен</th><th>Тест</th><th>Источник</th><th>Итог</th><th>Линий</th></tr>
+          </thead>
+          <tbody id="journalRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="schedule" class="view">
+      <div class="page-head">
+        <div class="page-title">Расписание</div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr><th>Вкл</th><th>Период</th><th>Дата</th><th>Время</th><th>Тест</th></tr>
+          </thead>
+          <tbody id="scheduleRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="logs" class="view">
+      <div class="page-head">
+        <div class="page-title">Системный лог</div>
+      </div>
+      <div id="logBox" class="log"></div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      token: localStorage.getItem("dialogG2Token") || "",
+      currentView: "dashboard",
+      last: null
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function on(id, event, handler) {
+      const element = $(id);
+      if (element) element.addEventListener(event, handler);
+    }
+
+    function setMessage(text) {
+      $("message").textContent = text || "";
+    }
+
+    async function api(path, options = {}) {
+      const headers = Object.assign({"Content-Type": "application/json"}, options.headers || {});
+      if (state.token) headers.Authorization = "Bearer " + state.token;
+      const response = await fetch(path, Object.assign({}, options, {headers}));
+      const text = await response.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (_) {}
+      if (response.status === 401) {
+        state.token = "";
+        localStorage.removeItem("dialogG2Token");
+        authUi();
+      }
+      if (!response.ok || data.ok === false) throw new Error(data.error || "Ошибка запроса");
+      return data;
+    }
+
+    function authUi() {
+      const unlocked = !!state.token;
+      $("loginBtn").hidden = unlocked;
+      document.querySelectorAll("[data-auth]").forEach((el) => el.disabled = !unlocked);
+      if (state.last) {
+        $("fireBtn").disabled = !unlocked;
+        renderTestButtons(state.last);
+      }
+    }
+
+    function fmt(n, digits = 0) {
+      return Number.isFinite(Number(n)) ? Number(n).toFixed(digits) : "--";
+    }
+
+    function fmtDate(value) {
+      if (!value) return "--";
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? "--" : d.toLocaleString("ru-RU");
+    }
+
+    function setDot(id, ok, warn = false) {
+      $(id).className = "dot" + (ok ? "" : (warn ? " warn" : " bad"));
+    }
+
+    function modeText(data) {
+      if (data.manualEmergencyActive || data.modeText === "Пожар") return "АВАРИЯ";
+      if (data.testRunning) return "ТЕСТ";
+      if (data.modeText === "Норма") return "РАБОЧИЙ";
+      return (data.modeText || "--").toUpperCase();
+    }
+
+    function lineName(line, i) {
+      return line.description || line.name || "Линия " + (i + 1);
+    }
+
+    function activeTestKind(data) {
+      if (!data || !data.testRunning) return 0;
+      if (data.testKind === 1 || data.testKindCode === "functional") return 1;
+      if (data.testKind === 2 || data.testKindCode === "duration") return 2;
+      return 0;
+    }
+
+    function renderTestButtons(data) {
+      const unlocked = !!state.token;
+      const kind = activeTestKind(data);
+      const functionalActive = kind === 1;
+      const durationActive = kind === 2;
+
+      $("functionalBtn").textContent = functionalActive ? "Стоп тест" : "Тест исправности";
+      $("durationBtn").textContent = durationActive ? "Стоп тест" : "Тест длительности";
+      $("functionalBtn").className = "warn";
+      $("durationBtn").className = "warn";
+      $("functionalBtn").disabled = !unlocked || durationActive;
+      $("durationBtn").disabled = !unlocked || functionalActive;
+    }
+
+    function renderState(data) {
+      state.last = data;
+      const now = new Date();
+      $("time").textContent = now.toLocaleTimeString("ru-RU", {hour: "2-digit", minute: "2-digit"});
+      $("date").textContent = now.toLocaleDateString("ru-RU");
+      $("temperature").textContent = fmt(data.temperature, 0) + "°C";
+
+      $("mode").textContent = modeText(data);
+      $("modeTile").classList.toggle("test-mode", !!data.testRunning);
+      $("systemState").textContent = data.systemOk ? "НОРМ" : "АВАР";
+      $("batteryState").textContent = data.batteryOk ? "НОРМ" : "АВАР";
+      $("linesState").textContent = data.linesOk ? "ИСПР" : "АВАР";
+      $("busState").textContent = data.busConnected ? "ОК" : "НЕТ";
+      $("systemNote").textContent = data.healthText || "--";
+      $("batteryNote").textContent = data.battery?.stateText || "--";
+      $("linesNote").textContent = "Линий: " + (data.lineCount || 0);
+      if (data.testRunning) {
+        setDot("modeDot", false, true);
+      } else {
+        setDot("modeDot", !data.manualEmergencyActive && data.systemOk);
+      }
+      setDot("systemDot", data.systemOk);
+      setDot("batteryDot", data.batteryOk);
+      setDot("linesDot", data.linesOk);
+      setDot("busDot", !!data.busConnected);
+
+      $("u").textContent = fmt(data.inletU, 0);
+      $("p").textContent = fmt(data.inletP, 0);
+      $("battery").textContent = data.batteryPercent >= 0 ? data.batteryPercent + "%" : "--";
+      $("testInfo").textContent = data.testRunning
+        ? "Тест выполняется, осталось " + Math.ceil((data.testRemainingSec || 0) / 60) + " мин"
+        : "Тест не выполняется";
+
+      $("fireBtn").textContent = data.manualEmergencyActive ? "Снять аварию" : "Пуск аварии";
+      $("fireBtn").className = data.manualEmergencyActive ? "warn" : "danger";
+      $("fireBtn").disabled = !state.token;
+      renderTestButtons(data);
+
+      $("linesRows").innerHTML = (data.lines || []).map((line, i) => `
+        <tr>
+          <td>${line.index ?? i + 1}</td>
+          <td title="${lineName(line, i)}">${lineName(line, i)}</td>
+          <td>${line.modeText || line.kindText || "--"}</td>
+          <td>${line.outputStateText || "--"}</td>
+          <td>${line.stateText || "--"}</td>
+        </tr>
+      `).join("");
+
+      $("maintenanceRows").innerHTML = (data.maintenance?.lines || []).map((line) => `
+        <tr>
+          <td>${line.lineName || line.lineIndex}</td>
+          <td>${fmtDate(line.lastTestAt)}</td>
+          <td>${line.overdue ? "Просрочен" : "Норма"}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function refreshState() {
+      try {
+        const res = await api("/api/state", {headers: {}});
+        renderState(res.data || {});
+      } catch (err) {
+        $("systemState").textContent = "НЕТ";
+        $("systemNote").textContent = "Нет связи с сервером";
+        setDot("systemDot", false);
+      }
+    }
+
+    async function refreshJournal() {
+      const res = await api("/api/journal");
+      $("journalRows").innerHTML = (res.data || []).slice().reverse().map((entry) => `
+        <tr>
+          <td>${fmtDate(entry.finishedAt)}</td>
+          <td>${entry.kindText || entry.kindCode || "--"}</td>
+          <td>${entry.sourceText || "--"}</td>
+          <td title="${entry.reason || ""}">${entry.statusText || "--"}</td>
+          <td>${(entry.lines || []).length}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function refreshLogs() {
+      const res = await api("/api/logs?offset=-240&limit=240");
+      $("logBox").textContent = (res.data || []).join("\n");
+    }
+
+    async function refreshSchedule() {
+      const res = await api("/api/schedule");
+      $("scheduleRows").innerHTML = (res.data || []).map((entry) => `
+        <tr>
+          <td>${entry.enabled ? "Да" : "Нет"}</td>
+          <td>${entry.period || "--"}</td>
+          <td>${entry.startDate || "--"}</td>
+          <td>${entry.startTime || "--"}</td>
+          <td>${entry.testType || "--"}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function post(path, body = {}) {
+      if (!state.token) {
+        setMessage("Введите пароль для управления");
+        return;
+      }
+      try {
+        await api(path, {method: "POST", body: JSON.stringify(body)});
+        setMessage("");
+        await refreshState();
+      } catch (err) {
+        setMessage(err.message);
+      }
+    }
+
+    async function openView(id) {
+      state.currentView = id;
+      document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === id));
+      document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === id));
+      $("commandPanel").hidden = id !== "dashboard";
+      if (id === "journal") {
+        await refreshState();
+        await refreshJournal();
+      }
+      if (id === "logs") await refreshLogs();
+      if (id === "schedule") await refreshSchedule();
+      if (id === "lines") await refreshState();
+    }
+
+    document.querySelectorAll("[data-view]").forEach((button) => {
+      button.addEventListener("click", () => openView(button.dataset.view));
+    });
+
+    on("loginBtn", "click", async () => {
+      const password = window.prompt("Введите пароль");
+      if (password === null)
+        return;
+      try {
+        const res = await api("/api/login", {method: "POST", body: JSON.stringify({password})});
+        state.token = res.token || "";
+        localStorage.setItem("dialogG2Token", state.token);
+        setMessage("");
+        authUi();
+      } catch (err) {
+        setMessage("Пароль не принят");
+      }
+    });
+
+    on("fireBtn", "click", () => post(state.last?.manualEmergencyActive ? "/api/manual-emergency/stop" : "/api/manual-emergency/start"));
+    on("functionalBtn", "click", () => {
+      if (activeTestKind(state.last) === 1)
+        post("/api/test/stop");
+      else
+        post("/api/test/start-functional", {warmupSec: 600});
+    });
+    on("durationBtn", "click", () => {
+      if (activeTestKind(state.last) === 2)
+        post("/api/test/stop");
+      else
+        post("/api/test/start-duration", {durationSec: 3600});
+    });
+
+    authUi();
+    refreshState();
+    setInterval(refreshState, 1500);
+  </script>
+</body>
+</html>

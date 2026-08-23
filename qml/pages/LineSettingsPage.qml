@@ -66,6 +66,14 @@ Page {
         panel.saveLines()
     }
 
+    function deleteLine() {
+        if (typeof panel === "undefined")
+            return
+
+        if (panel.removeLine(lineIndex))
+            lineEditPage.backRequested()
+    }
+
     Component.onCompleted: {
         loadLine()
         panel.setLineSetupActive(lineIndex, true)
@@ -122,57 +130,85 @@ Page {
                 }
             }
 
-            Rectangle {
-                width: 250
-                height: 90
-                radius: 12
-                color: panel.testRunning ? "#d84236" : "orange"
+            RowLayout {
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                spacing: 54
 
-                Text {
-                    anchors.centerIn: parent
-                    text: panel.testRunning ? "Стоп" : "Тест"
-                    font.pixelSize: 30
-                    color: "white"
-                }
+                Rectangle {
+                    width: 210
+                    height: 90
+                    radius: 12
+                    color: panel.testRunning ? "#d84236" : "orange"
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        if (panel.testRunning) {
-                            panel.stopCurrentTest()
-                        } else {
-                            lineEditPage.saveLine()
-                            panel.startFunctionalTest(10 * 60)
+                    Text {
+                        anchors.centerIn: parent
+                        text: panel.testRunning ? "Стоп" : "Тест"
+                        font.pixelSize: 30
+                        color: "white"
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (panel.testRunning) {
+                                panel.stopCurrentTest()
+                            } else {
+                                lineEditPage.saveLine()
+                                panel.startFunctionalTest(10 * 60)
+                            }
                         }
                     }
                 }
-            }
 
-            Rectangle {
-                width: 250
-                height: 90
-                radius: 12
-                color: "orange"
+                Rectangle {
+                    width: 210
+                    height: 90
+                    radius: 12
+                    color: "orange"
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "ввести \nизмеренное"
-                    font.pixelSize: 30
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "ввести \nизмеренное"
+                        font.pixelSize: 30
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (measuredAvailable)
+                                lineMpower = measuredPower
+                        }
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        if (measuredAvailable)
-                            lineMpower = measuredPower
+                Rectangle {
+                    width: 210
+                    height: 90
+                    radius: 12
+                    color: "#c62828"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Удалить\nлинию"
+                        font.pixelSize: 28
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: deleteConfirmPopup.open()
                     }
                 }
             }
 
             Text {
-                Layout.row: 4
                 text: "Установочная мощность, Вт:"
                 font.pixelSize: 30
                 Layout.alignment: Qt.AlignRight
@@ -290,6 +326,7 @@ Page {
                     }
                 }
             }
+
         }
 
         Rectangle {
@@ -315,6 +352,91 @@ Page {
                 onClicked: {
                     lineEditPage.saveLine()
                     lineEditPage.backRequested()
+                }
+            }
+        }
+    }
+
+    Popup {
+        id: deleteConfirmPopup
+
+        parent: Overlay.overlay
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        x: Math.round((lineEditPage.width - width) / 2)
+        y: Math.round((lineEditPage.height - height) / 2)
+        width: 560
+        height: 300
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 10
+            color: "#fff0f0"
+            border.color: "#c62828"
+            border.width: 3
+
+            Column {
+                anchors.fill: parent
+                anchors.margins: 22
+                spacing: 18
+
+                Text {
+                    width: parent.width
+                    text: "Удалить линию?"
+                    color: "#b00020"
+                    font.pixelSize: 34
+                    font.family: "Arial"
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                Text {
+                    width: parent.width
+                    height: 90
+                    text: "Линия будет удалена из настройки шкафа."
+                    color: "#b00020"
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 26
+                    font.family: "Arial"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 22
+
+                    Button {
+                        width: 200
+                        height: 72
+                        text: "Отмена"
+                        font.pixelSize: 30
+                        onClicked: deleteConfirmPopup.close()
+                    }
+
+                    Button {
+                        width: 220
+                        height: 72
+                        text: "Удалить"
+                        font.pixelSize: 30
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#ffffff"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font.pixelSize: 30
+                            font.family: "Arial"
+                        }
+                        background: Rectangle {
+                            radius: 8
+                            color: "#c62828"
+                        }
+                        onClicked: {
+                            deleteConfirmPopup.close()
+                            lineEditPage.deleteLine()
+                        }
+                    }
                 }
             }
         }

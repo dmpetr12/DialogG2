@@ -20,6 +20,9 @@ ApplicationWindow {
     property bool unlocked: false
     property int selectedLineIndex: 0
     property int selectedScheduleIndex: -1
+    property string lastMaintenancePopupDate: ""
+    property bool startupMaintenanceChecked: false
+    readonly property var maintenance: panel.maintenance
     readonly property int idleTimeoutMs: 10 * 60 * 1000
 
     Timer {
@@ -41,11 +44,90 @@ ApplicationWindow {
         }
     }
 
+    Timer {
+        id: startupMaintenanceTimer
+        interval: 60 * 1000
+        repeat: true
+        running: !window.startupMaintenanceChecked
+        onTriggered: window.startupMaintenanceChecked = window.showMaintenancePopup(false)
+    }
+
+    Timer {
+        id: dailyMaintenanceTimer
+        interval: 30 * 1000
+        repeat: true
+        running: true
+        onTriggered: {
+            var now = new Date()
+            var today = Qt.formatDate(now, "yyyy-MM-dd")
+            if (now.getHours() === 8 && now.getMinutes() === 0 &&
+                    window.lastMaintenancePopupDate !== today)
+                window.showMaintenancePopup(true)
+        }
+    }
+
     onUnlockedChanged: {
         if (unlocked)
             accessIdleTimer.restart()
         else
             accessIdleTimer.stop()
+    }
+
+    function maintenanceDateText(value) {
+        if (value === undefined || value === null || value === "")
+            return "не проводился"
+
+        var dt = new Date(value)
+        if (isNaN(dt.getTime()))
+            return "не проводился"
+
+        return Qt.formatDate(dt, "dd.MM.yyyy")
+    }
+
+    function maintenanceDetailsText() {
+        var m = window.maintenance || {}
+        var parts = []
+
+        if (m.longTestOverdue)
+            parts.push("Тест длительности:\n" + maintenanceDateText(m.lastLongTestAt))
+
+        if (m.summary) {
+            var summaryParts = m.summary.split("; ").filter(function(part) {
+                return part.indexOf("Тест длительности") !== 0
+            })
+            if (summaryParts.length > 0)
+                parts.push(summaryParts.join("; "))
+        }
+
+        var lines = m.lines || []
+        var overdue = []
+        for (var i = 0; i < lines.length; ++i) {
+            var line = lines[i]
+            if (line && line.overdue) {
+                var name = line.lineName || ("Линия " + line.lineIndex)
+                overdue.push(name + ": " + maintenanceDateText(line.lastTestAt))
+            }
+        }
+
+        if (overdue.length > 0)
+            parts.push("Функциональные проверки:\n" + overdue.join("\n"))
+
+        return parts.length > 0 ? parts.join("\n\n") : "Есть просроченные проверки."
+    }
+
+    function showMaintenancePopup(markDaily) {
+        var m = window.maintenance || {}
+        if (m.ok === undefined)
+            return false
+
+        if (m.ok !== false)
+            return true
+
+        window.lastMaintenancePopupDate = Qt.formatDate(new Date(), "yyyy-MM-dd")
+
+        maintenanceText.text = maintenanceDetailsText()
+        maintenancePopup.open()
+        return true
     }
 
     Rectangle {
@@ -128,6 +210,27 @@ ApplicationWindow {
         popExit: null
         replaceEnter: null
         replaceExit: null
+    }
+
+    Rectangle {
+        id: backendWarning
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: headerBand.bottom
+        height: 64
+        z: 900
+        visible: !panel.connected
+        color: "#b00020"
+
+        Text {
+            anchors.centerIn: parent
+            text: "НЕТ СВЯЗИ С BACKEND. ДАННЫЕ НА ЭКРАНЕ МОГУТ БЫТЬ УСТАРЕВШИМИ"
+            color: "#ffffff"
+            font.pixelSize: 25
+            font.family: "Arial"
+            font.bold: true
+        }
     }
 
     MouseArea {
@@ -269,6 +372,81 @@ ApplicationWindow {
         }
     }
 
+    Popup {
+        id: maintenancePopup
+
+        parent: Overlay.overlay
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        x: Math.round((window.width - width) / 2)
+        y: Math.round((window.height - height) / 2)
+        width: 660
+        height: 500
+        margins: 20
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 10
+            color: "#fff0f0"
+            border.color: "#c62828"
+            border.width: 3
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 24
+                spacing: 16
+
+                Text {
+                    Layout.fillWidth: true
+                    text: "ВНИМАНИЕ: просрочены проверки"
+                    color: "#b00020"
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: 34
+                    font.family: "Arial"
+                    font.bold: true
+                }
+
+                ScrollView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+
+                    Text {
+                        id: maintenanceText
+                        width: maintenancePopup.width - 72
+                        color: "#b00020"
+                        wrapMode: Text.WordWrap
+                        font.pixelSize: 24
+                        font.family: "Arial"
+                        font.bold: true
+                    }
+                }
+
+                Button {
+                    Layout.alignment: Qt.AlignHCenter
+                    width: 220
+                    height: 72
+                    text: "Закрыть"
+                    font.pixelSize: 30
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#ffffff"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: 30
+                        font.family: "Arial"
+                    }
+                    background: Rectangle {
+                        radius: 8
+                        color: "#c62828"
+                    }
+                    onClicked: maintenancePopup.close()
+                }
+            }
+        }
+    }
+
     Component {
         id: startPageComponent
 
@@ -279,7 +457,10 @@ ApplicationWindow {
             onTestRequested: pageStack.replace(testPageComponent)
             onSettingsRequested: pageStack.replace(settingsPageComponent)
             onScheduleRequested: pageStack.replace(schedulePageComponent)
-            onJournalRequested: pageStack.replace(journalPageComponent)
+            onJournalRequested: {
+                pageStack.replace(journalPageComponent)
+                window.showMaintenancePopup(false)
+            }
             onSystemRequested: pageStack.replace(systemPageComponent)
             onLinesRequested: pageStack.replace(linesPageComponent)
             onBatteryRequested: pageStack.replace(batteryPageComponent)

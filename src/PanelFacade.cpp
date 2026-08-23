@@ -88,6 +88,11 @@ QVariantMap PanelFacade::battery() const
     return state().value(QStringLiteral("battery")).toObject().toVariantMap();
 }
 
+QVariantMap PanelFacade::maintenance() const
+{
+    return state().value(QStringLiteral("maintenance")).toObject().toVariantMap();
+}
+
 double PanelFacade::inputVoltage() const
 {
     return state().value(QStringLiteral("inletU")).toDouble(0.0);
@@ -135,6 +140,16 @@ QVariantMap PanelFacade::lineAt(int index) const
 bool PanelFacade::addLine()
 {
     const bool ok = sendCommand({{QStringLiteral("cmd"), QStringLiteral("addLine")}});
+    pollState();
+    return ok;
+}
+
+bool PanelFacade::removeLine(int index)
+{
+    const bool ok = sendCommand({
+        {QStringLiteral("cmd"), QStringLiteral("removeLine")},
+        {QStringLiteral("index"), index}
+    });
     pollState();
     return ok;
 }
@@ -227,6 +242,24 @@ QVariantList PanelFacade::readLogs(int offset, int limit)
         return {};
     }
     return response.value(QStringLiteral("lines")).toArray().toVariantList();
+}
+
+QString PanelFacade::exportSystemLogToUsb()
+{
+    QJsonObject response;
+    if (!sendCommand({{QStringLiteral("cmd"), QStringLiteral("exportSystemLog")}}, &response))
+        return response.value(QStringLiteral("error")).toString(QStringLiteral("Ошибка записи"));
+
+    return QStringLiteral("Записано файлов: %1").arg(response.value(QStringLiteral("fileCount")).toInt());
+}
+
+QString PanelFacade::exportTestJournalToUsb()
+{
+    QJsonObject response;
+    if (!sendCommand({{QStringLiteral("cmd"), QStringLiteral("exportTestJournal")}}, &response))
+        return response.value(QStringLiteral("error")).toString(QStringLiteral("Ошибка записи"));
+
+    return QStringLiteral("Записано: %1").arg(response.value(QStringLiteral("fileName")).toString());
 }
 
 QVariantList PanelFacade::getAllTests()

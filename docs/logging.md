@@ -28,6 +28,15 @@ system_1.log -> system_2.log
 system_5.log удаляется
 ```
 
+При записи системного лога на флешку HMI копирует все существующие файлы комплекта:
+
+```text
+system.log
+system_1.log
+...
+system_5.log
+```
+
 ## Уровни
 
 ```text
