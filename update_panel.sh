@@ -67,6 +67,7 @@ sudo apt install -y --no-upgrade \
   qt6-base-dev \
   qt6-declarative-dev \
   qt6-httpserver-dev \
+  qt6-websockets-dev \
   psmisc \
   qt6-serialbus-dev \
   qt6-serialport-dev \
