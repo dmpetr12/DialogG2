@@ -273,8 +273,8 @@ ApplicationWindow {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         x: Math.round(((parent ? parent.width : window.width) - width) / 2)
         y: Math.round(((parent ? parent.height : window.height) - height) / 2)
-        width: 360
-        height: 450
+        width: 390
+        height: 470
         margins: 20
 
         property var targetObject: null
@@ -307,12 +307,16 @@ ApplicationWindow {
                     text: digitalPopup.nameP
                     color: "#111111"
                     font.pixelSize: 30
+                    width: parent.width
+                    elide: Text.ElideRight
                 }
 
                 TextField {
                     id: powerField
                     text: ""
                     readOnly: true
+                    width: parent.width
+                    height: 58
                     font.pixelSize: 40
                     color: "#111111"
                     inputMethodHints: Qt.ImhPreferNumbers
@@ -325,15 +329,18 @@ ApplicationWindow {
                 }
 
                 GridLayout {
+                    anchors.horizontalCenter: parent.horizontalCenter
                     columns: 3
-                    rowSpacing: 4
-                    columnSpacing: 4
+                    rowSpacing: 6
+                    columnSpacing: 8
 
                     Repeater {
                         model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ",", "←"]
 
                         delegate: Button {
                             text: modelData
+                            Layout.preferredWidth: 70
+                            Layout.preferredHeight: 54
                             font.pixelSize: 34
                             contentItem: Text {
                                 text: parent.text
@@ -360,12 +367,13 @@ ApplicationWindow {
                 }
 
                 Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 12
 
                     Button {
                         text: "Отмена"
-                        width: 190
-                        height: 64
+                        width: 205
+                        height: 60
                         font.pixelSize: 30
                         contentItem: Text {
                             text: parent.text
@@ -386,7 +394,7 @@ ApplicationWindow {
                     Button {
                         text: " OK "
                         width: 130
-                        height: 64
+                        height: 60
                         font.pixelSize: 30
                         contentItem: Text {
                             text: parent.text
