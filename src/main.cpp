@@ -1,8 +1,10 @@
 #include <QGuiApplication>
+#include <QCursor>
 #include <QFile>
 #include <QFont>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QObject>
 #include <QQuickStyle>
 #include <QUrl>
 
@@ -21,6 +23,22 @@ int main(int argc, char *argv[])
     app.setFont(font);
 
     PanelFacade panel;
+#ifndef Q_OS_WIN
+    auto updateCursor = [&panel]() {
+        if (panel.logLevel() == QStringLiteral("DEBUG")) {
+            while (QGuiApplication::overrideCursor())
+                QGuiApplication::restoreOverrideCursor();
+            return;
+        }
+
+        if (QGuiApplication::overrideCursor())
+            QGuiApplication::changeOverrideCursor(QCursor(Qt::BlankCursor));
+        else
+            QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
+    };
+    QObject::connect(&panel, &PanelFacade::changed, &app, updateCursor);
+    updateCursor();
+#endif
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("panel"), &panel);

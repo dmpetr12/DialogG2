@@ -242,6 +242,7 @@ ApplicationWindow {
         anchors.fill: parent
         z: 1000
         hoverEnabled: true
+        cursorShape: window.debugWindow ? Qt.ArrowCursor : Qt.BlankCursor
         propagateComposedEvents: true
 
         onPressed: function(mouse) {
@@ -270,8 +271,8 @@ ApplicationWindow {
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        x: Math.round((window.width - width) / 2)
-        y: Math.round((window.height - height) / 2)
+        x: Math.round(((parent ? parent.width : window.width) - width) / 2)
+        y: Math.round(((parent ? parent.height : window.height) - height) / 2)
         width: 360
         height: 450
         margins: 20
