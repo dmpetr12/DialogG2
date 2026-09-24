@@ -22,7 +22,8 @@ struct Adl200Measurement
 class Adl200Meter
 {
 public:
-    static constexpr int DefaultSlaveAddress = 1;
+    // Address 1 is reserved: BMS-related equipment has been observed answering on it.
+    static constexpr int DefaultSlaveAddress = 6;
     static constexpr int RealtimeHoldingStart = 0x000B;
     static constexpr int RealtimeHoldingCount = 7;
 

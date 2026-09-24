@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QSaveFile>
 
+#include <algorithm>
 #include <cmath>
 
 namespace DialogG2 {
@@ -380,11 +381,38 @@ int LineManager::nextLineIndex() const
     return 0;
 }
 
+int LineManager::requiredModuleCount() const
+{
+    int result = 1;
+    const QVector<WaveSharePoint> cabinetPoints = {
+        m_ioMap.fireInput, m_ioMap.manualFireButton, m_ioMap.manualStopButton,
+        m_ioMap.voltageControlInput, m_ioMap.modeRelay, m_ioMap.faultLampRelay,
+        m_ioMap.testLampRelay, m_ioMap.reserveRelay
+    };
+    for (const WaveSharePoint &point : cabinetPoints) {
+        if (point.isValid())
+            result = std::max(result, point.module);
+    }
+    for (const LineConfig &line : m_lines) {
+        if (!line.enabled)
+            continue;
+        if (line.requestInput.isValid())
+            result = std::max(result, line.requestInput.module);
+        if (line.outputRelay.isValid())
+            result = std::max(result, line.outputRelay.module);
+    }
+    return result;
+}
+
 LineManagerResult LineManager::evaluate(const LineManagerInputs &inputs) const
 {
     LineManagerResult result;
     result.fireInputActive = inputActive(inputs.modules, m_ioMap.fireInput);
-    result.voltageControlOk = inputActive(inputs.modules, m_ioMap.voltageControlInput);
+    const auto voltageModule = inputs.modules.constFind(m_ioMap.voltageControlInput.module);
+    result.voltageControlOk = !m_ioMap.voltageControlInput.isValid()
+        || voltageModule == inputs.modules.cend()
+        || !voltageModule->online
+        || !inputActive(inputs.modules, m_ioMap.voltageControlInput);
     result.manualFireButtonActive = inputActive(inputs.modules, m_ioMap.manualFireButton);
     result.manualStopButtonActive = inputActive(inputs.modules, m_ioMap.manualStopButton);
 

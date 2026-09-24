@@ -1,5 +1,7 @@
 #pragma once
 
+struct TelemetryTestAccess;
+
 #include <QJsonObject>
 #include <QObject>
 #include <QStringList>
@@ -10,13 +12,19 @@
 class PanelFacade : public QObject
 {
     Q_OBJECT
+    friend struct ::TelemetryTestAccess;
 
     Q_PROPERTY(bool connected READ connected NOTIFY changed)
+    Q_PROPERTY(bool systemAvailable READ systemAvailable NOTIFY changed)
+    Q_PROPERTY(bool linesAvailable READ linesAvailable NOTIFY changed)
+    Q_PROPERTY(bool busConnected READ busConnected NOTIFY changed)
+    Q_PROPERTY(bool demoMode READ demoMode NOTIFY changed)
     Q_PROPERTY(bool testRunning READ testRunning NOTIFY changed)
     Q_PROPERTY(int testPlannedSec READ testPlannedSec NOTIFY changed)
     Q_PROPERTY(int testRemainingSec READ testRemainingSec NOTIFY changed)
     Q_PROPERTY(int lineCount READ lineCount NOTIFY changed)
     Q_PROPERTY(QVariantList lines READ lines NOTIFY changed)
+    Q_PROPERTY(QString modeCode READ modeCode NOTIFY changed)
     Q_PROPERTY(QString modeText READ modeText NOTIFY changed)
     Q_PROPERTY(QString healthText READ healthText NOTIFY changed)
     Q_PROPERTY(QString modeColor READ modeColor NOTIFY changed)
@@ -36,13 +44,19 @@ class PanelFacade : public QObject
 
 public:
     explicit PanelFacade(QObject *parent = nullptr);
+    PanelFacade(QObject *parent, const QString &serverName);
 
     bool connected() const;
+    bool busConnected() const;
+    bool linesAvailable() const;
+    bool systemAvailable() const;
+    bool demoMode() const;
     bool testRunning() const;
     int testPlannedSec() const;
     int testRemainingSec() const;
     int lineCount() const;
     QVariantList lines() const;
+    QString modeCode() const;
     QString modeText() const;
     QString healthText() const;
     QString modeColor() const;
@@ -94,7 +108,7 @@ private:
     QJsonObject state() const;
     void pollState();
 
-    QString m_serverName = QStringLiteral("emergency_panel_backend");
+    QString m_serverName;
     QTimer m_pollTimer;
     mutable bool m_connected = false;
     QJsonObject m_state;

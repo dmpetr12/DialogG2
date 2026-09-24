@@ -12,7 +12,32 @@ Rectangle {
     color: "white"
 
     readonly property var battery: panel.battery
-    readonly property var rows: buildRows()
+    property int displayedCellCount: 0
+    property int displayedTemperatureCount: 0
+    property int displayedFaultCount: 1
+    property int displayedWarningCount: 1
+    property bool ready: false
+
+    ListModel { id: batteryRows; objectName: "batteryRows" }
+    Component.onCompleted: { ready = true; updateRows() }
+    onBatteryChanged: if (ready) updateRows()
+
+    function updateRows() {
+        var b = root.battery || {}
+        displayedCellCount = Math.max(displayedCellCount, b.cellCount || 0, (b.cellVoltages || []).length)
+        displayedTemperatureCount = Math.max(displayedTemperatureCount, (b.temperatures || []).length)
+        displayedFaultCount = Math.max(displayedFaultCount, (b.faults || []).length)
+        displayedWarningCount = Math.max(displayedWarningCount, (b.warnings || []).length)
+        var rows = buildRows()
+        for (var i = 0; i < rows.length; ++i) {
+            if (i < batteryRows.count)
+                batteryRows.set(i, rows[i])
+            else
+                batteryRows.append(rows[i])
+        }
+        if (batteryRows.count > rows.length)
+            batteryRows.remove(rows.length, batteryRows.count - rows.length)
+    }
 
     function numberText(value, digits, suffix) {
         if (value === undefined || value === null || isNaN(value))
@@ -27,6 +52,8 @@ Rectangle {
     }
 
     function boolText(value) {
+        if (value === undefined || value === null)
+            return "—"
         return value ? "ДА" : "НЕТ"
     }
 
@@ -40,11 +67,11 @@ Rectangle {
     }
 
     function addRow(list, name, value, bad) {
-        list.push({ "name": name, "value": value, "bad": bad === true })
+        list.push({ "name": name, "value": value, "bad": bad === true, "section": false })
     }
 
     function addSection(list, title) {
-        list.push({ "section": true, "name": title, "value": "" })
+        list.push({ "section": true, "name": title, "value": "", "bad": false })
     }
 
     function buildRows() {
@@ -54,9 +81,12 @@ Rectangle {
         addSection(result, "BMS")
         addRow(result, "Связь с батареей", boolText(b.connected), b.connected === false)
         addRow(result, "Обмен с BMS", boolText(b.communicationOk), b.communicationOk === false)
-        addRow(result, "Состояние", b.stateText || "-", !panel.batteryOk)
+        if (!b.communicationOk) {
+            b = {} // Keep the page structure, but never show stale measurements.
+        }
+        addRow(result, "Состояние", b.stateText || "Нет данных", !panel.batteryOk)
         addRow(result, "Код состояния", b.stateCode || "-")
-        addRow(result, "Заряд SOC", intText(b.socPercent, "%"), b.socPercent >= 0 && b.socPercent < 20)
+        addRow(result, "Заряд SOC", intText(b.socPercent, "%"))
         addRow(result, "Напряжение батареи", numberText(b.voltage, 2, " В"))
         addRow(result, "Ток батареи", numberText(b.current, 2, " А"))
         addRow(result, "Остаточная емкость", numberText(b.remainingCapacityAh, 2, " Ач"))
@@ -79,10 +109,10 @@ Rectangle {
         addRow(result, "Разброс ячеек", numberText(b.cellVoltageDelta, 3, " В"))
 
         var cells = b.cellVoltages || []
-        if (cells.length === 0) {
+        if (displayedCellCount === 0) {
             addRow(result, "Напряжения ячеек", "-")
         } else {
-            for (var i = 0; i < cells.length; ++i)
+            for (var i = 0; i < displayedCellCount; ++i)
                 addRow(result, "Ячейка " + (i + 1), numberText(cells[i], 3, " В"))
         }
 
@@ -91,30 +121,36 @@ Rectangle {
         addRow(result, "Максимальная температура", numberText(b.maxTemperature, 1, " °C"))
 
         var temperatures = b.temperatures || []
-        if (temperatures.length === 0) {
+        if (displayedTemperatureCount === 0) {
             addRow(result, "Датчики температуры", "-")
         } else {
-            for (var t = 0; t < temperatures.length; ++t)
+            for (var t = 0; t < displayedTemperatureCount; ++t)
                 addRow(result, "Температура " + (t + 1), numberText(temperatures[t], 1, " °C"))
         }
 
         addSection(result, "Ошибки")
         var faults = b.faults || []
         if (faults.length === 0) {
-            addRow(result, "Ошибки BMS", "нет")
+            addRow(result, "Ошибки BMS", b.communicationOk ? "нет" : "Нет данных")
         } else {
             for (var f = 0; f < faults.length; ++f)
                 addRow(result, "Ошибка " + (f + 1), faults[f], true)
         }
 
+        for (var emptyFault = Math.max(1, faults.length); emptyFault < displayedFaultCount; ++emptyFault)
+            addRow(result, "Ошибка " + (emptyFault + 1), "—")
+
         addSection(result, "Предупреждения")
         var warnings = b.warnings || []
         if (warnings.length === 0) {
-            addRow(result, "Предупреждения BMS", "нет")
+            addRow(result, "Предупреждения BMS", b.communicationOk ? "нет" : "Нет данных")
         } else {
             for (var w = 0; w < warnings.length; ++w)
                 addRow(result, "Предупреждение " + (w + 1), warnings[w], true)
         }
+
+        for (var emptyWarning = Math.max(1, warnings.length); emptyWarning < displayedWarningCount; ++emptyWarning)
+            addRow(result, "Предупреждение " + (emptyWarning + 1), "—")
 
         return result
     }
@@ -171,23 +207,24 @@ Rectangle {
 
             ListView {
                 id: listView
+                objectName: "batteryList"
 
                 anchors.fill: parent
                 anchors.margins: 8
                 clip: true
                 spacing: 2
-                model: root.rows
+                model: batteryRows
 
                 delegate: Rectangle {
                     width: listView.width - 34
-                    height: modelData.section ? 42 : 38
-                    color: modelData.section ? "#e7e7e7" : (index % 2 === 0 ? "#ffffff" : "#f7f7f7")
+                    height: model.section ? 42 : 38
+                    color: model.section ? "#e7e7e7" : (index % 2 === 0 ? "#ffffff" : "#f7f7f7")
 
                     Text {
-                        visible: modelData.section === true
+                        visible: model.section === true
                         anchors.fill: parent
                         anchors.leftMargin: 10
-                        text: modelData.name
+                        text: model.name
                         color: "#111111"
                         font.pixelSize: 24
                         font.family: "Arial"
@@ -195,7 +232,7 @@ Rectangle {
                     }
 
                     RowLayout {
-                        visible: modelData.section !== true
+                        visible: model.section !== true
                         anchors.fill: parent
                         anchors.leftMargin: 10
                         anchors.rightMargin: 10
@@ -203,7 +240,7 @@ Rectangle {
 
                         Text {
                             Layout.preferredWidth: 390
-                            text: modelData.name
+                            text: model.name
                             color: "#333333"
                             font.pixelSize: 22
                             font.family: "Arial"
@@ -213,8 +250,8 @@ Rectangle {
 
                         Text {
                             Layout.fillWidth: true
-                            text: modelData.value
-                            color: modelData.bad ? "#d84236" : "#111111"
+                            text: model.value
+                            color: model.bad ? "#d84236" : "#111111"
                             font.pixelSize: 22
                             font.family: "Arial"
                             verticalAlignment: Text.AlignVCenter

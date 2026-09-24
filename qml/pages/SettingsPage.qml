@@ -5,6 +5,31 @@ import QtQuick.Layouts
 Rectangle {
     id: root
 
+    readonly property var panelLines: panel.lines
+
+    ListModel { id: lineRows }
+    Component.onCompleted: updateLines()
+    onPanelLinesChanged: updateLines()
+
+    function updateLines() {
+        var rows = panelLines || []
+        for (var i = 0; i < rows.length; ++i) {
+            var row = {}
+            for (var key in rows[i]) {
+                if (key !== "index")
+                    row[key] = rows[i][key]
+            }
+            row.lineNumber = rows[i].index
+            row.position = i
+            if (i < lineRows.count)
+                lineRows.set(i, row)
+            else
+                lineRows.append(row)
+        }
+        if (lineRows.count > rows.length)
+            lineRows.remove(rows.length, lineRows.count - rows.length)
+    }
+
     signal backRequested()
     signal dateTimeRequested()
     signal passwordRequested()
@@ -127,7 +152,7 @@ Rectangle {
                         id: listView
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        model: panel.lines
+                        model: lineRows
                         spacing: 0
                         reuseItems: true
 
@@ -148,7 +173,7 @@ Rectangle {
                                     color: "#E7E7E7"
 
                                     Text {
-                                        text: (index + 1) + ": " + (modelData.description || ("Линия " + (index + 1)))
+                                        text: model.lineNumber + ": " + (model.description || ("Линия " + model.lineNumber))
                                         font.pixelSize: 30
                                         anchors.fill: parent
                                         color: "black"
@@ -174,7 +199,7 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: root.lineRequested(index)
+                                        onClicked: root.lineRequested(model.position)
                                     }
                                 }
 

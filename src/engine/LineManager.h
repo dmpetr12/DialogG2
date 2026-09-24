@@ -93,6 +93,7 @@ public:
     LineConfig makeNextLine(LineKind kind = LineKind::NonConstant) const;
     WaveSharePoint nextDefaultLinePoint() const;
     int nextLineIndex() const;
+    int requiredModuleCount() const;
 
     LineManagerResult evaluate(const LineManagerInputs &inputs) const;
 

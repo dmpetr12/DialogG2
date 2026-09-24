@@ -61,6 +61,8 @@ http://<ip-адрес-щита>:8080/
 | `POST` | `/api/password/change` | Сменить пароль |
 | `POST` | `/api/system/time` | Установить системное время |
 
+В ответах `/api/state`, `/api/lines` и `/api/lines/<index>` каждая линия содержит `leakage` и `leakageLimit` в мА, а также `stateCode` и `stateText`. При превышении предела сервер выдаёт `stateCode: "insulation_breakdown"` и `stateText: "Пробой изоляции"`; веб-панель показывает это как аварию линии.
+
 Примеры тел команд:
 
 ```json

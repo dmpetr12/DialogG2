@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
 #endif
 
     QQmlApplicationEngine engine;
+    // This project embeds its QML module at :/DialogG2 (Qt 6.4 resource layout).
+    engine.addImportPath(QStringLiteral("qrc:/"));
     engine.rootContext()->setContextProperty(QStringLiteral("panel"), &panel);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     engine.loadFromModule(QStringLiteral("DialogG2"), QStringLiteral("Main"));

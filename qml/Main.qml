@@ -163,7 +163,7 @@ ApplicationWindow {
             spacing: 34
 
             Text {
-                text: panel.temperature.toFixed(0) + "°C"
+                text: isFinite(panel.temperature) ? panel.temperature.toFixed(0) + "°C" : "— °C"
                 color: "#111111"
                 font.pixelSize: 41
                 font.family: "Arial"
@@ -225,12 +225,13 @@ ApplicationWindow {
         anchors.top: headerBand.bottom
         height: 64
         z: 900
-        visible: !panel.connected
+        visible: !panel.connected || panel.demoMode
         color: "#b00020"
 
         Text {
             anchors.centerIn: parent
-            text: "НЕТ СВЯЗИ С BACKEND. ДАННЫЕ НА ЭКРАНЕ МОГУТ БЫТЬ УСТАРЕВШИМИ"
+            text: !panel.connected ? "НЕТ СВЯЗИ СО СЛУЖБОЙ ШКАФА — НЕТ ДАННЫХ"
+                                  : "ДЕМОРЕЖИМ — ПОКАЗАНИЯ НЕ ОТ РЕАЛЬНОГО ШКАФА"
             color: "#ffffff"
             font.pixelSize: 25
             font.family: "Arial"

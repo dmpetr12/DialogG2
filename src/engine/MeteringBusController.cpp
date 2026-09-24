@@ -3,6 +3,7 @@
 #include "ModbusRtuCodec.h"
 
 #include <QSerialPort>
+#include <QDebug>
 
 #include <algorithm>
 
@@ -44,6 +45,10 @@ MeteringBusController::MeteringBusController(QObject *parent)
     : QObject(parent)
     , m_port(new QSerialPort(this))
 {
+    m_battery.connected = false;
+    m_battery.communicationOk = false;
+    m_battery.state = BatteryState::Disconnected;
+
     connect(&m_scheduler, &QTimer::timeout, this, &MeteringBusController::pollTick);
     m_scheduler.setInterval(50);
 
@@ -57,6 +62,7 @@ MeteringBusController::MeteringBusController(QObject *parent)
         const QString message = m_port->errorString().isEmpty()
             ? QStringLiteral("Serial port error")
             : m_port->errorString();
+        invalidateMeasurements();
         emit errorOccurred(message);
         updateBusMonitorFailure(message);
     });
@@ -64,6 +70,8 @@ MeteringBusController::MeteringBusController(QObject *parent)
 
 MeteringBusController::~MeteringBusController()
 {
+    // Receivers may already be tearing down their measurement storage.
+    QObject::disconnect(this, nullptr, nullptr, nullptr);
     disconnectDevice();
 }
 
@@ -118,6 +126,9 @@ void MeteringBusController::disconnectDevice()
 
     if (m_port && m_port->isOpen())
         m_port->close();
+    m_busMonitor.reset();
+    invalidateMeasurements();
+    emit busStatusChanged(m_busMonitor.status());
     emit connectedChanged(false);
 }
 
@@ -159,6 +170,12 @@ void MeteringBusController::addAmc16zFak24BranchPowerPolling(int intervalMs, int
     request.start = Amc16zFak24Meter::ActivePowerHoldingStart;
     request.count = Amc16zFak24Meter::ActivePowerHoldingCount;
     request.meterKind = MeterKind::Amc16zFak24BranchPower;
+    m_pollTasks.append({request, std::max(50, intervalMs), 0});
+    request.start = Amc16zFak24Meter::VoltageHoldingStart;
+    request.meterKind = MeterKind::Amc16zBranchVoltage;
+    m_pollTasks.append({request, std::max(50, intervalMs), 0});
+    request.start = Amc16zFak24Meter::CurrentHoldingStart;
+    request.meterKind = MeterKind::Amc16zBranchCurrent;
     m_pollTasks.append({request, std::max(50, intervalMs), 0});
 }
 
@@ -224,6 +241,9 @@ void MeteringBusController::pollTick()
 
 void MeteringBusController::enqueue(const Request &request)
 {
+    if (m_busy && sameRequest(m_currentRequest, request))
+        return;
+
     for (const Request &queued : m_queue) {
         if (sameRequest(queued, request))
             return;
@@ -263,6 +283,7 @@ void MeteringBusController::sendRequest(const Request &request)
     }
 
     m_rxBuffer.clear();
+    qDebug().noquote() << "Metering TX:" << frame.toHex(' ');
     if (m_port->write(frame) != frame.size()) {
         handleRequestFailure(m_port->errorString());
         finishCurrentRequest();
@@ -276,20 +297,59 @@ void MeteringBusController::sendRequest(const Request &request)
 void MeteringBusController::onReadyRead()
 {
     m_rxBuffer.append(m_port->readAll());
-    if (!m_busy)
-        return;
+    processReceiveBuffer();
+}
 
-    switch (m_currentRequest.type) {
-    case RequestType::JbdBmsBasicInfo:
-    case RequestType::JbdBmsCellVoltages:
-        if (m_rxBuffer.size() >= 7 && byteAt(m_rxBuffer, m_rxBuffer.size() - 1) == 0x77)
-            handleCurrentResponse();
-        break;
-    case RequestType::ReadHolding:
-    case RequestType::ReadInputRegs:
-        if (m_rxBuffer.size() >= expectedResponseSize())
-            handleCurrentResponse();
-        break;
+void MeteringBusController::processReceiveBuffer()
+{
+    if (!m_busy) {
+        m_rxBuffer.clear();
+        return;
+    }
+    const bool expectingBms = m_currentRequest.type == RequestType::JbdBmsBasicInfo
+        || m_currentRequest.type == RequestType::JbdBmsCellVoltages;
+    while (m_rxBuffer.size() >= 2) {
+        const bool bmsFrame = byteAt(m_rxBuffer, 0) == 0xDD;
+        int frameSize = 0;
+        if (bmsFrame) {
+            if (m_rxBuffer.size() < 4) return;
+            // No callbackId is sent by this controller: response length is payload + 7.
+            frameSize = 7 + byteAt(m_rxBuffer, 3);
+        } else {
+            const quint8 function = byteAt(m_rxBuffer, 1);
+            if (function == 0x83 || function == 0x84) frameSize = 5;
+            else if (function == 0x03 || function == 0x04) {
+                if (m_rxBuffer.size() < 3) return;
+                frameSize = 5 + byteAt(m_rxBuffer, 2);
+            } else {
+                m_rxBuffer.remove(0, 1);
+                continue;
+            }
+        }
+        if (m_rxBuffer.size() < frameSize) return;
+        const QByteArray frame = m_rxBuffer.left(frameSize);
+        JbdBmsResponse bms;
+        const bool valid = bmsFrame ? JbdBmsProtocol::parseResponse(frame, &bms)
+                                    : ModbusRtuCodec::validateCrc(frame);
+        if (!valid) {
+            m_rxBuffer.remove(0, 1);
+            continue;
+        }
+        m_rxBuffer.remove(0, frameSize);
+        const quint8 expectedCommand = m_currentRequest.type == RequestType::JbdBmsBasicInfo
+            ? JbdBmsProtocol::CommandBasicInfo : JbdBmsProtocol::CommandCellVoltages;
+        const quint8 expectedFunction = m_currentRequest.type == RequestType::ReadHolding ? 0x03 : 0x04;
+        const bool matches = bmsFrame
+            ? expectingBms && bms.command == expectedCommand
+            : !expectingBms && byteAt(frame, 0) == m_currentRequest.slaveAddress
+                && (byteAt(frame, 1) == (expectedFunction | 0x80)
+                    || (byteAt(frame, 1) == expectedFunction && byteAt(frame, 2) == m_currentRequest.count * 2));
+        if (!matches) {
+            qDebug().noquote() << "Metering RX ignored (not current request):" << frame.toHex(' ');
+            continue;
+        }
+        handleCurrentResponse(frame);
+        return;
     }
 }
 
@@ -298,11 +358,14 @@ void MeteringBusController::onRequestTimeout()
     if (!m_busy)
         return;
 
-    handleRequestFailure(QStringLiteral("Metering bus request timeout"));
+    handleRequestFailure(QStringLiteral("Metering timeout: type=%1 slave=%2 start=0x%3 count=%4 pending=%5")
+                             .arg(static_cast<int>(m_currentRequest.type)).arg(m_currentRequest.slaveAddress)
+                             .arg(m_currentRequest.start, 0, 16).arg(m_currentRequest.count)
+                             .arg(QString::fromLatin1(m_rxBuffer.toHex(' '))));
     finishCurrentRequest();
 }
 
-void MeteringBusController::handleCurrentResponse()
+void MeteringBusController::handleCurrentResponse(const QByteArray &frame)
 {
     switch (m_currentRequest.type) {
     case RequestType::JbdBmsBasicInfo:
@@ -310,10 +373,13 @@ void MeteringBusController::handleCurrentResponse()
     {
         JbdBmsResponse response;
         QString error;
-        if (!JbdBmsProtocol::parseResponse(m_rxBuffer, &response, &error)) {
+        if (!JbdBmsProtocol::parseResponse(frame, &response, &error)) {
             handleRequestFailure(error);
             break;
         }
+        const quint8 expectedCommand = m_currentRequest.type == RequestType::JbdBmsBasicInfo
+            ? JbdBmsProtocol::CommandBasicInfo : JbdBmsProtocol::CommandCellVoltages;
+        if (response.command != expectedCommand) return;
         if (!response.ok()) {
             handleRequestFailure(QStringLiteral("BMS returned status 0x%1")
                                      .arg(response.status, 2, 16, QLatin1Char('0')));
@@ -321,27 +387,47 @@ void MeteringBusController::handleCurrentResponse()
         }
 
         updateBusMonitorSuccess();
-        if (response.command == JbdBmsProtocol::CommandBasicInfo)
-            m_battery = JbdBmsProtocol::decodeBasicInfo(response.data);
-        else if (response.command == JbdBmsProtocol::CommandCellVoltages)
+        m_requestFailures.remove(requestKey(m_currentRequest));
+        if (response.command == JbdBmsProtocol::CommandBasicInfo) {
+            BatterySnapshot battery = JbdBmsProtocol::decodeBasicInfo(response.data);
+            battery.cellVoltages = m_battery.cellVoltages;
+            battery.minCellVoltage = m_battery.minCellVoltage;
+            battery.maxCellVoltage = m_battery.maxCellVoltage;
+            battery.cellVoltageDelta = m_battery.cellVoltageDelta;
+            m_battery = battery;
+        } else if (response.command == JbdBmsProtocol::CommandCellVoltages) {
             JbdBmsProtocol::applyCellVoltages(&m_battery, response.data);
+        }
         emit jbdBmsBatteryUpdated(m_battery);
         break;
     }
     case RequestType::ReadHolding:
     case RequestType::ReadInputRegs:
     {
-        if (!ModbusRtuCodec::validateCrc(m_rxBuffer)) {
+        if (!ModbusRtuCodec::validateCrc(frame)) {
             handleRequestFailure(QStringLiteral("Modbus CRC mismatch"));
             break;
         }
 
+        const quint8 function = m_currentRequest.type == RequestType::ReadHolding ? 0x03 : 0x04;
+        if (byteAt(frame, 0) != m_currentRequest.slaveAddress) return;
+        if (byteAt(frame, 1) == (function | 0x80) && frame.size() == 5) {
+            handleRequestFailure(QStringLiteral("Modbus exception %1").arg(byteAt(frame, 2)));
+            break;
+        }
+        if (byteAt(frame, 1) != function || frame.size() != expectedResponseSize()
+            || byteAt(frame, 2) != m_currentRequest.count * 2) return;
         updateBusMonitorSuccess();
-        const QVector<quint16> values = ModbusRtuCodec::registersFromReadResponse(m_rxBuffer);
+        m_requestFailures.remove(requestKey(m_currentRequest));
+        const QVector<quint16> values = ModbusRtuCodec::registersFromReadResponse(frame);
         if (m_currentRequest.meterKind == MeterKind::Adl200Input)
             emit adl200InputMeterUpdated(Adl200Meter::decodeRealtimeHoldingRegisters(values));
         else if (m_currentRequest.meterKind == MeterKind::Amc16zFak24BranchPower)
             emit amc16zFak24BranchPowersUpdated(Amc16zFak24Meter::decodeActivePowerHoldingRegisters(values));
+        else if (m_currentRequest.meterKind == MeterKind::Amc16zBranchVoltage)
+            emit amc16zBranchVoltagesUpdated(Amc16zFak24Meter::decodeRmsHoldingRegisters(values));
+        else if (m_currentRequest.meterKind == MeterKind::Amc16zBranchCurrent)
+            emit amc16zBranchCurrentsUpdated(Amc16zFak24Meter::decodeRmsHoldingRegisters(values));
         else if (m_currentRequest.meterKind == MeterKind::Asj60Ld16aLeakage)
             emit asj60Ld16aLeakageUpdated(Asj60Ld16aMonitor::decodeChannelHoldingRegisters(values));
         else if (m_currentRequest.meterKind == MeterKind::WhdTemperatureHumidity)
@@ -363,9 +449,55 @@ void MeteringBusController::finishCurrentRequest()
 
 void MeteringBusController::handleRequestFailure(const QString &error)
 {
+    const QString key = requestKey(m_currentRequest);
+    const int failures = ++m_requestFailures[key];
+    if (failures >= std::max(1, m_config.busOfflineFailureThreshold))
+        invalidateRequest(m_currentRequest);
     const QString message = error.isEmpty() ? QStringLiteral("Metering bus request failed") : error;
     emit errorOccurred(message);
     updateBusMonitorFailure(message);
+}
+
+void MeteringBusController::invalidateRequest(const Request &request)
+{
+    if (request.type == RequestType::JbdBmsBasicInfo) {
+        m_battery = BatterySnapshot{};
+        m_battery.connected = false;
+        m_battery.communicationOk = false;
+        m_battery.state = BatteryState::Disconnected;
+        m_battery.faults = {QStringLiteral("нет данных BMS")};
+        emit jbdBmsBatteryUpdated(m_battery);
+    } else if (request.type == RequestType::JbdBmsCellVoltages) {
+        m_battery.cellVoltages.clear();
+        m_battery.minCellVoltage = std::numeric_limits<double>::quiet_NaN();
+        m_battery.maxCellVoltage = std::numeric_limits<double>::quiet_NaN();
+        m_battery.cellVoltageDelta = std::numeric_limits<double>::quiet_NaN();
+        emit jbdBmsBatteryUpdated(m_battery);
+    } else {
+        switch (request.meterKind) {
+        case MeterKind::Adl200Input: emit adl200InputMeterUpdated({}); break;
+        case MeterKind::Amc16zFak24BranchPower: emit amc16zFak24BranchPowersUpdated({}); break;
+        case MeterKind::Asj60Ld16aLeakage: emit asj60Ld16aLeakageUpdated({}); break;
+        case MeterKind::WhdTemperatureHumidity: emit whdTemperatureHumidityUpdated({}); break;
+        case MeterKind::Amc16zBranchVoltage: emit amc16zBranchVoltagesUpdated({}); break;
+        case MeterKind::Amc16zBranchCurrent: emit amc16zBranchCurrentsUpdated({}); break;
+        case MeterKind::None: break;
+        }
+    }
+}
+
+void MeteringBusController::invalidateMeasurements()
+{
+    m_requestFailures.clear();
+    emit adl200InputMeterUpdated({});
+    emit amc16zFak24BranchPowersUpdated({});
+    emit amc16zBranchVoltagesUpdated({});
+    emit amc16zBranchCurrentsUpdated({});
+    emit asj60Ld16aLeakageUpdated({});
+    emit whdTemperatureHumidityUpdated({});
+    Request request;
+    request.type = RequestType::JbdBmsBasicInfo;
+    invalidateRequest(request);
 }
 
 void MeteringBusController::updateBusMonitorSuccess()
@@ -393,6 +525,16 @@ bool MeteringBusController::sameRequest(const Request &a, const Request &b)
         && a.start == b.start
         && a.count == b.count
         && a.meterKind == b.meterKind;
+}
+
+QString MeteringBusController::requestKey(const Request &request)
+{
+    return QStringLiteral("%1:%2:%3:%4:%5")
+        .arg(static_cast<int>(request.type))
+        .arg(request.slaveAddress)
+        .arg(request.start)
+        .arg(request.count)
+        .arg(static_cast<int>(request.meterKind));
 }
 
 int MeteringBusController::expectedResponseSize() const

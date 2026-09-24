@@ -93,6 +93,8 @@ target_include_directories(dialog-g2-core PUBLIC
 )
 
 qt_add_executable(dialog-g2-engine
+    src/EngineRuntime.h
+    src/EngineRuntime.cpp
     src/engine_main.cpp
     src/PasswordManager.h
 )
@@ -102,7 +104,7 @@ target_link_libraries(dialog-g2-engine PRIVATE
     Qt6::HttpServer
 )
 
-qt_add_executable(test-controller-tests
+qt_add_executable(test-controller-tests EXCLUDE_FROM_ALL
     tests/test_controller_tests.cpp
 )
 
@@ -200,3 +202,14 @@ if (WIN32)
         WIN32_EXECUTABLE TRUE
     )
 endif()
+
+qt_add_executable(telemetry-tests EXCLUDE_FROM_ALL tests/telemetry_tests.cpp src/PanelFacade.cpp src/PanelFacade.h)
+target_link_libraries(telemetry-tests PRIVATE dialog-g2-core)
+
+qt_add_executable(battery-page-tests EXCLUDE_FROM_ALL tests/battery_page_tests.cpp)
+target_link_libraries(battery-page-tests PRIVATE Qt6::Quick Qt6::Qml)
+target_compile_definitions(battery-page-tests PRIVATE
+    BATTERY_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/BatteryPage.qml"
+    START_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/StartPage.qml"
+    TEST_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/TestPage.qml"
+)

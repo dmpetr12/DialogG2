@@ -19,6 +19,7 @@ void TestController::reset()
 TestControllerResult TestController::evaluate(const TestControllerInputs &inputs)
 {
     TestControllerResult result;
+    result.manualRequestConsumed = inputs.manualFunctional.active || inputs.manualDuration.active;
     result.lines = inputs.lines;
 
     const Candidate requested = highestRequestedTest(inputs, m_config);

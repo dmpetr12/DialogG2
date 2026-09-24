@@ -12,11 +12,18 @@ LineOperationalMonitor::LineOperationalMonitor(LineOperationalMonitorConfig conf
 void LineOperationalMonitor::reset()
 {
     m_onSince.clear();
+    m_testActive = false;
 }
 
 QVector<LineSnapshot> LineOperationalMonitor::evaluate(const QVector<LineSnapshot> &lines,
-                                                       const QDateTime &now)
+                                                       const QDateTime &now,
+                                                       bool testActive)
 {
+    if (testActive != m_testActive) {
+        m_onSince.clear();
+        m_testActive = testActive;
+    }
+
     QVector<LineSnapshot> result = lines;
 
     QHash<int, bool> seen;
@@ -40,8 +47,9 @@ QVector<LineSnapshot> LineOperationalMonitor::evaluate(const QVector<LineSnapsho
             m_onSince.insert(line.index, now);
 
         line.operationalCheck = checkLine(line, m_onSince.value(line.index), now, m_config.warmupSeconds);
-        if (line.operationalCheck.state == LineOperationalState::Fault
-            || line.operationalCheck.state == LineOperationalState::NoMeasurement) {
+        if (line.state != LineState::InsulationBreakdown
+            && (line.operationalCheck.state == LineOperationalState::Fault
+                || line.operationalCheck.state == LineOperationalState::NoMeasurement)) {
             line.state = LineState::Fault;
         }
     }

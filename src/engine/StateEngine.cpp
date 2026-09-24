@@ -30,6 +30,11 @@ CabinetSnapshot StateEngine::evaluate(const EngineInputs &inputs) const
     return snapshot;
 }
 
+bool StateEngine::faultLampRequired(const CabinetSnapshot &snapshot)
+{
+    return snapshot.mode == CabinetMode::Emergency || snapshot.health == SystemHealth::Fault;
+}
+
 CabinetMode StateEngine::resolveMode(const EngineInputs &inputs)
 {
     if (!inputs.voltageControlOk)

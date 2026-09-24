@@ -16,7 +16,8 @@ Item {
     signal batteryRequested()
     property var confirmedAction: null
 
-    readonly property bool normalMode: panel.modeText === "Норма"
+    readonly property bool normalMode: panel.modeCode === "normal"
+    readonly property bool fireActive: panel.modeCode === "fire" || panel.manualEmergencyActive
     readonly property bool systemOk: panel.systemOk
     readonly property bool linesOk: panel.linesOk
     readonly property string batteryText: panel.batteryPercent >= 0 ? panel.batteryPercent + "%" : "-"
@@ -59,27 +60,31 @@ Item {
             }
         }
         HmiButton {
+            objectName: "testButton"
             text: "ТЕСТ"
-            enabled: root.unlocked
-            locked: !root.unlocked
+            enabled: root.unlocked && !root.fireActive
+            locked: !root.unlocked || root.fireActive
             onClicked: root.testRequested()
         }
         HmiButton {
+            objectName: "settingsButton"
             text: "НАСТРОЙКА"
-            enabled: root.unlocked
-            locked: !root.unlocked
+            enabled: root.unlocked && !root.fireActive
+            locked: !root.unlocked || root.fireActive
             onClicked: root.settingsRequested()
         }
         HmiButton {
+            objectName: "scheduleButton"
             text: "РАСПИСАНИЕ"
-            enabled: root.unlocked
-            locked: !root.unlocked
+            enabled: root.unlocked && !root.fireActive
+            locked: !root.unlocked || root.fireActive
             onClicked: root.scheduleRequested()
         }
         HmiButton {
+            objectName: "journalButton"
             text: "ЖУРНАЛ"
-            enabled: root.unlocked
-            locked: !root.unlocked
+            enabled: root.unlocked && !root.fireActive
+            locked: !root.unlocked || root.fireActive
             onClicked: root.journalRequested()
         }
     }
@@ -100,7 +105,7 @@ Item {
 
         StateLine {
             label: "Система"
-            value: root.systemOk ? "НОРМ" : "АВАР"
+            value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (root.systemOk ? "НОРМ" : "АВАР")
             ok: root.systemOk
             labelBadge: true
             clickableBadge: true
@@ -109,7 +114,7 @@ Item {
 
         StateLine {
             label: "Батарея"
-            value: panel.batteryOk ? "НОРМ" : "АВАР"
+            value: !panel.connected || !panel.battery.communicationOk ? "НЕТ ДАННЫХ" : (panel.batteryOk ? "НОРМ" : "АВАР")
             ok: panel.batteryOk
             labelBadge: true
             clickableBadge: true
@@ -118,8 +123,8 @@ Item {
 
         StateLine {
             label: "Линии"
-            value: root.linesOk ? "ИСПР" : "АВАР"
-            ok: root.linesOk
+            value: !panel.linesAvailable ? "НЕТ ДАННЫХ" : (root.linesOk ? "ИСПР" : "АВАР")
+            ok: panel.linesAvailable && root.linesOk
             labelBadge: true
             clickableBadge: true
             onBadgeClicked: root.linesRequested()
@@ -127,12 +132,12 @@ Item {
 
         MetricLine {
             label: "Напряжение"
-            value: panel.inputVoltage.toFixed(0) + "В"
+            value: isFinite(panel.inputVoltage) ? panel.inputVoltage.toFixed(0) + "В" : "—"
         }
 
         MetricLine {
             label: "Мощность"
-            value: panel.outputPower.toFixed(0) + "Вт"
+            value: isFinite(panel.outputPower) ? panel.outputPower.toFixed(0) + "Вт" : "—"
         }
 
         MetricLine {

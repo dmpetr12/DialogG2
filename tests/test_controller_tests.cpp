@@ -10,6 +10,8 @@
 #include "engine/MaintenanceChecker.h"
 #include "engine/ManualEmergencyController.h"
 #include "engine/ModbusRtuCodec.h"
+#include "engine/ModbusTcpServer.h"
+#include "engine/StateEngine.h"
 #include "engine/WhdTemperatureHumidityController.h"
 
 #include <QCoreApplication>
@@ -65,6 +67,12 @@ static bool adl200DecoderScalesRealtimeRegisters()
         && expect(qFuzzyCompare(measurement.frequency, 50.0), QStringLiteral("ADL200 frequency scale should be 0.01 Hz"));
 }
 
+static bool adl200UsesReservedSafeAddress()
+{
+    return expect(Adl200Meter::DefaultSlaveAddress == 6,
+                  QStringLiteral("ADL200 default Modbus address must be 6; address 1 is reserved"));
+}
+
 static void putFloatRegisters(QVector<quint16> *registers, int valueIndex, float value)
 {
     quint32 raw = 0;
@@ -76,7 +84,8 @@ static void putFloatRegisters(QVector<quint16> *registers, int valueIndex, float
 static bool amc16zFak24DecoderScalesBranchPowers()
 {
     QVector<quint16> registers(Amc16zFak24Meter::ActivePowerHoldingCount, 0);
-    putFloatRegisters(&registers, 0, 0.125f);
+    putFloatRegisters(&registers, 0, -0.125f);
+    putFloatRegisters(&registers, 1, std::numeric_limits<float>::quiet_NaN());
     putFloatRegisters(&registers, 23, 2.5f);
 
     const QVector<Amc16zBranchMeasurement> measurements =
@@ -88,10 +97,25 @@ static bool amc16zFak24DecoderScalesBranchPowers()
                   QStringLiteral("AMC16Z-FAK24 first decoded channel should be 1"))
         && expect(qFuzzyCompare(measurements.first().activePower, 125.0),
                   QStringLiteral("AMC16Z-FAK24 active power should be converted from kW to W"))
+        && expect(!measurements.at(1).valid, QStringLiteral("AMC invalid power remains unavailable"))
+        && expect(measurements.at(2).valid && measurements.at(2).activePower == 0.0, QStringLiteral("AMC zero power stays valid"))
         && expect(measurements.last().channel == 24,
                   QStringLiteral("AMC16Z-FAK24 last decoded channel should be 24"))
         && expect(qFuzzyCompare(measurements.last().activePower, 2500.0),
                   QStringLiteral("AMC16Z-FAK24 channel 24 power should be decoded"));
+}
+
+static bool amc16zRmsDecoderKeepsUnitsAndMissingData()
+{
+    QVector<quint16> registers(48, 0);
+    putFloatRegisters(&registers, 0, 230.5f);
+    putFloatRegisters(&registers, 23, 0.625f);
+    const auto values = Amc16zFak24Meter::decodeRmsHoldingRegisters(registers);
+    return expect(values.size() == 24 && values.first() == 230.5 && values.last() == 0.625,
+                  QStringLiteral("AMC RMS channel ordering and V/A units"))
+        && expect(values.at(1) == 0.0, QStringLiteral("AMC measured zero remains zero"))
+        && expect(Amc16zFak24Meter::decodeRmsHoldingRegisters({}).isEmpty(),
+                  QStringLiteral("AMC missing RMS response remains unavailable"));
 }
 
 static bool asj60Ld16aDecoderReadsChannelStatusesAndLeakage()
@@ -125,6 +149,10 @@ static bool asj60Ld16aDecoderReadsChannelStatusesAndLeakage()
 
 static bool whdDecoderScalesTemperatureAndHumidity()
 {
+    if (!expect(WhdTemperatureHumidityController::Channel1RealtimeRegisterStart == 0x0001,
+                QStringLiteral("WHD channel 1 poll must start at register 1")))
+        return false;
+
     const QVector<quint16> registers = {
         0x0120,
         0x025E
@@ -500,6 +528,22 @@ static bool testInterruptedByVoltagePriority()
                   QStringLiteral("journal status should be interrupted_by_priority"));
 }
 
+static bool manualTestBlockedByFireIsConsumed()
+{
+    TestController controller;
+    TestControllerInputs inputs;
+    inputs.now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    inputs.lines = {testLine(1, 100.0)};
+    inputs.fireInputActive = true;
+    inputs.manualFunctional.active = true;
+
+    const TestControllerResult result = controller.evaluate(inputs);
+    return expect(!result.activeTest.active,
+                  QStringLiteral("manual test must not start during fire"))
+        && expect(result.manualRequestConsumed,
+                  QStringLiteral("manual test request blocked by fire must be consumed"));
+}
+
 static bool testStoppedByOperator()
 {
     TestControllerConfig config;
@@ -568,6 +612,46 @@ static bool lineManagerDrivesNormallyClosedFaultLamp()
     result = manager.evaluate(inputs);
     return expect((result.relayOutputBytes.value(1) & faultLampMask) == 0,
                   QStringLiteral("normally closed fault lamp relay should drop on fault"));
+}
+
+static bool faultLampFollowsPowerEmergencyOrSystemFault()
+{
+    CabinetSnapshot snapshot;
+    snapshot.mode = CabinetMode::Emergency;
+    snapshot.health = SystemHealth::Normal;
+    if (!expect(StateEngine::faultLampRequired(snapshot),
+                QStringLiteral("power emergency must turn on fault lamp")))
+        return false;
+
+    snapshot.mode = CabinetMode::Fire;
+    if (!expect(!StateEngine::faultLampRequired(snapshot),
+                QStringLiteral("fire mode alone must not turn on fault lamp")))
+        return false;
+
+    snapshot.mode = CabinetMode::Normal;
+    snapshot.health = SystemHealth::Fault;
+    return expect(StateEngine::faultLampRequired(snapshot),
+                      QStringLiteral("system fault must turn on fault lamp"));
+}
+
+static bool modbusKeepsPowerEmergencySeparateFromSystemFault()
+{
+    CabinetSnapshot snapshot;
+    snapshot.mode = CabinetMode::Emergency;
+    snapshot.health = SystemHealth::Normal;
+    if (!expect(ModbusTcpServer::inputRegisterValue(snapshot, 1) == 3,
+                QStringLiteral("Modbus cabinet state must report power emergency")))
+        return false;
+    if (!expect(ModbusTcpServer::inputRegisterValue(snapshot, 6) == 0,
+                QStringLiteral("power emergency alone must not become a system fault")))
+        return false;
+
+    snapshot.mode = CabinetMode::Normal;
+    snapshot.health = SystemHealth::Fault;
+    return expect(ModbusTcpServer::inputRegisterValue(snapshot, 1) == 3,
+                  QStringLiteral("Modbus cabinet state must report system fault"))
+        && expect(ModbusTcpServer::inputRegisterValue(snapshot, 6) == 1,
+                  QStringLiteral("system fault must remain independently visible"));
 }
 
 static bool lineManagerDrivesDirectTestLamp()
@@ -791,6 +875,53 @@ static bool operationalMonitorWaitsWarmup()
                   QStringLiteral("failed operational check should mark line fault"));
 }
 
+static bool operationalMonitorDefaultWarmupIsFortySeconds()
+{
+    LineOperationalMonitor monitor;
+    const QDateTime start = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    const QVector<LineSnapshot> lines = {testLine(1, 0.0)};
+
+    monitor.evaluate(lines, start, true);
+    if (!expect(monitor.evaluate(lines, start.addSecs(39), true).first().operationalCheck.state
+                    == LineOperationalState::WarmingUp,
+                QStringLiteral("default stabilization must still be active at 39 seconds")))
+        return false;
+
+    return expect(monitor.evaluate(lines, start.addSecs(40), true).first().operationalCheck.state
+                      == LineOperationalState::Fault,
+                  QStringLiteral("default stabilization must end at 40 seconds"));
+}
+
+static bool operationalMonitorRestartsWarmupAroundTestTransfer()
+{
+    LineOperationalMonitorConfig config;
+    config.warmupSeconds = 120;
+    LineOperationalMonitor monitor(config);
+
+    const QDateTime start = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    QVector<LineSnapshot> lines = {testLine(2, 130.0)};
+    lines.first().nominalPower = 130.0;
+    monitor.evaluate(lines, start, false);
+    if (!expect(monitor.evaluate(lines, start.addSecs(121), false).first().state == LineState::Normal,
+                QStringLiteral("stable line should be normal before test transfer")))
+        return false;
+
+    lines.first().outputPower = 0.0;
+    QVector<LineSnapshot> result = monitor.evaluate(lines, start.addSecs(122), true);
+    if (!expect(result.first().operationalCheck.state == LineOperationalState::WarmingUp,
+                QStringLiteral("test start must restart power stabilization")))
+        return false;
+    if (!expect(result.first().state == LineState::Normal,
+                QStringLiteral("transfer transient must not mark line faulty")))
+        return false;
+
+    result = monitor.evaluate(lines, start.addSecs(123), false);
+    return expect(result.first().operationalCheck.state == LineOperationalState::WarmingUp,
+                  QStringLiteral("test stop must restart power stabilization"))
+        && expect(result.first().state == LineState::Normal,
+                  QStringLiteral("return transfer transient must not mark line faulty"));
+}
+
 static bool operationalMonitorIgnoresOffLine()
 {
     LineOperationalMonitor monitor;
@@ -822,12 +953,96 @@ static bool operationalMonitorFailsNoMeasurementAfterWarmup()
                   QStringLiteral("no measurement after warmup should mark line fault"));
 }
 
+static bool lineManagerDoesNotTreatMissingWaveShareAsPowerFailure()
+{
+    LineManager manager;
+    LineManagerInputs inputs;
+    WaveShareModuleState module;
+    module.module = 1;
+    module.online = false;
+    inputs.modules.insert(module.module, module);
+
+    const LineManagerResult missing = manager.evaluate(inputs);
+    if (!expect(missing.voltageControlOk,
+                QStringLiteral("missing WaveShare must be a fault, not a power emergency")))
+        return false;
+
+    module.online = true;
+    inputs.modules[module.module] = module;
+    const LineManagerResult closedNormallyClosedContact = manager.evaluate(inputs);
+    if (!expect(closedNormallyClosedContact.voltageControlOk,
+                QStringLiteral("zero voltage-control input must be normal")))
+        return false;
+
+    module.inputs = static_cast<quint8>(1u << 3);
+    inputs.modules[module.module] = module;
+    const LineManagerResult openedNormallyClosedContact = manager.evaluate(inputs);
+    return expect(!openedNormallyClosedContact.voltageControlOk,
+                  QStringLiteral("active voltage-control input must be an emergency"));
+}
+
+static bool disabledLinesDoNotRequireExtraWaveShareModules()
+{
+    LineManager manager;
+    LineConfig line;
+    line.index = 13;
+    line.name = QStringLiteral("disabled line on module 3");
+    line.enabled = false;
+    line.requestInput = {3, 1};
+    line.outputRelay = {3, 1};
+    QString error;
+
+    return expect(manager.addLine(line, &error), QStringLiteral("test line should be added: %1").arg(error))
+        && expect(manager.requiredModuleCount() == 1,
+                  QStringLiteral("disabled lines must not require absent WaveShare modules"));
+}
+
+static bool insulationBreakdownIsPublishedForRemoteMonitoring()
+{
+    LineSnapshot line = testLine(1, 100.0);
+    line.state = LineState::InsulationBreakdown;
+    line.leakageCurrent = 31.4;
+    line.leakageCurrentLimit = 30.0;
+
+    const QJsonObject json = toJson(line);
+    CabinetSnapshot snapshot;
+    snapshot.health = SystemHealth::Fault;
+    snapshot.activeTest.active = true;
+    snapshot.lines = {line};
+
+    return expect(json.value(QStringLiteral("stateCode")).toString() == QStringLiteral("insulation_breakdown"),
+                  QStringLiteral("JSON should identify insulation breakdown by a stable code"))
+        && expect(json.value(QStringLiteral("stateText")).toString() == QStringLiteral("Пробой изоляции"),
+                  QStringLiteral("JSON should report insulation breakdown text"))
+        && expect(ModbusTcpServer::inputRegisterValue(snapshot, 101) == 4,
+                  QStringLiteral("Modbus line state should identify insulation breakdown"))
+        && expect(ModbusTcpServer::inputRegisterValue(snapshot, 105) == 314,
+                  QStringLiteral("Modbus line block should expose leakage current in 0.1 mA"))
+        && expect(ModbusTcpServer::inputRegisterValue(snapshot, 300) == 300,
+                  QStringLiteral("Modbus leakage limit block should expose threshold in 0.1 mA"));
+}
+
+static bool operationalMonitorPreservesInsulationBreakdown()
+{
+    LineOperationalMonitorConfig config;
+    config.warmupSeconds = 0;
+    LineOperationalMonitor monitor(config);
+    LineSnapshot line = testLine(1, 0.0);
+    line.state = LineState::InsulationBreakdown;
+
+    const QVector<LineSnapshot> result = monitor.evaluate({line}, QDateTime::currentDateTimeUtc());
+    return expect(result.first().state == LineState::InsulationBreakdown,
+                  QStringLiteral("power monitoring must not hide insulation breakdown"));
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
     const bool ok = adl200DecoderScalesRealtimeRegisters()
+        && adl200UsesReservedSafeAddress()
         && amc16zFak24DecoderScalesBranchPowers()
+        && amc16zRmsDecoderKeepsUnitsAndMissingData()
         && asj60Ld16aDecoderReadsChannelStatusesAndLeakage()
         && whdDecoderScalesTemperatureAndHumidity()
         && jbdBmsBuildsReadCommands()
@@ -847,9 +1062,14 @@ int main(int argc, char *argv[])
         && maintenanceCheckerAcceptsFreshTests()
         && maintenanceCheckerReportsOldLineTest()
         && testInterruptedByVoltagePriority()
+        && manualTestBlockedByFireIsConsumed()
         && testStoppedByOperator()
         && lineManagerReadsManualStopButton()
+        && lineManagerDoesNotTreatMissingWaveShareAsPowerFailure()
+        && disabledLinesDoNotRequireExtraWaveShareModules()
         && lineManagerDrivesNormallyClosedFaultLamp()
+        && faultLampFollowsPowerEmergencyOrSystemFault()
+        && modbusKeepsPowerEmergencySeparateFromSystemFault()
         && lineManagerDrivesDirectTestLamp()
         && lineManagerForcesEnabledLinesOnDuringTest()
         && lineManagerForcesSelectedLineOnDuringSetup()
@@ -858,8 +1078,12 @@ int main(int argc, char *argv[])
         && journalStorePersistsEntries()
         && lineManagerPersistsLastTestResults()
         && operationalMonitorWaitsWarmup()
+        && operationalMonitorDefaultWarmupIsFortySeconds()
+        && operationalMonitorRestartsWarmupAroundTestTransfer()
         && operationalMonitorIgnoresOffLine()
-        && operationalMonitorFailsNoMeasurementAfterWarmup();
+        && operationalMonitorFailsNoMeasurementAfterWarmup()
+        && insulationBreakdownIsPublishedForRemoteMonitoring()
+        && operationalMonitorPreservesInsulationBreakdown();
 
     if (ok)
         qInfo() << "TestController checks passed";

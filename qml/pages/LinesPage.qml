@@ -20,36 +20,34 @@ Rectangle {
     readonly property int wVoltage: 78
     readonly property int wCurrent: 72
     readonly property int wLeakage: 108
-    readonly property var visibleLines: panel.lines.filter(function(line) {
-        return line.mode !== 2
-    })
+    readonly property var panelLines: panel.lines
 
-    function modeText(mode) {
-        if (mode === 0)
-            return "ПОСТ"
-        if (mode === 1)
-            return "НЕПОСТ"
-        return "ОТКЛ"
-    }
+    ListModel { id: lineRows }
+    Component.onCompleted: updateLines()
+    onPanelLinesChanged: updateLines()
 
-    function stateText(line) {
-        if (line.mode === 2)
-            return "ОТКЛ"
-        if (line.powerAvailable === false)
-            return "НЕТ ДАН"
-        if (line.mpower > 0 && line.power < 1)
-            return "АВАР"
-        return "ВКЛ"
-    }
-
-    function stateOk(line) {
-        return stateText(line) === "ВКЛ"
+    function updateLines() {
+        var rows = panelLines.filter(function(line) { return line.mode !== 2 })
+        for (var i = 0; i < rows.length; ++i) {
+            var row = {}
+            for (var key in rows[i]) {
+                if (key !== "index")
+                    row[key] = rows[i][key]
+            }
+            row.lineNumber = rows[i].index
+            if (i < lineRows.count)
+                lineRows.set(i, row)
+            else
+                lineRows.append(row)
+        }
+        if (lineRows.count > rows.length)
+            lineRows.remove(rows.length, lineRows.count - rows.length)
     }
 
     function numberText(value, available, digits) {
         if (available !== undefined && !available)
             return "-"
-        if (value === undefined || isNaN(value))
+        if (value === undefined || value === null || !isFinite(value))
             return "-"
         return Number(value).toFixed(digits)
     }
@@ -108,7 +106,7 @@ Rectangle {
 
             Text {
                 anchors.centerIn: parent
-                visible: root.visibleLines.length === 0
+                visible: lineRows.count === 0
                 text: "Включенные линии не настроены"
                 color: "#666666"
                 font.pixelSize: 34
@@ -121,8 +119,8 @@ Rectangle {
                 anchors.fill: parent
                 clip: true
                 spacing: 8
-                model: root.visibleLines
-                visible: root.visibleLines.length > 0
+                model: lineRows
+                visible: lineRows.count > 0
 
                 delegate: Rectangle {
                     width: lineList.width - 34
@@ -140,44 +138,44 @@ Rectangle {
 
                         NameCell {
                             width: root.wName - 8
-                            text: modelData.description || ("Линия " + (modelData.index || (index + 1)))
-                            ok: root.stateOk(modelData)
+                            text: model.description || ("Линия " + (model.lineNumber || (index + 1)))
+                            ok: model.displayStateOk
                         }
 
                         TextCell {
                             width: root.wType
-                            text: root.modeText(modelData.mode)
+                            text: model.displayModeText
                         }
 
                         StateCell {
                             width: root.wState
-                            text: root.stateText(modelData)
-                            ok: root.stateOk(modelData)
+                            text: model.displayStateText
+                            ok: model.displayStateOk
                         }
 
                         TextCell {
                             width: root.wNominalPower
-                            text: root.numberText(modelData.mpower, true, 0)
+                            text: root.numberText(model.mpower, true, 0)
                         }
 
                         TextCell {
                             width: root.wMeasuredPower
-                            text: root.numberText(modelData.power, modelData.powerAvailable, 0)
+                            text: root.numberText(model.power, model.powerAvailable, 0)
                         }
 
                         TextCell {
                             width: root.wVoltage
-                            text: root.numberText(modelData.voltage, modelData.voltageAvailable, 0)
+                            text: root.numberText(model.voltage, model.voltageAvailable, 0)
                         }
 
                         TextCell {
                             width: root.wCurrent
-                            text: root.numberText(modelData.current, modelData.currentAvailable, 1)
+                            text: root.numberText(model.current, model.currentAvailable, 1)
                         }
 
                         TextCell {
                             width: root.wLeakage
-                            text: root.numberText(modelData.leakage, true, 1)
+                            text: root.numberText(model.leakage, model.leakageAvailable, 1)
                         }
                     }
                 }

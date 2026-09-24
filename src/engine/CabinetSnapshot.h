@@ -257,6 +257,7 @@ QString healthText(SystemHealth health);
 QString batteryStateCode(BatteryState state);
 QString batteryStateText(BatteryState state);
 QString lineStateText(LineState state);
+QString lineStateCode(LineState state);
 QString lineKindCode(LineKind kind);
 QString lineKindText(LineKind kind);
 QString lineOutputStateCode(LineOutputState state);

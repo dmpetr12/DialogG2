@@ -39,6 +39,9 @@ QVector<quint16> ModbusRtuCodec::registersFromReadResponse(const QByteArray &fra
         return values;
 
     const int byteCount = byteAt(frame, 2);
+    if ((byteAt(frame, 1) != 0x03 && byteAt(frame, 1) != 0x04)
+        || byteCount % 2 != 0 || frame.size() != byteCount + 5)
+        return {};
     values.reserve(byteCount / 2);
     for (int i = 0; i + 1 < byteCount; i += 2) {
         const int offset = 3 + i;

@@ -4,9 +4,16 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QLocalSocket>
+#include <limits>
 
 PanelFacade::PanelFacade(QObject *parent)
+    : PanelFacade(parent, QStringLiteral("emergency_panel_backend"))
+{
+}
+
+PanelFacade::PanelFacade(QObject *parent, const QString &serverName)
     : QObject(parent)
+    , m_serverName(serverName)
 {
     connect(&m_pollTimer, &QTimer::timeout, this, &PanelFacade::pollState);
     m_pollTimer.start(1000);
@@ -16,6 +23,26 @@ PanelFacade::PanelFacade(QObject *parent)
 bool PanelFacade::connected() const
 {
     return m_connected;
+}
+
+bool PanelFacade::busConnected() const
+{
+    return state().value(QStringLiteral("busConnected")).toBool(false);
+}
+
+bool PanelFacade::systemAvailable() const
+{
+    return state().value(QStringLiteral("systemAvailable")).toBool(false);
+}
+
+bool PanelFacade::linesAvailable() const
+{
+    return state().value(QStringLiteral("linesAvailable")).toBool(false);
+}
+
+bool PanelFacade::demoMode() const
+{
+    return state().value(QStringLiteral("demoMode")).toBool(false);
 }
 
 bool PanelFacade::testRunning() const
@@ -45,12 +72,17 @@ QVariantList PanelFacade::lines() const
 
 QString PanelFacade::modeText() const
 {
-    return state().value(QStringLiteral("modeText")).toString(QStringLiteral("Норма"));
+    return state().value(QStringLiteral("modeText")).toString(QStringLiteral("Нет данных"));
+}
+
+QString PanelFacade::modeCode() const
+{
+    return state().value(QStringLiteral("modeCode")).toString(QStringLiteral("unknown"));
 }
 
 QString PanelFacade::healthText() const
 {
-    return state().value(QStringLiteral("healthText")).toString(QStringLiteral("Норма"));
+    return state().value(QStringLiteral("healthText")).toString(QStringLiteral("Нет данных"));
 }
 
 QString PanelFacade::modeColor() const
@@ -65,17 +97,17 @@ bool PanelFacade::manualEmergencyActive() const
 
 bool PanelFacade::systemOk() const
 {
-    return state().value(QStringLiteral("systemOk")).toBool(true);
+    return state().value(QStringLiteral("systemOk")).toBool(false);
 }
 
 bool PanelFacade::linesOk() const
 {
-    return state().value(QStringLiteral("linesOk")).toBool(true);
+    return state().value(QStringLiteral("linesOk")).toBool(false);
 }
 
 bool PanelFacade::batteryOk() const
 {
-    return state().value(QStringLiteral("batteryOk")).toBool(true);
+    return state().value(QStringLiteral("batteryOk")).toBool(false);
 }
 
 int PanelFacade::batteryPercent() const
@@ -95,27 +127,27 @@ QVariantMap PanelFacade::maintenance() const
 
 double PanelFacade::inputVoltage() const
 {
-    return state().value(QStringLiteral("inletU")).toDouble(0.0);
+    return state().value(QStringLiteral("inletU")).toDouble(std::numeric_limits<double>::quiet_NaN());
 }
 
 double PanelFacade::inputCurrent() const
 {
-    return state().value(QStringLiteral("inletI")).toDouble(0.0);
+    return state().value(QStringLiteral("inletI")).toDouble(std::numeric_limits<double>::quiet_NaN());
 }
 
 double PanelFacade::inputFrequency() const
 {
-    return state().value(QStringLiteral("inletF")).toDouble(0.0);
+    return state().value(QStringLiteral("inletF")).toDouble(std::numeric_limits<double>::quiet_NaN());
 }
 
 double PanelFacade::outputPower() const
 {
-    return state().value(QStringLiteral("inletP")).toDouble(0.0);
+    return state().value(QStringLiteral("inletP")).toDouble(std::numeric_limits<double>::quiet_NaN());
 }
 
 double PanelFacade::temperature() const
 {
-    return state().value(QStringLiteral("temperature")).toDouble(0.0);
+    return state().value(QStringLiteral("temperature")).toDouble(std::numeric_limits<double>::quiet_NaN());
 }
 
 QString PanelFacade::logLevel() const
@@ -378,7 +410,7 @@ bool PanelFacade::sendCommand(const QJsonObject &request, QJsonObject *response)
 
 QJsonObject PanelFacade::state() const
 {
-    return m_state;
+    return m_connected ? m_state : QJsonObject{};
 }
 
 void PanelFacade::pollState()
@@ -387,7 +419,9 @@ void PanelFacade::pollState()
     QJsonObject response;
     const bool ok = sendCommand({{QStringLiteral("cmd"), QStringLiteral("getState")}}, &response);
     if (!ok) {
-        if (wasConnected)
+        const bool hadState = !m_state.isEmpty();
+        m_state = {};
+        if (wasConnected || hadState)
             emit changed();
         return;
     }

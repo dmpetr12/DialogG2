@@ -24,6 +24,7 @@ public:
     bool isRunning() const;
 
     void updateSnapshot(const CabinetSnapshot &snapshot);
+    static quint16 inputRegisterValue(const CabinetSnapshot &snapshot, int address);
 
 signals:
     void logMessage(const QString &message);

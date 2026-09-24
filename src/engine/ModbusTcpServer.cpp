@@ -49,6 +49,7 @@ enum InputRegAddress : int
 
     InRegLinesBase = 100,
     LineBlockSize = 6,
+    InRegLeakageLimitsBase = 300,
 
     InputRegisterCount = 400
 };
@@ -60,7 +61,7 @@ enum LineBlockOffset : int
     LineOutputState = 2,
     LineLastTestLow = 3,
     LineLastTestHigh = 4,
-    LineReserved1 = 5
+    LineLeakageCurrent = 5
 };
 
 static constexpr quint16 InvalidRegValue = 0xFFFF;
@@ -113,6 +114,8 @@ static quint16 cabinetState(const CabinetSnapshot &snapshot)
         return 1;
     if (snapshot.activeTest.active || snapshot.testKind != TestKind::None)
         return 2;
+    if (snapshot.mode == CabinetMode::Emergency)
+        return 3;
     if (snapshot.battery.state == BatteryState::Fault || snapshot.battery.state == BatteryState::Disconnected)
         return 4;
     if (snapshot.battery.state == BatteryState::Warning)
@@ -150,6 +153,8 @@ static quint16 lineState(const LineSnapshot &line, const CabinetSnapshot &snapsh
 {
     if (!line.enabled)
         return 3;
+    if (line.state == LineState::InsulationBreakdown)
+        return 4;
     if (snapshot.activeTest.active)
         return 2;
     return line.state == LineState::Normal ? 0 : 1;
@@ -191,6 +196,11 @@ static quint16 readInputRegister(const CabinetSnapshot &snapshot, int address)
         break;
     }
 
+    if (address >= InRegLeakageLimitsBase
+        && address < InRegLeakageLimitsBase + snapshot.lines.size()) {
+        return scaled(snapshot.lines.at(address - InRegLeakageLimitsBase).leakageCurrentLimit, 10.0);
+    }
+
     if (address < InRegLinesBase)
         return 0;
 
@@ -215,7 +225,8 @@ static quint16 readInputRegister(const CabinetSnapshot &snapshot, int address)
         const quint32 timestamp = dateTimeToU32(lastTest);
         return offset == LineLastTestLow ? lowWord(timestamp) : highWord(timestamp);
     }
-    case LineReserved1:
+    case LineLeakageCurrent:
+        return scaled(line.leakageCurrent, 10.0);
     default:
         return 0;
     }
@@ -307,13 +318,18 @@ void ModbusTcpServer::updateSnapshot(const CabinetSnapshot &snapshot)
     refreshRegisters();
 }
 
+quint16 ModbusTcpServer::inputRegisterValue(const CabinetSnapshot &snapshot, int address)
+{
+    return readInputRegister(snapshot, address);
+}
+
 void ModbusTcpServer::refreshRegisters()
 {
     if (!m_server)
         return;
 
     for (int address = 0; address < InputRegisterCount; ++address)
-        m_server->setData(QModbusDataUnit::InputRegisters, address, readInputRegister(m_snapshot, address));
+        m_server->setData(QModbusDataUnit::InputRegisters, address, inputRegisterValue(m_snapshot, address));
 }
 
 void ModbusTcpServer::onStateChanged(int state)

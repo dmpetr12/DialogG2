@@ -13,9 +13,9 @@ Page {
     property string lineDescription: "Линия " + (lineIndex + 1)
     property double lineMpower: 100
     property double lineTolerance: 5
-    property double measuredPower: 0
-    property double measuredVoltage: 0
-    property double measuredCurrent: 0
+    property double measuredPower: NaN
+    property double measuredVoltage: NaN
+    property double measuredCurrent: NaN
     property bool measuredAvailable: false
     property int maxPower: 2000
     property int maxTolerance: 50
@@ -35,9 +35,9 @@ Page {
         lineMpower = Number(ln.mpower || 0)
         lineTolerance = Number(ln.tolerance || 0)
         lineMode = Number(ln.mode || 0)
-        measuredPower = Number(ln.power || 0)
-        measuredVoltage = Number(ln.voltage || 0)
-        measuredCurrent = Number(ln.current || 0)
+        measuredPower = ln.powerAvailable ? Number(ln.power) : NaN
+        measuredVoltage = ln.voltageAvailable ? Number(ln.voltage) : NaN
+        measuredCurrent = ln.currentAvailable ? Number(ln.current) : NaN
         measuredAvailable = Boolean(ln.powerAvailable || ln.voltageAvailable || ln.currentAvailable)
     }
 
@@ -49,9 +49,9 @@ Page {
         if (!ln)
             return
 
-        measuredPower = Number(ln.power || 0)
-        measuredVoltage = Number(ln.voltage || 0)
-        measuredCurrent = Number(ln.current || 0)
+        measuredPower = ln.powerAvailable ? Number(ln.power) : NaN
+        measuredVoltage = ln.voltageAvailable ? Number(ln.voltage) : NaN
+        measuredCurrent = ln.currentAvailable ? Number(ln.current) : NaN
         measuredAvailable = Boolean(ln.powerAvailable || ln.voltageAvailable || ln.currentAvailable)
     }
 
@@ -187,7 +187,7 @@ Page {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            if (measuredAvailable)
+                            if (panel.connected && isFinite(measuredPower))
                                 lineMpower = measuredPower
                         }
                     }
@@ -266,7 +266,7 @@ Page {
             }
 
             Label {
-                text: measuredAvailable ? measuredPower.toFixed(1) : "—"
+                text: panel.connected && isFinite(measuredPower) ? measuredPower.toFixed(1) : "—"
                 color: "#111111"
                 font.pixelSize: 30
             }
@@ -280,7 +280,7 @@ Page {
             }
 
             Label {
-                text: measuredAvailable ? measuredVoltage.toFixed(1) : "—"
+                text: panel.connected && isFinite(measuredVoltage) ? measuredVoltage.toFixed(1) : "—"
                 color: "#111111"
                 font.pixelSize: 30
             }
@@ -294,7 +294,7 @@ Page {
             }
 
             Label {
-                text: measuredAvailable ? measuredCurrent.toFixed(3) : "—"
+                text: panel.connected && isFinite(measuredCurrent) ? measuredCurrent.toFixed(3) : "—"
                 color: "#111111"
                 font.pixelSize: 30
             }

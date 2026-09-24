@@ -38,6 +38,7 @@ class StateEngine
 {
 public:
     CabinetSnapshot evaluate(const EngineInputs &inputs) const;
+    static bool faultLampRequired(const CabinetSnapshot &snapshot);
 
 private:
     static CabinetMode resolveMode(const EngineInputs &inputs);

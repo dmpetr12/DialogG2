@@ -160,6 +160,7 @@
 
     .dot.bad { background: var(--bad); }
     .dot.warn { background: var(--warn); }
+    .state-bad { color: var(--bad); font-weight: 700; }
 
     .tile-value {
       font-size: 25px;
@@ -326,6 +327,7 @@
     </div>
   </header>
 
+  <div id="demoWarning" hidden style="background:#b00020;color:white;padding:12px;text-align:center;font-weight:bold">ДЕМОРЕЖИМ — ПОКАЗАНИЯ НЕ ОТ РЕАЛЬНОГО ШКАФА</div>
   <main>
     <nav class="nav">
       <button data-view="dashboard" class="active">Главная</button>
@@ -392,7 +394,7 @@
       <div class="panel">
         <table>
           <thead>
-            <tr><th>№</th><th>Линия</th><th>Тип</th><th>Выход</th><th>Итог</th></tr>
+            <tr><th>№</th><th>Линия</th><th>Тип</th><th>Выход</th><th>Утечка, мА</th><th>Предел, мА</th><th>Итог</th></tr>
           </thead>
           <tbody id="linesRows"></tbody>
         </table>
@@ -490,7 +492,7 @@
     }
 
     function fmt(n, digits = 0) {
-      return Number.isFinite(Number(n)) ? Number(n).toFixed(digits) : "--";
+      return n !== null && n !== undefined && Number.isFinite(Number(n)) ? Number(n).toFixed(digits) : "--";
     }
 
     function fmtDate(value) {
@@ -504,9 +506,7 @@
     }
 
     function modeText(data) {
-      if (data.manualEmergencyActive || data.modeText === "Пожар") return "АВАРИЯ";
-      if (data.testRunning) return "ТЕСТ";
-      if (data.modeText === "Норма") return "РАБОЧИЙ";
+      if (data.modeCode === "normal") return "РАБОЧИЙ";
       return (data.modeText || "--").toUpperCase();
     }
 
@@ -537,6 +537,7 @@
 
     function renderState(data) {
       state.last = data;
+      $("demoWarning").hidden = !data.demoMode;
       const now = new Date();
       $("time").textContent = now.toLocaleTimeString("ru-RU", {hour: "2-digit", minute: "2-digit"});
       $("date").textContent = now.toLocaleDateString("ru-RU");
@@ -544,9 +545,9 @@
 
       $("mode").textContent = modeText(data);
       $("modeTile").classList.toggle("test-mode", !!data.testRunning);
-      $("systemState").textContent = data.systemOk ? "НОРМ" : "АВАР";
-      $("batteryState").textContent = data.batteryOk ? "НОРМ" : "АВАР";
-      $("linesState").textContent = data.linesOk ? "ИСПР" : "АВАР";
+      $("systemState").textContent = !data.systemAvailable ? "НЕТ ДАННЫХ" : (data.systemOk ? "НОРМ" : "АВАР");
+      $("batteryState").textContent = !data.battery?.communicationOk ? "НЕТ ДАННЫХ" : (data.batteryOk ? "НОРМ" : "АВАР");
+      $("linesState").textContent = !data.linesAvailable ? "НЕТ ДАННЫХ" : (data.linesOk ? "ИСПР" : "АВАР");
       $("busState").textContent = data.busConnected ? "ОК" : "НЕТ";
       $("systemNote").textContent = data.healthText || "--";
       $("batteryNote").textContent = data.battery?.stateText || "--";
@@ -554,7 +555,7 @@
       if (data.testRunning) {
         setDot("modeDot", false, true);
       } else {
-        setDot("modeDot", !data.manualEmergencyActive && data.systemOk);
+        setDot("modeDot", data.modeCode === "normal" && data.systemOk);
       }
       setDot("systemDot", data.systemOk);
       setDot("batteryDot", data.batteryOk);
@@ -576,10 +577,12 @@
       $("linesRows").innerHTML = (data.lines || []).map((line, i) => `
         <tr>
           <td>${line.index ?? i + 1}</td>
-          <td title="${lineName(line, i)}">${lineName(line, i)}</td>
-          <td>${line.modeText || line.kindText || "--"}</td>
+          <td class="${line.displayStateOk ? "" : "state-bad"}" title="${lineName(line, i)}">${lineName(line, i)}</td>
+          <td>${line.displayModeText || "--"}</td>
           <td>${line.outputStateText || "--"}</td>
-          <td>${line.stateText || "--"}</td>
+          <td>${fmt(line.leakage, 1)}</td>
+          <td>${fmt(line.leakageLimit, 1)}</td>
+          <td class="${line.displayStateOk ? "" : "state-bad"}">${line.displayStateText || "--"}</td>
         </tr>
       `).join("");
 
@@ -597,7 +600,8 @@
         const res = await api("/api/state", {headers: {}});
         renderState(res.data || {});
       } catch (err) {
-        $("systemState").textContent = "НЕТ";
+        renderState({});
+        $("systemState").textContent = "НЕТ ДАННЫХ";
         $("systemNote").textContent = "Нет связи с сервером";
         setDot("systemDot", false);
       }

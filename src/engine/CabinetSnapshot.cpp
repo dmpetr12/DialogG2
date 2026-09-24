@@ -140,6 +140,17 @@ QString lineStateText(LineState state)
     return QStringLiteral("Неизвестно");
 }
 
+QString lineStateCode(LineState state)
+{
+    switch (state) {
+    case LineState::Normal: return QStringLiteral("normal");
+    case LineState::Fault: return QStringLiteral("fault");
+    case LineState::Disabled: return QStringLiteral("disabled");
+    case LineState::InsulationBreakdown: return QStringLiteral("insulation_breakdown");
+    }
+    return QStringLiteral("unknown");
+}
+
 QString lineKindCode(LineKind kind)
 {
     switch (kind) {
@@ -371,6 +382,7 @@ QJsonObject toJson(const LineSnapshot &line)
         {QStringLiteral("outputStateCode"), lineOutputStateCode(line.outputState)},
         {QStringLiteral("outputStateText"), lineOutputStateText(line.outputState)},
         {QStringLiteral("state"), static_cast<int>(line.state)},
+        {QStringLiteral("stateCode"), lineStateCode(line.state)},
         {QStringLiteral("stateText"), lineStateText(line.state)},
         {QStringLiteral("nominalPower"), numberOrNull(line.nominalPower)},
         {QStringLiteral("powerTestTolerancePercent"), numberOrNull(line.powerTestTolerancePercent)},

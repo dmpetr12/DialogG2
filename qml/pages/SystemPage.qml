@@ -11,7 +11,7 @@ Rectangle {
     property bool logVisible: false
     property string exportStatus: ""
     readonly property string batteryText: panel.batteryPercent >= 0 ? panel.batteryPercent + "%" : "-"
-    readonly property string cabinetModeText: panel.modeText === "Норма" ? "РАБОЧИЙ" : panel.modeText.toUpperCase()
+    readonly property string cabinetModeText: panel.modeCode === "normal" ? "РАБОЧИЙ" : panel.modeText.toUpperCase()
 
     width: parent ? parent.width : 1024
     height: parent ? parent.height : 648
@@ -128,14 +128,14 @@ Rectangle {
             ParameterBox {
                 title: "Режим шкафа"
                 value: root.cabinetModeText
-                ok: panel.modeText === "Норма"
+                ok: panel.modeCode === "normal"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
 
             ParameterBox {
                 title: "Состояние системы"
-                value: panel.systemOk ? "НОРМ" : "АВАР"
+                value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (panel.systemOk ? "НОРМ" : "АВАР")
                 ok: panel.systemOk
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -143,7 +143,7 @@ Rectangle {
 
             ParameterBox {
                 title: "Батарея"
-                value: panel.batteryOk ? ("НОРМ, " + root.batteryText) : "АВАР"
+                value: !panel.connected || !panel.battery.communicationOk ? "НЕТ ДАННЫХ" : (panel.batteryOk ? ("НОРМ, " + root.batteryText) : "АВАР")
                 ok: panel.batteryOk
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -151,15 +151,15 @@ Rectangle {
 
             ParameterBox {
                 title: "Линии"
-                value: panel.linesOk ? "ИСПРАВНЫ" : "АВАРИЯ"
-                ok: panel.linesOk
+                value: !panel.linesAvailable ? "НЕТ ДАННЫХ" : (panel.linesOk ? "ИСПРАВНЫ" : "АВАРИЯ")
+                ok: panel.linesAvailable && panel.linesOk
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
 
             ParameterBox {
                 title: "Входное напряжение"
-                value: panel.inputVoltage.toFixed(0) + " В"
+                value: isFinite(panel.inputVoltage) ? panel.inputVoltage.toFixed(0) + " В" : "—"
                 ok: panel.inputVoltage > 0
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -167,7 +167,7 @@ Rectangle {
 
             ParameterBox {
                 title: "Входная мощность"
-                value: panel.outputPower.toFixed(0) + " Вт"
+                value: isFinite(panel.outputPower) ? panel.outputPower.toFixed(0) + " Вт" : "—"
                 ok: true
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -175,7 +175,7 @@ Rectangle {
 
             ParameterBox {
                 title: "Входной ток"
-                value: panel.inputCurrent.toFixed(1) + " А"
+                value: isFinite(panel.inputCurrent) ? panel.inputCurrent.toFixed(1) + " А" : "—"
                 ok: true
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -183,7 +183,7 @@ Rectangle {
 
             ParameterBox {
                 title: "Частота"
-                value: panel.inputFrequency.toFixed(1) + " Гц"
+                value: isFinite(panel.inputFrequency) ? panel.inputFrequency.toFixed(1) + " Гц" : "—"
                 ok: panel.inputFrequency > 0
                 Layout.fillWidth: true
                 Layout.fillHeight: true

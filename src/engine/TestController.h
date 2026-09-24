@@ -36,6 +36,7 @@ struct TestControllerInputs
 
 struct TestControllerResult
 {
+    bool manualRequestConsumed = false;
     bool manualTestActive = false;
     bool scheduledTestActive = false;
     bool modeRelayOn = false;

@@ -17,7 +17,7 @@
             "parity": "none",
             "dataBits": 8,
             "stopBits": 1,
-            "timeoutMs": 250,
+            "timeoutMs": 350,
             "retries": 0,
             "busOfflineFailureThreshold": 3
         },

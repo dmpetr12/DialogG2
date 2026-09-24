@@ -1,5 +1,7 @@
 #pragma once
 
+struct TelemetryTestAccess;
+
 #include "Adl200Meter.h"
 #include "Amc16zFak24Meter.h"
 #include "AppConfig.h"
@@ -11,6 +13,7 @@
 
 #include <QByteArray>
 #include <QDateTime>
+#include <QHash>
 #include <QObject>
 #include <QTimer>
 #include <QVector>
@@ -24,6 +27,7 @@ namespace DialogG2 {
 class MeteringBusController : public QObject
 {
     Q_OBJECT
+    friend struct ::TelemetryTestAccess;
 
 public:
     explicit MeteringBusController(QObject *parent = nullptr);
@@ -40,7 +44,7 @@ public:
     void clearPollTasks();
 
     void addAdl200InputMeterPolling(int intervalMs = 1000, int slaveAddress = Adl200Meter::DefaultSlaveAddress);
-    void addAmc16zFak24BranchPowerPolling(int intervalMs = 1000,
+    void addAmc16zFak24BranchPowerPolling(int intervalMs = 2000,
                                           int slaveAddress = Amc16zFak24Meter::DefaultSlaveAddress);
     void addAsj60Ld16aLeakagePolling(int intervalMs = 1000,
                                      int slaveAddress = Asj60Ld16aMonitor::DefaultSlaveAddress);
@@ -58,13 +62,15 @@ signals:
 
     void adl200InputMeterUpdated(const DialogG2::Adl200Measurement &measurement);
     void amc16zFak24BranchPowersUpdated(QVector<DialogG2::Amc16zBranchMeasurement> measurements);
+    void amc16zBranchVoltagesUpdated(QVector<double> values);
+    void amc16zBranchCurrentsUpdated(QVector<double> values);
     void asj60Ld16aLeakageUpdated(QVector<DialogG2::Asj60LeakageChannel> channels);
     void whdTemperatureHumidityUpdated(const DialogG2::WhdMeasurement &measurement);
     void jbdBmsBatteryUpdated(const DialogG2::BatterySnapshot &battery);
 
 private:
     enum class RequestType { ReadHolding, ReadInputRegs, JbdBmsBasicInfo, JbdBmsCellVoltages };
-    enum class MeterKind { None, Adl200Input, Amc16zFak24BranchPower, Asj60Ld16aLeakage, WhdTemperatureHumidity };
+    enum class MeterKind { None, Adl200Input, Amc16zFak24BranchPower, Asj60Ld16aLeakage, WhdTemperatureHumidity, Amc16zBranchVoltage, Amc16zBranchCurrent };
 
     struct Request
     {
@@ -89,13 +95,17 @@ private:
     void sendRequest(const Request &request);
     void onReadyRead();
     void onRequestTimeout();
-    void handleCurrentResponse();
+    void processReceiveBuffer();
+    void handleCurrentResponse(const QByteArray &frame);
     void finishCurrentRequest();
     void handleRequestFailure(const QString &error);
+    void invalidateMeasurements();
+    void invalidateRequest(const Request &request);
     void updateBusMonitorSuccess();
     void updateBusMonitorFailure(const QString &error);
 
     static bool sameRequest(const Request &a, const Request &b);
+    static QString requestKey(const Request &request);
     int expectedResponseSize() const;
 
     QSerialPort *m_port = nullptr;
@@ -110,6 +120,7 @@ private:
 
     Request m_currentRequest;
     QByteArray m_rxBuffer;
+    QHash<QString, int> m_requestFailures;
     bool m_busy = false;
 };
 
