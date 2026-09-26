@@ -51,6 +51,8 @@ add_library(dialog-g2-core STATIC
     src/engine/JbdBmsProtocol.cpp
     src/engine/StateEngine.h
     src/engine/StateEngine.cpp
+    src/engine/StateChangeTracker.h
+    src/engine/StateChangeTracker.cpp
     src/engine/TestController.h
     src/engine/TestController.cpp
     src/engine/TestJournalStore.h
@@ -210,6 +212,7 @@ qt_add_executable(battery-page-tests EXCLUDE_FROM_ALL tests/battery_page_tests.c
 target_link_libraries(battery-page-tests PRIVATE Qt6::Quick Qt6::Qml)
 target_compile_definitions(battery-page-tests PRIVATE
     BATTERY_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/BatteryPage.qml"
+    LINES_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/LinesPage.qml"
     START_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/StartPage.qml"
     TEST_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/TestPage.qml"
 )

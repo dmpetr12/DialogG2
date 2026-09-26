@@ -12,6 +12,7 @@
 #include "engine/ModbusRtuCodec.h"
 #include "engine/ModbusTcpServer.h"
 #include "engine/StateEngine.h"
+#include "engine/StateChangeTracker.h"
 #include "engine/WhdTemperatureHumidityController.h"
 
 #include <QCoreApplication>
@@ -614,6 +615,25 @@ static bool lineManagerDrivesNormallyClosedFaultLamp()
                   QStringLiteral("normally closed fault lamp relay should drop on fault"));
 }
 
+static bool lineManagerNormalizesEditableDecimalPrecision()
+{
+    LineManager manager;
+    LineConfig line = manager.lines().first();
+    line.nominalPower = 130.123456789;
+    line.powerTestTolerancePercent = 7.00000001;
+
+    QString error;
+    if (!expect(manager.updateLine(line, &error),
+                QStringLiteral("line update should succeed: %1").arg(error)))
+        return false;
+
+    const LineConfig *updated = manager.line(line.index);
+    return expect(updated && qFuzzyCompare(updated->nominalPower, 130.1),
+                  QStringLiteral("nominal power should be stored with one decimal place"))
+        && expect(qFuzzyCompare(updated->powerTestTolerancePercent, 7.0),
+                  QStringLiteral("power tolerance should be stored with one decimal place"));
+}
+
 static bool faultLampFollowsPowerEmergencyOrSystemFault()
 {
     CabinetSnapshot snapshot;
@@ -1035,6 +1055,98 @@ static bool operationalMonitorPreservesInsulationBreakdown()
                   QStringLiteral("power monitoring must not hide insulation breakdown"));
 }
 
+static bool lineDataAvailabilityDependsOnlyOnPower()
+{
+    LineSnapshot line = testLine(1, 125.0);
+    line.outputVoltage = std::numeric_limits<double>::quiet_NaN();
+    line.outputCurrent = std::numeric_limits<double>::quiet_NaN();
+    line.leakageCurrent = std::numeric_limits<double>::quiet_NaN();
+
+    if (!expect(StateEngine::linePowerDataAvailable({line}),
+                QStringLiteral("reference measurements must not hide available line power")))
+        return false;
+
+    line.outputPower = std::numeric_limits<double>::quiet_NaN();
+    return expect(!StateEngine::linePowerDataAvailable({line}),
+                  QStringLiteral("enabled line without power must be unavailable"));
+}
+
+static bool stateChangeTrackerLogsTransitionsAndRecoveriesOnce()
+{
+    StateChangeTracker tracker;
+
+    CabinetSnapshot initial;
+    initial.mode = CabinetMode::Normal;
+    initial.health = SystemHealth::Normal;
+    initial.lines = {testLine(1, 100.0), testLine(2, 100.0)};
+    initial.lines[0].name = QStringLiteral("Гараж");
+    initial.lines[1].name = QStringLiteral("Коридор");
+    initial.lines[0].outputState = LineOutputState::Off;
+    initial.lines[1].outputState = LineOutputState::Off;
+    initial.lines[1].state = LineState::Fault;
+
+    QVector<StateLogEvent> events = tracker.update(initial);
+    auto hasEvent = [](const QVector<StateLogEvent> &items, const QString &text, bool warning) {
+        return std::any_of(items.cbegin(), items.cend(), [&](const StateLogEvent &event) {
+            return event.warning == warning && event.message.contains(text);
+        });
+    };
+    if (!expect(hasEvent(events, QStringLiteral("Режим: РАБОЧИЙ"), false),
+                QStringLiteral("initial operating mode should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Система: НОРМА"), false),
+                   QStringLiteral("initial system state should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Линия 2 \"Коридор\": исходное состояние НЕИСПРАВНОСТЬ"), true),
+                   QStringLiteral("initial abnormal line state should be logged"))
+        || !expect(!hasEvent(events, QStringLiteral("Линия 1"), false),
+                   QStringLiteral("initial normal lines should not fill the log")))
+        return false;
+
+    CabinetSnapshot changed = initial;
+    changed.mode = CabinetMode::Fire;
+    changed.health = SystemHealth::Fault;
+    changed.activeFaults = {QStringLiteral("связь Modbus")};
+    changed.lines[0].state = LineState::Fault;
+    changed.lines[0].outputState = LineOutputState::On;
+    changed.lines[1].state = LineState::Normal;
+    events = tracker.update(changed);
+
+    if (!expect(hasEvent(events, QStringLiteral("Режим: РАБОЧИЙ → ПОЖАР"), false),
+                QStringLiteral("mode transition should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Система: НОРМА → НЕИСПРАВНОСТЬ. Причина: связь Modbus"), true),
+                   QStringLiteral("system fault and its reason should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Линия 1 \"Гараж\": НОРМА → НЕИСПРАВНОСТЬ"), true),
+                   QStringLiteral("line fault should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Линия 2 \"Коридор\": НЕИСПРАВНОСТЬ → НОРМА"), false),
+                   QStringLiteral("line recovery should be logged"))
+        || !expect(hasEvent(events, QStringLiteral("Линия 1 \"Гараж\": выход ВЫКЛ → ВКЛ"), false),
+                   QStringLiteral("line output switching should be logged")))
+        return false;
+
+    if (!expect(tracker.update(changed).isEmpty(),
+                QStringLiteral("unchanged snapshots must not repeat log entries")))
+        return false;
+
+    changed.activeFaults = {QStringLiteral("батарея")};
+    events = tracker.update(changed);
+    if (!expect(hasEvent(events, QStringLiteral("Причина изменена: батарея"), true),
+                QStringLiteral("changed system fault reason should be logged")))
+        return false;
+
+    changed.mode = CabinetMode::ManualTest;
+    changed.testKind = TestKind::Functional;
+    changed.testSource = TestSource::Manual;
+    changed.health = SystemHealth::Normal;
+    changed.activeFaults.clear();
+    changed.lines[0].state = LineState::Normal;
+    events = tracker.update(changed);
+    return expect(hasEvent(events, QStringLiteral("Режим: ПОЖАР → ТЕСТ (ручной, исправность)"), false),
+                  QStringLiteral("test mode details should be logged"))
+        && expect(hasEvent(events, QStringLiteral("Система: НЕИСПРАВНОСТЬ → НОРМА"), false),
+                  QStringLiteral("system recovery should be logged"))
+        && expect(hasEvent(events, QStringLiteral("Линия 1 \"Гараж\": НЕИСПРАВНОСТЬ → НОРМА"), false),
+                  QStringLiteral("line recovery from fault should be logged"));
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -1065,6 +1177,7 @@ int main(int argc, char *argv[])
         && manualTestBlockedByFireIsConsumed()
         && testStoppedByOperator()
         && lineManagerReadsManualStopButton()
+        && lineManagerNormalizesEditableDecimalPrecision()
         && lineManagerDoesNotTreatMissingWaveShareAsPowerFailure()
         && disabledLinesDoNotRequireExtraWaveShareModules()
         && lineManagerDrivesNormallyClosedFaultLamp()
@@ -1083,7 +1196,9 @@ int main(int argc, char *argv[])
         && operationalMonitorIgnoresOffLine()
         && operationalMonitorFailsNoMeasurementAfterWarmup()
         && insulationBreakdownIsPublishedForRemoteMonitoring()
-        && operationalMonitorPreservesInsulationBreakdown();
+        && operationalMonitorPreservesInsulationBreakdown()
+        && lineDataAvailabilityDependsOnlyOnPower()
+        && stateChangeTrackerLogsTransitionsAndRecoveriesOnce();
 
     if (ok)
         qInfo() << "TestController checks passed";

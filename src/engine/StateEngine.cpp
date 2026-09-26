@@ -1,5 +1,7 @@
 #include "StateEngine.h"
 
+#include <cmath>
+
 namespace DialogG2 {
 
 CabinetSnapshot StateEngine::evaluate(const EngineInputs &inputs) const
@@ -33,6 +35,15 @@ CabinetSnapshot StateEngine::evaluate(const EngineInputs &inputs) const
 bool StateEngine::faultLampRequired(const CabinetSnapshot &snapshot)
 {
     return snapshot.mode == CabinetMode::Emergency || snapshot.health == SystemHealth::Fault;
+}
+
+bool StateEngine::linePowerDataAvailable(const QVector<LineSnapshot> &lines)
+{
+    for (const LineSnapshot &line : lines) {
+        if (line.enabled && !std::isfinite(line.outputPower))
+            return false;
+    }
+    return true;
 }
 
 CabinetMode StateEngine::resolveMode(const EngineInputs &inputs)

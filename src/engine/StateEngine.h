@@ -39,6 +39,7 @@ class StateEngine
 public:
     CabinetSnapshot evaluate(const EngineInputs &inputs) const;
     static bool faultLampRequired(const CabinetSnapshot &snapshot);
+    static bool linePowerDataAvailable(const QVector<LineSnapshot> &lines);
 
 private:
     static CabinetMode resolveMode(const EngineInputs &inputs);

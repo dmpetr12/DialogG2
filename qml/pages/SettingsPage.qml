@@ -16,8 +16,14 @@ Rectangle {
         for (var i = 0; i < rows.length; ++i) {
             var row = {}
             for (var key in rows[i]) {
-                if (key !== "index")
-                    row[key] = rows[i][key]
+                if (key !== "index") {
+                    var value = rows[i][key]
+                    row[key] = (value === null || value === undefined)
+                            && (key === "power" || key === "voltage"
+                                || key === "current" || key === "leakage")
+                        ? 0
+                        : value
+                }
             }
             row.lineNumber = rows[i].index
             row.position = i

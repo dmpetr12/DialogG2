@@ -130,6 +130,25 @@ int main(int argc, char **argv) {
         ++failures;
     }
     delete testPage;
+
+    panel.insert("lines", QVariantList{QVariantMap{
+        {"index", 1}, {"description", QString::fromUtf8("Гараж")},
+        {"mode", 0}, {"displayModeText", QString::fromUtf8("ПОСТОЯН.")},
+        {"displayStateText", QString::fromUtf8("ВКЛ")}, {"displayStateOk", true},
+        {"power", QVariant()}, {"voltage", QVariant()}, {"current", QVariant()},
+        {"leakage", QVariant()}, {"powerAvailable", false}, {"voltageAvailable", false},
+        {"currentAvailable", false}, {"leakageAvailable", false}
+    }});
+    QQmlComponent linesComponent(&engine, QUrl::fromLocalFile(QStringLiteral(LINES_QML_PATH)));
+    auto *linesPage = qobject_cast<QQuickItem *>(linesComponent.create());
+    if (!linesPage) { qCritical() << linesComponent.errors(); return 5; }
+    if (linesPage->property("wType").toInt() < 140
+        || linesPage->property("typeFontSize").toInt() >= linesPage->property("tableFontSize").toInt()) {
+        fprintf(stderr, "FAIL: HMI line type column must be wider and use a smaller font\n");
+        ++failures;
+    }
+    delete linesPage;
+
     fprintf(stdout,"%d battery page failures\n",failures);
     return failures ? 1 : 0;
 }

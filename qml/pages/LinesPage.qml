@@ -12,8 +12,9 @@ Rectangle {
     color: "white"
 
     readonly property int tableFontSize: 21
-    readonly property int wName: 238
-    readonly property int wType: 108
+    readonly property int typeFontSize: 17
+    readonly property int wName: 206
+    readonly property int wType: 140
     readonly property int wState: 124
     readonly property int wNominalPower: 98
     readonly property int wMeasuredPower: 104
@@ -31,8 +32,17 @@ Rectangle {
         for (var i = 0; i < rows.length; ++i) {
             var row = {}
             for (var key in rows[i]) {
-                if (key !== "index")
-                    row[key] = rows[i][key]
+                if (key !== "index") {
+                    // ListModel cannot create a role from a null value. Keep
+                    // measurement roles present; availability flags decide
+                    // whether the value is displayed as a dash.
+                    var value = rows[i][key]
+                    row[key] = (value === null || value === undefined)
+                            && (key === "power" || key === "voltage"
+                                || key === "current" || key === "leakage")
+                        ? 0
+                        : value
+                }
             }
             row.lineNumber = rows[i].index
             if (i < lineRows.count)
@@ -145,6 +155,7 @@ Rectangle {
                         TextCell {
                             width: root.wType
                             text: model.displayModeText
+                            font.pixelSize: root.typeFontSize
                         }
 
                         StateCell {

@@ -48,6 +48,7 @@
 #include "engine/MeteringBusController.h"
 #include "engine/ModbusController.h"
 #include "engine/ModbusTcpServer.h"
+#include "engine/StateChangeTracker.h"
 #include "engine/StateEngine.h"
 #include "engine/StateFileStore.h"
 #include "engine/TestController.h"
@@ -359,6 +360,26 @@ private:
             if (line.isEmpty())
                 return webJsonError(QStringLiteral("line not found"), QHttpServerResponder::StatusCode::NotFound);
             return webJsonOk({{QStringLiteral("data"), line}});
+        });
+
+        m_webServer.route(QStringLiteral("/api/lines/<arg>/update"), QHttpServerRequest::Method::Post,
+                          [this](int index, const QHttpServerRequest &request) {
+            if (!webCheckAuth(request))
+                return webUnauthorized();
+
+            QJsonObject body;
+            if (!webRequestJson(request, &body))
+                return webJsonError(QStringLiteral("invalid json body"));
+            if (!updateLineFromHmi(index, body))
+                return webJsonError(QStringLiteral("line update failed"));
+
+            QString error;
+            if (!m_lineManager.saveConfig(defaultLinesConfigPath(), &error)) {
+                LOG_WARN(QStringLiteral("Line config not saved: %1").arg(error));
+                return webJsonError(QStringLiteral("line config not saved"),
+                                    QHttpServerResponder::StatusCode::InternalServerError);
+            }
+            return webJsonOk({{QStringLiteral("data"), lineAtForHmi(index)}});
         });
 
         m_webServer.route(QStringLiteral("/api/login"), QHttpServerRequest::Method::Post,
@@ -912,9 +933,9 @@ private:
             {QStringLiteral("currentAvailable"), std::isfinite(measuredCurrent)},
             {QStringLiteral("tolerance"), std::isfinite(line->powerTestTolerancePercent) ? line->powerTestTolerancePercent : 5.0},
             {QStringLiteral("mode"), hmiMode},
-            {QStringLiteral("displayModeText"), hmiMode == 0 ? QStringLiteral("ПОСТ")
-                                                               : hmiMode == 1 ? QStringLiteral("НЕПОСТ")
-                                                                              : QStringLiteral("ОТКЛ")}
+            {QStringLiteral("displayModeText"), hmiMode == 0 ? QStringLiteral("ПОСТОЯН.")
+                                                               : hmiMode == 1 ? QStringLiteral("НЕПОСТ.")
+                                                                              : QStringLiteral("ОТКЛ.")}
         };
     }
 
@@ -969,11 +990,7 @@ private:
         for (int i = 0; i < m_lineManager.lines().size(); ++i)
             lines.append(lineAtForHmi(i));
 
-        const bool linesAvailable = m_relayBusStatus.online
-            && std::all_of(m_lastSnapshot.lines.cbegin(), m_lastSnapshot.lines.cend(), [](const LineSnapshot &line) {
-                return !line.enabled || (std::isfinite(line.outputPower) && std::isfinite(line.leakageCurrent)
-                    && std::isfinite(line.outputVoltage) && std::isfinite(line.outputCurrent));
-            });
+        const bool linesAvailable = StateEngine::linePowerDataAvailable(m_lastSnapshot.lines);
         const bool systemAvailable = linesAvailable
             && std::isfinite(m_lastSnapshot.inputVoltage)
             && std::isfinite(m_lastSnapshot.inputCurrent)
@@ -1486,13 +1503,12 @@ private:
             return;
         }
 
-        if (snapshot.mode != m_lastLoggedMode || snapshot.health != m_lastLoggedHealth) {
-            LOG_INFO(QStringLiteral("%1 / %2 - %3")
-                         .arg(modeText(snapshot.mode),
-                              healthText(snapshot.health),
-                              snapshot.explanation));
-            m_lastLoggedMode = snapshot.mode;
-            m_lastLoggedHealth = snapshot.health;
+        const QVector<StateLogEvent> events = m_stateChangeTracker.update(snapshot);
+        for (const StateLogEvent &event : events) {
+            if (event.warning)
+                LOG_WARN(event.message);
+            else
+                LOG_INFO(event.message);
         }
     }
 
@@ -1593,6 +1609,7 @@ private:
     TestController m_testController;
     TestScheduleManager m_scheduleManager;
     StateEngine m_stateEngine;
+    StateChangeTracker m_stateChangeTracker;
     StateFileStore m_stateStore;
     TestJournalStore m_journalStore;
     QVector<TestJournalEntry> m_storedJournal;
@@ -1634,8 +1651,6 @@ private:
     double m_inputFrequency = std::numeric_limits<double>::quiet_NaN();
     double m_temperature = std::numeric_limits<double>::quiet_NaN();
 
-    CabinetMode m_lastLoggedMode = static_cast<CabinetMode>(-1);
-    SystemHealth m_lastLoggedHealth = static_cast<SystemHealth>(-1);
     CabinetSnapshot m_lastSnapshot;
     QDateTime m_startedAt;
     QDateTime m_lastHeartbeat;

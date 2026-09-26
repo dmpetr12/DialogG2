@@ -388,7 +388,7 @@ Page {
                         }
                     }
 
-                    model: ["постоянный", "непостоянный", "линия отключена"]
+                    model: ["Постоянная", "Непостоянная", "Отключена"]
                     currentIndex: lineMode
 
                     onActivated: function(index) {

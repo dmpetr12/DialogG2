@@ -55,6 +55,7 @@ http://<ip-адрес-щита>:8080/
 | `POST` | `/api/test/start-functional` | Запустить тест исправности |
 | `POST` | `/api/test/start-duration` | Запустить тест длительности |
 | `POST` | `/api/test/stop` | Остановить текущий тест |
+| `POST` | `/api/lines/<index>/update` | Изменить и сохранить существующую линию |
 | `POST` | `/api/schedule/add` | Добавить запись расписания |
 | `POST` | `/api/schedule/<index>/update` | Изменить запись расписания |
 | `POST` | `/api/schedule/<index>/remove` | Удалить запись расписания |
@@ -66,8 +67,16 @@ http://<ip-адрес-щита>:8080/
 Примеры тел команд:
 
 ```json
-{"warmupSec": 600}
+{"warmupSec": 120}
 ```
+
+Настройка существующей линии:
+
+```json
+{"description": "Гараж", "mpower": 124, "tolerance": 5, "mode": 0}
+```
+
+`mode`: `0` - постоянная, `1` - непостоянная, `2` - отключена. Индекс соответствует позиции линии в массиве `/api/lines`.
 
 ```json
 {"durationSec": 3600}

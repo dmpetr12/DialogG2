@@ -298,6 +298,11 @@ bool LineManager::updateLine(const LineConfig &line, QString *error)
         return false;
     }
 
+    if (std::isfinite(updated.nominalPower))
+        updated.nominalPower = std::round(updated.nominalPower * 10.0) / 10.0;
+    if (std::isfinite(updated.powerTestTolerancePercent))
+        updated.powerTestTolerancePercent = std::round(updated.powerTestTolerancePercent * 10.0) / 10.0;
+
     for (int i = 0; i < m_lines.size(); ++i) {
         if (i == pos)
             continue;

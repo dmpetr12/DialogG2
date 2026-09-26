@@ -40,10 +40,10 @@
       background: var(--top);
     }
 
-    .brand {
-      color: #515a52;
-      font-size: 27px;
-      line-height: 1;
+    .brand-logo {
+      display: block;
+      height: 80px;
+      width: auto;
       margin-bottom: 4px;
     }
 
@@ -104,7 +104,7 @@
 
     .nav {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(120px, 0.7fr);
+      grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(120px, 0.7fr);
       gap: 8px;
     }
 
@@ -242,6 +242,48 @@
       font-size: 36px;
     }
 
+    .form-grid {
+      max-width: 760px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.4fr);
+      gap: 14px 18px;
+      align-items: center;
+    }
+
+    .form-grid label {
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .form-grid input, .form-grid select {
+      width: 100%;
+      height: 48px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font: 20px Arial, Helvetica, sans-serif;
+    }
+
+    .form-value {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #efefef;
+      color: var(--text);
+      font-size: 20px;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
     table {
       width: 100%;
       border-collapse: separate;
@@ -295,7 +337,7 @@
 
     @media (max-width: 560px) {
       header { padding: 10px 12px; min-height: 94px; }
-      .brand { font-size: 20px; }
+      .brand-logo { height: 60px; }
       h1 { font-size: 21px; }
       .clock { font-size: 20px; gap: 10px; }
       main { padding: 8px; }
@@ -310,6 +352,8 @@
       .page-head { grid-template-columns: 82px 1fr; }
       .page-head > :last-child { grid-column: 1 / -1; }
       .page-title { font-size: 27px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-actions { grid-column: 1; }
       th, td { font-size: 14px; padding: 8px 6px; }
     }
   </style>
@@ -317,7 +361,7 @@
 <body>
   <header>
     <div>
-      <div class="brand">Световые технологии</div>
+      <img class="brand-logo" src="light-tech-logo.png" alt="Световые технологии">
       <h1>Щит аварийного освещения "Диалог G2"</h1>
     </div>
     <div class="clock">
@@ -332,6 +376,7 @@
     <nav class="nav">
       <button data-view="dashboard" class="active">Главная</button>
       <button data-view="lines">Линии</button>
+      <button data-view="line-settings" data-auth>Настройки линий</button>
       <button data-view="journal">Журнал</button>
       <button data-view="schedule">Расписание</button>
       <button data-view="logs">Логи</button>
@@ -340,8 +385,8 @@
 
     <div id="commandPanel" class="command-panel">
       <div class="command-grid">
-        <button id="fireBtn" class="danger" data-auth>Пуск аварии</button>
-        <button id="functionalBtn" class="warn" data-auth>Тест исправности</button>
+        <button id="fireBtn" class="danger" data-auth>Пуск</button>
+        <button id="functionalBtn" class="warn" data-auth>Тест</button>
         <button id="durationBtn" class="warn" data-auth>Тест длительности</button>
       </div>
       <div id="message" class="message"></div>
@@ -368,7 +413,6 @@
           <div class="tile">
             <div class="tile-title"><span id="linesDot" class="dot"></span><span>Линии</span></div>
             <div id="linesState" class="tile-value">--</div>
-            <div id="linesNote" class="tile-note">--</div>
           </div>
           <div class="tile">
             <div class="tile-title"><span id="busDot" class="dot"></span><span>Связь</span></div>
@@ -394,11 +438,57 @@
       <div class="panel">
         <table>
           <thead>
-            <tr><th>№</th><th>Линия</th><th>Тип</th><th>Выход</th><th>Утечка, мА</th><th>Предел, мА</th><th>Итог</th></tr>
+            <tr><th>Название</th><th>Тип</th><th>Состояние</th><th>P<sub>ном</sub>, Вт</th><th>P<sub>изм</sub>, Вт</th><th>U, В</th><th>I, А</th><th>I<sub>утеч</sub>, мА</th></tr>
           </thead>
           <tbody id="linesRows"></tbody>
         </table>
       </div>
+    </section>
+
+    <section id="line-settings" class="view">
+      <div class="page-head">
+        <div class="page-title">Настройки линий</div>
+      </div>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr><th>№</th><th>Название</th><th>Режим</th><th>Мощность, Вт</th><th>Допуск, %</th><th></th></tr>
+          </thead>
+          <tbody id="lineSettingsRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="line-edit" class="view">
+      <div class="page-head">
+        <div id="lineEditTitle" class="page-title">Настройка линии</div>
+      </div>
+      <form id="lineEditForm" class="panel form-grid">
+        <label for="lineEditName">Название</label>
+        <input id="lineEditName" maxlength="80" required>
+
+        <label for="lineEditPower">Номинальная мощность, Вт</label>
+        <input id="lineEditPower" type="number" min="0" max="2000" step="0.1" required>
+
+        <label for="lineEditMeasuredPower">Измеренная мощность</label>
+        <output id="lineEditMeasuredPower" class="form-value">--</output>
+
+        <label for="lineEditTolerance">Допуск, %</label>
+        <input id="lineEditTolerance" type="number" min="0" max="50" step="0.1" required>
+
+        <label for="lineEditMode">Режим</label>
+        <select id="lineEditMode">
+          <option value="0">Постоянная</option>
+          <option value="1">Непостоянная</option>
+          <option value="2">Отключена</option>
+        </select>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" data-auth>Сохранить</button>
+          <button id="lineEditBack" type="button">Назад</button>
+        </div>
+        <div id="lineEditMessage" class="message"></div>
+      </form>
     </section>
 
     <section id="journal" class="view">
@@ -451,7 +541,8 @@
     const state = {
       token: localStorage.getItem("dialogG2Token") || "",
       currentView: "dashboard",
-      last: null
+      last: null,
+      editingLinePosition: -1
     };
 
     const $ = (id) => document.getElementById(id);
@@ -506,12 +597,55 @@
     }
 
     function modeText(data) {
+      if (!data.systemAvailable) return "НЕТ ДАННЫХ";
       if (data.modeCode === "normal") return "РАБОЧИЙ";
       return (data.modeText || "--").toUpperCase();
     }
 
     function lineName(line, i) {
       return line.description || line.name || "Линия " + (i + 1);
+    }
+
+    function lineModeName(line) {
+      const mode = Number(line.mode);
+      if (mode === 0) return "Постоянная";
+      if (mode === 1) return "Непостоянная";
+      if (mode === 2) return "Отключена";
+      return "--";
+    }
+
+    function lineModeShortName(line) {
+      const mode = Number(line.mode);
+      if (mode === 0) return "ПОСТОЯН.";
+      if (mode === 1) return "НЕПОСТ.";
+      if (mode === 2) return "ОТКЛ.";
+      return "--";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function openLineEditor(position) {
+      const line = state.last?.lines?.[position];
+      if (!line)
+        return;
+
+      state.editingLinePosition = position;
+      $("lineEditTitle").textContent = "Настройка линии " + line.index;
+      $("lineEditName").value = lineName(line, position);
+      $("lineEditPower").value = Number(line.mpower ?? 0).toFixed(1);
+      const measuredPower = fmt(line.power, 1);
+      $("lineEditMeasuredPower").textContent = measuredPower === "--" ? "--" : measuredPower + " Вт";
+      $("lineEditTolerance").value = Number(line.tolerance ?? 0).toFixed(1);
+      $("lineEditMode").value = String(Number(line.mode || 0));
+      $("lineEditMessage").textContent = "";
+      openView("line-edit");
     }
 
     function activeTestKind(data) {
@@ -527,7 +661,7 @@
       const functionalActive = kind === 1;
       const durationActive = kind === 2;
 
-      $("functionalBtn").textContent = functionalActive ? "Стоп тест" : "Тест исправности";
+      $("functionalBtn").textContent = functionalActive ? "Стоп тест" : "Тест";
       $("durationBtn").textContent = durationActive ? "Стоп тест" : "Тест длительности";
       $("functionalBtn").className = "warn";
       $("durationBtn").className = "warn";
@@ -551,7 +685,6 @@
       $("busState").textContent = data.busConnected ? "ОК" : "НЕТ";
       $("systemNote").textContent = data.healthText || "--";
       $("batteryNote").textContent = data.battery?.stateText || "--";
-      $("linesNote").textContent = "Линий: " + (data.lineCount || 0);
       if (data.testRunning) {
         setDot("modeDot", false, true);
       } else {
@@ -567,22 +700,35 @@
       $("battery").textContent = data.batteryPercent >= 0 ? data.batteryPercent + "%" : "--";
       $("testInfo").textContent = data.testRunning
         ? "Тест выполняется, осталось " + Math.ceil((data.testRemainingSec || 0) / 60) + " мин"
-        : "Тест не выполняется";
+        : "";
 
-      $("fireBtn").textContent = data.manualEmergencyActive ? "Снять аварию" : "Пуск аварии";
+      $("fireBtn").textContent = data.manualEmergencyActive ? "Стоп" : "Пуск";
       $("fireBtn").className = data.manualEmergencyActive ? "warn" : "danger";
       $("fireBtn").disabled = !state.token;
       renderTestButtons(data);
 
-      $("linesRows").innerHTML = (data.lines || []).map((line, i) => `
+      const allLines = data.lines || [];
+      $("linesRows").innerHTML = allLines.filter((line) => Number(line.mode) !== 2).map((line, i) => `
+        <tr>
+          <td class="${line.displayStateOk ? "" : "state-bad"}" title="${escapeHtml(lineName(line, i))}">${escapeHtml(lineName(line, i))}</td>
+          <td>${lineModeShortName(line)}</td>
+          <td class="${line.displayStateOk ? "" : "state-bad"}">${line.displayStateText || "--"}</td>
+          <td>${fmt(line.mpower, 0)}</td>
+          <td>${fmt(line.power, 0)}</td>
+          <td>${fmt(line.voltage, 0)}</td>
+          <td>${fmt(line.current, 1)}</td>
+          <td>${fmt(line.leakage, 1)}</td>
+        </tr>
+      `).join("");
+
+      $("lineSettingsRows").innerHTML = allLines.map((line, i) => `
         <tr>
           <td>${line.index ?? i + 1}</td>
-          <td class="${line.displayStateOk ? "" : "state-bad"}" title="${lineName(line, i)}">${lineName(line, i)}</td>
-          <td>${line.displayModeText || "--"}</td>
-          <td>${line.outputStateText || "--"}</td>
-          <td>${fmt(line.leakage, 1)}</td>
-          <td>${fmt(line.leakageLimit, 1)}</td>
-          <td class="${line.displayStateOk ? "" : "state-bad"}">${line.displayStateText || "--"}</td>
+          <td>${escapeHtml(lineName(line, i))}</td>
+          <td>${lineModeName(line)}</td>
+          <td>${fmt(line.mpower, 1)}</td>
+          <td>${fmt(line.tolerance, 1)}</td>
+          <td><button class="small" type="button" onclick="openLineEditor(${i})">Изменить</button></td>
         </tr>
       `).join("");
 
@@ -663,7 +809,7 @@
       }
       if (id === "logs") await refreshLogs();
       if (id === "schedule") await refreshSchedule();
-      if (id === "lines") await refreshState();
+      if (id === "lines" || id === "line-settings") await refreshState();
     }
 
     document.querySelectorAll("[data-view]").forEach((button) => {
@@ -686,11 +832,39 @@
     });
 
     on("fireBtn", "click", () => post(state.last?.manualEmergencyActive ? "/api/manual-emergency/stop" : "/api/manual-emergency/start"));
+    on("lineEditBack", "click", () => openView("line-settings"));
+    on("lineEditForm", "submit", async (event) => {
+      event.preventDefault();
+      const position = state.editingLinePosition;
+      const description = $("lineEditName").value.trim();
+      const mpower = Number($("lineEditPower").value);
+      const tolerance = Number($("lineEditTolerance").value);
+      const mode = Number($("lineEditMode").value);
+
+      if (position < 0 || !description || !Number.isFinite(mpower) || mpower < 0 || mpower > 2000
+          || !Number.isFinite(tolerance) || tolerance < 0 || tolerance > 50
+          || ![0, 1, 2].includes(mode)) {
+        $("lineEditMessage").textContent = "Проверьте введённые значения";
+        return;
+      }
+
+      try {
+        await api(`/api/lines/${position}/update`, {
+          method: "POST",
+          body: JSON.stringify({description, mpower, tolerance, mode})
+        });
+        $("lineEditMessage").textContent = "";
+        await refreshState();
+        await openView("line-settings");
+      } catch (err) {
+        $("lineEditMessage").textContent = err.message;
+      }
+    });
     on("functionalBtn", "click", () => {
       if (activeTestKind(state.last) === 1)
         post("/api/test/stop");
       else
-        post("/api/test/start-functional", {warmupSec: 600});
+        post("/api/test/start-functional", {warmupSec: 120});
     });
     on("durationBtn", "click", () => {
       if (activeTestKind(state.last) === 2)
