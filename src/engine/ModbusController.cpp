@@ -10,6 +10,8 @@
 
 namespace DialogG2 {
 
+static constexpr int ReconnectIntervalMs = 3000;
+
 static QSerialPort::Parity parityFromConfig(const QString &value)
 {
     const QString normalized = value.trimmed().toLower();
@@ -89,6 +91,10 @@ void ModbusController::connectDevice()
     if (!m_client)
         recreateClient();
 
+    if (m_client->state() != QModbusDevice::UnconnectedState)
+        return;
+
+    m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
     setupDevice();
     if (!m_client->connectDevice())
         updateBusMonitorFailure(m_client->errorString());
@@ -275,8 +281,14 @@ void ModbusController::recreateClient()
     connect(m_client, &QModbusClient::stateChanged, this, [this](QModbusDevice::State state) {
         const bool connected = state == QModbusDevice::ConnectedState;
         emit connectedChanged(connected);
-        if (connected)
+        if (connected) {
+            m_nextConnectAttemptMsec = 0;
             updateBusMonitorSuccess();
+        } else if (state == QModbusDevice::UnconnectedState) {
+            m_busy = false;
+            clearQueues();
+            m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
+        }
     });
 
     connect(m_client, &QModbusClient::errorOccurred, this, [this](QModbusDevice::Error error) {
@@ -285,15 +297,21 @@ void ModbusController::recreateClient()
 
         const QString message = m_client ? m_client->errorString() : QStringLiteral("Modbus client error");
         emit errorOccurred(message);
+        m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
     });
 }
 
 void ModbusController::pollTick()
 {
-    if (!isConnected())
-        return;
-
     const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (!isConnected()) {
+        if (m_client && m_client->state() == QModbusDevice::UnconnectedState
+            && now >= m_nextConnectAttemptMsec) {
+            connectDevice();
+        }
+        return;
+    }
+
     for (PollTask &task : m_pollTasks) {
         if (task.nextDueMsec > now)
             continue;

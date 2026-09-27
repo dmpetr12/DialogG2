@@ -4,6 +4,8 @@
 #include <QVariantMap>
 #include "PanelFacade.h"
 #include "engine/MeteringBusController.h"
+#include "engine/ModbusController.h"
+#include <QEventLoop>
 #include <cmath>
 #include <cstdio>
 
@@ -136,6 +138,34 @@ int main(int argc, char **argv) {
     DialogG2::MeteringBusController bus;
     check(TelemetryTestAccess::branchPollsCorrect(bus), "AMC polls separate P/U/I blocks at slave 2");
     check(TelemetryTestAccess::activeRequestIsNotQueued(bus), "active request must not be queued again");
+
+    {
+        DialogG2::MeteringBusController lateMetering;
+        DialogG2::ModbusController lateRelay;
+        DialogG2::ModbusRtuConfig missingPort;
+        missingPort.port = QStringLiteral("__dialog_g2_missing_serial_port__");
+        lateMetering.configure(missingPort);
+        lateRelay.configure(missingPort);
+
+        int meteringAttempts = 0;
+        int relayAttempts = 0;
+        QObject::connect(&lateMetering, &DialogG2::MeteringBusController::connectedChanged,
+                         [&](bool connected) { if (!connected) ++meteringAttempts; });
+        QObject::connect(&lateRelay, &DialogG2::ModbusController::busStatusChanged,
+                         [&](const auto &) { ++relayAttempts; });
+
+        lateMetering.connectDevice();
+        lateRelay.connectDevice();
+        lateMetering.startPolling();
+        lateRelay.startPolling();
+
+        QEventLoop retryWait;
+        QTimer::singleShot(3300, &retryWait, &QEventLoop::quit);
+        retryWait.exec();
+
+        check(meteringAttempts >= 2, "metering bus retries a port that appears after startup");
+        check(relayAttempts >= 2, "relay bus retries a port that appears after startup");
+    }
     int validAdlResponses = 0;
     QObject::connect(&bus, &DialogG2::MeteringBusController::adl200InputMeterUpdated,
                      [&](const auto &m) { if (m.valid) ++validAdlResponses; });

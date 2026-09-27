@@ -129,6 +129,7 @@ private:
     std::deque<Request> m_highQueue;
     std::deque<Request> m_normalQueue;
     std::deque<Request> m_lowQueue;
+    qint64 m_nextConnectAttemptMsec = 0;
     bool m_busy = false;
 };
 

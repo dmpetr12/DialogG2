@@ -121,6 +121,7 @@ private:
     Request m_currentRequest;
     QByteArray m_rxBuffer;
     QHash<QString, int> m_requestFailures;
+    qint64 m_nextConnectAttemptMsec = 0;
     bool m_busy = false;
 };
 

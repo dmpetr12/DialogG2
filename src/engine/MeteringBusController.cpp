@@ -9,6 +9,8 @@
 
 namespace DialogG2 {
 
+static constexpr int ReconnectIntervalMs = 3000;
+
 static QSerialPort::Parity parityFromConfig(const QString &value)
 {
     const QString normalized = value.trimmed().toLower();
@@ -65,6 +67,17 @@ MeteringBusController::MeteringBusController(QObject *parent)
         invalidateMeasurements();
         emit errorOccurred(message);
         updateBusMonitorFailure(message);
+
+        if (error == QSerialPort::ResourceError || error == QSerialPort::DeviceNotFoundError
+            || error == QSerialPort::PermissionError) {
+            m_timeoutTimer.stop();
+            m_queue.clear();
+            m_rxBuffer.clear();
+            m_busy = false;
+            m_port->close();
+            m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
+            emit connectedChanged(false);
+        }
     });
 }
 
@@ -101,9 +114,10 @@ ModbusBusStatus MeteringBusController::busStatus() const
 
 void MeteringBusController::connectDevice()
 {
-    if (!m_port)
+    if (!m_port || m_port->isOpen())
         return;
 
+    m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
     setupPort();
     if (!m_port->open(QIODevice::ReadWrite)) {
         updateBusMonitorFailure(m_port->errorString());
@@ -111,6 +125,7 @@ void MeteringBusController::connectDevice()
         return;
     }
 
+    m_nextConnectAttemptMsec = 0;
     emit connectedChanged(true);
     updateBusMonitorSuccess();
     pump();
@@ -227,10 +242,13 @@ void MeteringBusController::setupPort()
 
 void MeteringBusController::pollTick()
 {
-    if (!isConnected())
-        return;
-
     const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (!isConnected()) {
+        if (now >= m_nextConnectAttemptMsec)
+            connectDevice();
+        return;
+    }
+
     for (PollTask &task : m_pollTasks) {
         if (task.nextDueMsec > now)
             continue;

@@ -1237,6 +1237,10 @@ private:
         connect(&m_relayBus, &ModbusController::busStatusChanged, this, [this](const ModbusBusStatus &status) {
             m_relayBusStatus = status;
         });
+        connect(&m_relayBus, &ModbusController::connectedChanged, this, [this](bool connected) {
+            if (connected)
+                m_lastRelayBytes.clear();
+        });
         connect(&m_relayBus, &ModbusController::errorOccurred, this, [](const QString &message) {
             LOG_WARN(QStringLiteral("Relay bus: %1").arg(message));
         });
