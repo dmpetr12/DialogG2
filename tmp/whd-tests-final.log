@@ -1,0 +1,444 @@
+jom: parallel job execution disabled for Makefile
+[  0%] Built target dialog-g2-core_autogen_timestamp_deps
+[  4%] Built target dialog-g2-core_autogen
+[ 84%] Built target dialog-g2-core
+[ 84%] Built target test-controller-tests_autogen_timestamp_deps
+[ 88%] Automatic MOC and UIC for target test-controller-tests
+[ 88%] Built target test-controller-tests_autogen
+[ 92%] Building CXX object CMakeFiles/test-controller-tests.dir/tests/test_controller_tests.cpp.obj
+test_controller_tests.cpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/Adl200Meter.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QMetaType
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\qmetatype.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qglobal.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\type_traits
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\yvals_core.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\sal.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\concurrencysal.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vadefs.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xkeycheck.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cstddef
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stddef.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xtr1common
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cstdint
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\stdint.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\utility
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_doom_core.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\initializer_list
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\assert.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\stdbool.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtcoreglobal.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtversionchecks.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtconfiginclude.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\version
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qconfig.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtcore-config.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtconfigmacros.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtdeprecationdefinitions.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qprocessordetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\assert.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtcoreexports.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtdeprecationmarkers.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtclasshelpermacros.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtpreprocessorsupport.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qprocessordetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qassert.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtnoop.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtypes.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qprocessordetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtversion.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtypeinfo.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainerfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\limits
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cfloat
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\float.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\climits
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\limits.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cwchar
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cstdio
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstdio.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_stdio_config.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\wchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_memcpy_s.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\errno.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime_string.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wconio.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wctype.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wdirect.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wio.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_share.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wprocess.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstdlib.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wstring.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_wtime.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\sys/stat.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\sys/types.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\intrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\intrin0.inl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\setjmp.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\immintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\wmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:              C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\nmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:               C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\smmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\tmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                 C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\pmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                  C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\emmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                   C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                    C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\mmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                    C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\malloc.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                     C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_malloc.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\zmmintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\ammintrin.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\intrin0.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsysinfo.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qprocessordetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlogging.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qflags.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompare_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\algorithm
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_heap_algorithms.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xutility
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\yvals.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\crtdbg.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime_new_debug.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime_new.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\crtdefs.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\use_ansi.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_iter_core.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cstdlib
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\math.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_math.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdlib.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_search.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cstring
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\string.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_memory.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_int128.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_bit_utils.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_minmax.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xmemory
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\new
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\exception
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime_exception.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\eh.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\corecrt_terminate.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xatomic.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qatomic.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbasicatomic.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qatomic_cxx11.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qgenericatomic.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qyieldcpu.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qprocessordetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\atomic
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xthreads.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_threads_core.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xtimec.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\ctime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:              C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\time.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qconstructormacros.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdarwinhelpers.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qexceptionhandling.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qforeach.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qttypetraits.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\optional
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_sanitizer_annotate_container.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xsmf_control.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\tuple
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\variant
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfunctionpointer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qglobalstatic.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qmalloc.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qminmax.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qnumeric.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cmath
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/q20type_traits.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qoverload.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qswap.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtenvironmentvariables.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtresource.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qttranslation.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qversiontagging.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbytearray.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qrefcount.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qnamespace.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompare.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstdlibdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcomparehelpers.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\functional
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\typeinfo
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vcruntime_typeinfo.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\unordered_map
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xhash
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\list
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xpolymorphic_allocator.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\vector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xbit_ops.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xnode_handle.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtmetamacros.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qarraydata.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qpair.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qarraydatapointer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qarraydataops.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qxptype_traits.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/q23type_traits.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\iterator
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\iosfwd
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\memory
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/q20functional.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/q20memory.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/q17memory.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbytearrayalgorithms.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\stdarg.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbytearrayview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\string
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xstring
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_string_view.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cctype
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\ctype.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\string_view
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdatastream.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringalgorithms.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qiodevicebase.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qscopedpointer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfloat16.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qhashfunctions.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstring.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlatin1stringview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qanystringview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qutf8stringview.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringtokenizer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringbuilder.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstring.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringconverter.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringconverter_base.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstring.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringbuilder.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstring.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringfwd.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\numeric
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qmath.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qalgorithms.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtformat_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qiterable.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtaggedpointer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qmetacontainer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainerinfo.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qobjectdefs.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qobjectdefs_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfunctionaltools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qscopeguard.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\array
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\map
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xtree
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\qvector.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qiterator.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbytearraylist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringmatcher.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/Amc16zFak24Meter.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QMetaType
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/Asj60Ld16aMonitor.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QMetaType
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/JbdBmsProtocol.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt_work\DialogG2\src\engine\CabinetSnapshot.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\QDateTime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore\qdatetime.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcalendar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qlocale.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qvariant.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdebug.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtextstream.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qchar.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontiguouscache.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsharedpointer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qshareddata.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsharedpointer_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\chrono
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_chrono.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\ratio
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\system_error
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_system_error_abi.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cerrno
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\stdexcept
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xcall_once.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xerrc.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xfilesystem_abi.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\set
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\unordered_set
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qmap.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qshareddata_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qset.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qhash.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qvarlengtharray.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qalloc.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcontainertools_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/q23utility.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/q20utility.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbytearraylist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qobject.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qobject_impl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbindingstorage.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\QJsonArray
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore\qjsonarray.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qjsonvalue.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcborvalue.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcborcommon.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qregularexpression.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qurl.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/quuid.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qendian.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Qt\6.10.3\msvc2022_64\include\QtCore/qsystemdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qjsondocument.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qjsonparseerror.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\QJsonObject
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore\qjsonobject.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\QString
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QByteArray
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QString
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/TestController.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QDateTime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/TestJournalStore.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QString
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/TestScheduleManager.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QDate
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QDateTime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QString
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QStringList
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\qstringlist.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QTime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/LineManager.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QHash
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QString
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/LineOperationalMonitor.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QHash
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/MaintenanceChecker.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/ManualEmergencyController.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/ModbusRtuCodec.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QByteArray
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/ModbusTcpServer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QObject
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QTimer
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore\qtimer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qbasictimer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qabstracteventdispatcher.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qeventloop.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdeadlinetimer.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus/QModbusDataUnit
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus\qmodbusdataunit.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus/QModbusDevice
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus\qmodbusdevice.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qiodevice.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qspan.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\cassert
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\assert.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/q20iterator.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus/qtserialbusglobal.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus/qtserialbus-config.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtSerialBus/qtserialbusexports.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcompilerdetection.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt_work\DialogG2\src\engine/WhdTemperatureHumidityController.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QMetaType
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\QVector
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt\6.10.3\msvc2022_64\include\QtCore\QCoreApplication
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\qcoreapplication.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcoreevent.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore/qnativeinterface.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcoreapplication_platform.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qcoreapplication.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt\6.10.3\msvc2022_64\include\QtCore\QDebug
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt\6.10.3\msvc2022_64\include\QtCore\QJsonDocument
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt\6.10.3\msvc2022_64\include\QtCore\QJsonParseError
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:  C:\Qt\6.10.3\msvc2022_64\include\QtCore\QTemporaryDir
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:   C:\Qt\6.10.3\msvc2022_64\include\QtCore\qtemporarydir.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:    C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdir.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qdirlisting.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfiledevice.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfile.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\filesystem
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\iomanip
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\istream
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:         C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_ostream.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:          C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\ios
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:           C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocnum
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:            C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\streambuf
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:             C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xiosbase
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:              C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\share.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:              C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocale
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:               C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xfacet
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:               C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocinfo
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\__msvc_xlocinfo_types.hpp
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\clocale
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:                 C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\locale.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocmon
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xloctime
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:       C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\locale
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocbuf
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:        C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\include\xlocmes
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qfileinfo.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:      C:\Qt\6.10.3\msvc2022_64\include\QtCore/qtimezone.h
+╨Я╤А╨╕╨╝╨╡╤З╨░╨╜╨╕╨╡: ╨▓╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╤Д╨░╨╣╨╗╨░:     C:\Qt\6.10.3\msvc2022_64\include\QtCore/qstringlist.h
+[ 96%] Linking CXX executable test-controller-tests.exe
+[100%] Built target test-controller-tests
+[  0%] Built target dialog-g2-core_autogen_timestamp_deps
+[  4%] Built target dialog-g2-core_autogen
+[ 84%] Built target dialog-g2-core
+[ 84%] Built target telemetry-tests_autogen_timestamp_deps
+[ 88%] Built target telemetry-tests_autogen
+[100%] Built target telemetry-tests

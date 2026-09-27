@@ -1,0 +1,26 @@
+Версия MSBuild 18.6.3+84d3e95b4 для .NET Framework
+
+  Automatic MOC and UIC for target dialog-g2-core
+  mocs_compilation_Debug.cpp
+  Amc16zFak24Meter.cpp
+  MeteringBusController.cpp
+  ModbusController.cpp
+  Создание кода...
+  dialog-g2-core.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\dialog-g2-core.lib
+  Automatic MOC and UIC for target dialog-g2-engine
+  EngineRuntime.cpp
+  dialog-g2-engine.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\dialog-g2-engine.exe
+Версия MSBuild 18.6.3+84d3e95b4 для .NET Framework
+
+  Automatic MOC and UIC for target dialog-g2-core
+  dialog-g2-core.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\dialog-g2-core.lib
+  Automatic MOC and UIC for target test-controller-tests
+  test_controller_tests.cpp
+  test-controller-tests.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\test-controller-tests.exe
+Версия MSBuild 18.6.3+84d3e95b4 для .NET Framework
+
+  Automatic MOC and UIC for target dialog-g2-core
+  dialog-g2-core.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\dialog-g2-core.lib
+  Automatic MOC and UIC for target telemetry-tests
+  telemetry_tests.cpp
+  telemetry-tests.vcxproj -> C:\Qt_work\DialogG2\build-msvc\Debug\telemetry-tests.exe

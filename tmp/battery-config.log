@@ -1,0 +1,17 @@
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+CMake Warning (dev) at C:/Qt/6.10.3/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake:3544 (message):
+  Qt policy QTP0001 is not set: ':/qt/qml/' is the default resource prefix
+  for QML modules.  Check https://doc.qt.io/qt-6/qt-cmake-policy-qtp0001.html
+  for policy details.  Use the qt_policy command to set the policy and
+  suppress this warning.
+
+Call Stack (most recent call first):
+  C:/Qt/6.10.3/msvc2022_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:813 (__qt_internal_setup_policy)
+  C:/Qt/6.10.3/msvc2022_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:1489 (qt6_add_qml_module)
+  CMakeLists.txt:145 (qt_add_qml_module)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (5.1s)
+-- Generating done (1.5s)
+-- Build files have been written to: C:/Qt_work/DialogG2/build-msvc
