@@ -16,7 +16,9 @@ MaintenanceSnapshot MaintenanceChecker::evaluate(const QVector<LineSnapshot> &li
     MaintenanceSnapshot snapshot;
     snapshot.lineLimitDays = m_config.lineLimitDays;
     snapshot.longTestLimitDays = m_config.longTestLimitDays;
-    snapshot.lastLongTestAt = latestCompletedDurationTest(journal);
+    const TestJournalEntry lastLongTest = latestCompletedDurationTest(journal);
+    snapshot.lastLongTestAt = lastLongTest.finishedAt;
+    snapshot.lastLongTestStatus = lastLongTest.status;
 
     snapshot.longTestOverdue = !snapshot.lastLongTestAt.isValid()
         || snapshot.lastLongTestAt.daysTo(now) > m_config.longTestLimitDays;
@@ -30,6 +32,7 @@ MaintenanceSnapshot MaintenanceChecker::evaluate(const QVector<LineSnapshot> &li
         status.lineIndex = line.index;
         status.lineName = lineDisplayName(line);
         status.lastTestAt = line.lastFunctionalTest.completedAt;
+        status.lastTestStatus = line.lastFunctionalTest.status;
         status.overdue = !status.lastTestAt.isValid()
             || status.lastTestAt.daysTo(now) > m_config.lineLimitDays;
 
@@ -41,10 +44,22 @@ MaintenanceSnapshot MaintenanceChecker::evaluate(const QVector<LineSnapshot> &li
         snapshot.lines.append(status);
     }
 
-    snapshot.ok = snapshot.overdueLinesCount == 0 && !snapshot.longTestOverdue;
+    QStringList failedLineNames;
+    for (const MaintenanceLineStatus &line : snapshot.lines) {
+        if (line.lastTestStatus == TestRunStatus::Failed)
+            failedLineNames.append(line.lineName);
+    }
+
+    snapshot.ok = snapshot.overdueLinesCount == 0
+        && !snapshot.longTestOverdue
+        && snapshot.lastLongTestStatus != TestRunStatus::Failed
+        && failedLineNames.isEmpty();
 
     QStringList parts;
-    if (snapshot.longTestOverdue) {
+    if (snapshot.lastLongTestStatus == TestRunStatus::Failed) {
+        parts.append(QStringLiteral("Последний тест длительности неисправен: %1")
+                         .arg(snapshot.lastLongTestAt.toString(QStringLiteral("dd.MM.yyyy"))));
+    } else if (snapshot.longTestOverdue) {
         parts.append(snapshot.lastLongTestAt.isValid()
             ? QStringLiteral("Тест длительности просрочен, последний: %1")
                   .arg(snapshot.lastLongTestAt.toString(QStringLiteral("dd.MM.yyyy")))
@@ -54,6 +69,10 @@ MaintenanceSnapshot MaintenanceChecker::evaluate(const QVector<LineSnapshot> &li
         parts.append(QStringLiteral("Просрочены проверки линий: %1")
                          .arg(overdueLineNames.join(QStringLiteral(", "))));
     }
+    if (!failedLineNames.isEmpty()) {
+        parts.append(QStringLiteral("Не пройдены проверки линий: %1")
+                         .arg(failedLineNames.join(QStringLiteral(", "))));
+    }
 
     snapshot.summary = parts.isEmpty()
         ? QStringLiteral("Обслуживание по тестам в срок")
@@ -61,17 +80,17 @@ MaintenanceSnapshot MaintenanceChecker::evaluate(const QVector<LineSnapshot> &li
     return snapshot;
 }
 
-QDateTime MaintenanceChecker::latestCompletedDurationTest(const QVector<TestJournalEntry> &journal)
+TestJournalEntry MaintenanceChecker::latestCompletedDurationTest(const QVector<TestJournalEntry> &journal)
 {
-    QDateTime latest;
+    TestJournalEntry latest;
     for (const TestJournalEntry &entry : journal) {
         if (entry.kind != TestKind::Duration || !isCompletedTestStatus(entry.status)
             || !entry.finishedAt.isValid()) {
             continue;
         }
 
-        if (!latest.isValid() || latest < entry.finishedAt)
-            latest = entry.finishedAt;
+        if (!latest.finishedAt.isValid() || latest.finishedAt < entry.finishedAt)
+            latest = entry;
     }
     return latest;
 }

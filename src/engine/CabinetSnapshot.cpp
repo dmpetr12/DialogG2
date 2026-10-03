@@ -437,6 +437,9 @@ QJsonObject toJson(const MaintenanceLineStatus &line)
         {QStringLiteral("lineIndex"), line.lineIndex},
         {QStringLiteral("lineName"), line.lineName},
         {QStringLiteral("lastTestAt"), dateTimeOrNull(line.lastTestAt)},
+        {QStringLiteral("lastTestStatus"), static_cast<int>(line.lastTestStatus)},
+        {QStringLiteral("lastTestStatusCode"), testRunStatusCode(line.lastTestStatus)},
+        {QStringLiteral("lastTestStatusText"), testRunStatusText(line.lastTestStatus)},
         {QStringLiteral("overdue"), line.overdue}
     };
 }
@@ -452,6 +455,9 @@ QJsonObject toJson(const MaintenanceSnapshot &maintenance)
         {QStringLiteral("overdueLinesCount"), maintenance.overdueLinesCount},
         {QStringLiteral("longTestOverdue"), maintenance.longTestOverdue},
         {QStringLiteral("lastLongTestAt"), dateTimeOrNull(maintenance.lastLongTestAt)},
+        {QStringLiteral("lastLongTestStatus"), static_cast<int>(maintenance.lastLongTestStatus)},
+        {QStringLiteral("lastLongTestStatusCode"), testRunStatusCode(maintenance.lastLongTestStatus)},
+        {QStringLiteral("lastLongTestStatusText"), testRunStatusText(maintenance.lastLongTestStatus)},
         {QStringLiteral("lineLimitDays"), maintenance.lineLimitDays},
         {QStringLiteral("longTestLimitDays"), maintenance.longTestLimitDays},
         {QStringLiteral("summary"), maintenance.summary},
@@ -638,6 +644,7 @@ MaintenanceLineStatus maintenanceLineStatusFromJson(const QJsonObject &obj)
     line.lineIndex = obj.value(QStringLiteral("lineIndex")).toInt();
     line.lineName = obj.value(QStringLiteral("lineName")).toString();
     line.lastTestAt = dateTimeFromJson(obj, QStringLiteral("lastTestAt"));
+    line.lastTestStatus = static_cast<TestRunStatus>(obj.value(QStringLiteral("lastTestStatus")).toInt());
     line.overdue = obj.value(QStringLiteral("overdue")).toBool(false);
     return line;
 }
@@ -649,6 +656,7 @@ MaintenanceSnapshot maintenanceFromJson(const QJsonObject &obj)
     maintenance.overdueLinesCount = obj.value(QStringLiteral("overdueLinesCount")).toInt();
     maintenance.longTestOverdue = obj.value(QStringLiteral("longTestOverdue")).toBool(false);
     maintenance.lastLongTestAt = dateTimeFromJson(obj, QStringLiteral("lastLongTestAt"));
+    maintenance.lastLongTestStatus = static_cast<TestRunStatus>(obj.value(QStringLiteral("lastLongTestStatus")).toInt());
     maintenance.lineLimitDays = obj.value(QStringLiteral("lineLimitDays")).toInt(30);
     maintenance.longTestLimitDays = obj.value(QStringLiteral("longTestLimitDays")).toInt(365);
     maintenance.summary = obj.value(QStringLiteral("summary")).toString();

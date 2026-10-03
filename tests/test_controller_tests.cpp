@@ -504,6 +504,52 @@ static bool maintenanceCheckerReportsOldLineTest()
         && expect(!result.longTestOverdue, QStringLiteral("fresh duration test should stay ok"));
 }
 
+static bool maintenanceCheckerReportsFailedTests()
+{
+    MaintenanceChecker checker;
+    const QDateTime now = QDateTime::fromString(QStringLiteral("2026-08-08T08:00:00.000Z"), Qt::ISODateWithMs);
+    LineSnapshot line = testLine(1, 100.0);
+    line.lastFunctionalTest.completedAt = now.addDays(-1);
+    line.lastFunctionalTest.status = TestRunStatus::Failed;
+
+    TestJournalEntry duration = durationJournalEntry(now.addDays(-1));
+    duration.status = TestRunStatus::Failed;
+    const MaintenanceSnapshot result = checker.evaluate({line}, {duration}, now);
+    const QJsonObject json = toJson(result);
+    const QJsonObject jsonLine = json.value(QStringLiteral("lines")).toArray().first().toObject();
+
+    return expect(!result.ok, QStringLiteral("failed tests must make maintenance not ok"))
+        && expect(result.lastLongTestStatus == TestRunStatus::Failed,
+                  QStringLiteral("maintenance must retain failed duration status"))
+        && expect(result.lines.first().lastTestStatus == TestRunStatus::Failed,
+                  QStringLiteral("maintenance must retain failed line status"))
+        && expect(json.value(QStringLiteral("lastLongTestStatusCode")).toString() == QStringLiteral("failed"),
+                  QStringLiteral("duration status must be published"))
+        && expect(jsonLine.value(QStringLiteral("lastTestStatusCode")).toString() == QStringLiteral("failed"),
+                  QStringLiteral("line test status must be published"));
+}
+
+static bool failedMaintenanceBecomesSystemFault()
+{
+    EngineInputs inputs;
+    inputs.maintenance.lastLongTestStatus = TestRunStatus::Failed;
+    MaintenanceLineStatus line;
+    line.lineIndex = 3;
+    line.lineName = QStringLiteral("Коридор");
+    line.lastTestStatus = TestRunStatus::Failed;
+    inputs.maintenance.lines.append(line);
+
+    const CabinetSnapshot result = StateEngine().evaluate(inputs);
+    return expect(result.health == SystemHealth::Fault,
+                  QStringLiteral("failed maintenance test must make system faulty"))
+        && expect(result.activeFaults.contains(QStringLiteral("не пройден тест длительности")),
+                  QStringLiteral("failed duration test must explain system fault"))
+        && expect(result.activeFaults.contains(QStringLiteral("не пройден тест линии 3 \"Коридор\"")),
+                  QStringLiteral("failed line test must explain system fault"))
+        && expect(result.explanation.contains(QStringLiteral("не пройден тест")),
+                  QStringLiteral("system explanation must include failed test reason"));
+}
+
 static bool testInterruptedByVoltagePriority()
 {
     TestControllerConfig config;
@@ -1173,6 +1219,8 @@ int main(int argc, char *argv[])
         && maintenanceCheckerReportsMissingTests()
         && maintenanceCheckerAcceptsFreshTests()
         && maintenanceCheckerReportsOldLineTest()
+        && maintenanceCheckerReportsFailedTests()
+        && failedMaintenanceBecomesSystemFault()
         && testInterruptedByVoltagePriority()
         && manualTestBlockedByFireIsConsumed()
         && testStoppedByOperator()

@@ -113,6 +113,9 @@ ExecStart=$BUILD_DIR/dialog-g2-engine
 Restart=always
 RestartSec=2
 User=$USER_NAME
+AmbientCapabilities=CAP_SYS_TIME
+CapabilityBoundingSet=CAP_SYS_TIME
+NoNewPrivileges=true
 
 [Install]
 WantedBy=multi-user.target

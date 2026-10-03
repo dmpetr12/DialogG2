@@ -27,6 +27,7 @@ class PanelFacade : public QObject
     Q_PROPERTY(QString modeCode READ modeCode NOTIFY changed)
     Q_PROPERTY(QString modeText READ modeText NOTIFY changed)
     Q_PROPERTY(QString healthText READ healthText NOTIFY changed)
+    Q_PROPERTY(QString healthReason READ healthReason NOTIFY changed)
     Q_PROPERTY(QString modeColor READ modeColor NOTIFY changed)
     Q_PROPERTY(bool manualEmergencyActive READ manualEmergencyActive NOTIFY changed)
     Q_PROPERTY(bool systemOk READ systemOk NOTIFY changed)
@@ -59,6 +60,7 @@ public:
     QString modeCode() const;
     QString modeText() const;
     QString healthText() const;
+    QString healthReason() const;
     QString modeColor() const;
     bool manualEmergencyActive() const;
     bool systemOk() const;

@@ -120,6 +120,19 @@ ApplicationWindow {
         return parts.length > 0 ? parts.join("\n\n") : "Есть просроченные проверки."
     }
 
+    function maintenanceHasFailedTests() {
+        var m = window.maintenance || {}
+        if (m.lastLongTestStatusCode === "failed")
+            return true
+
+        var lines = m.lines || []
+        for (var i = 0; i < lines.length; ++i) {
+            if (lines[i] && lines[i].lastTestStatusCode === "failed")
+                return true
+        }
+        return false
+    }
+
     function showMaintenancePopup(markDaily) {
         var m = window.maintenance || {}
         if (m.ok === undefined)
@@ -464,7 +477,9 @@ ApplicationWindow {
 
                 Text {
                     Layout.fillWidth: true
-                    text: "ВНИМАНИЕ: просрочены проверки"
+                    text: window.maintenanceHasFailedTests()
+                          ? "ВНИМАНИЕ: тест не пройден"
+                          : "ВНИМАНИЕ: просрочены проверки"
                     color: "#b00020"
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: 34

@@ -107,6 +107,21 @@ QStringList StateEngine::collectFaults(const EngineInputs &inputs)
     if (inputs.temperatureFault)
         faults.append(QStringLiteral("температура"));
 
+    if (inputs.maintenance.lastLongTestStatus == TestRunStatus::Failed)
+        faults.append(QStringLiteral("не пройден тест длительности"));
+
+    for (const MaintenanceLineStatus &test : inputs.maintenance.lines) {
+        if (test.lastTestStatus != TestRunStatus::Failed)
+            continue;
+
+        const QString name = test.lineName.isEmpty()
+            ? QStringLiteral("Линия %1").arg(test.lineIndex)
+            : test.lineName;
+        faults.append(QStringLiteral("не пройден тест линии %1 \"%2\"")
+                          .arg(test.lineIndex)
+                          .arg(name));
+    }
+
     for (const LineSnapshot &line : inputs.lines) {
         if (!line.enabled)
             continue;

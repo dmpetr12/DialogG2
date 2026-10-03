@@ -85,6 +85,11 @@ QString PanelFacade::healthText() const
     return state().value(QStringLiteral("healthText")).toString(QStringLiteral("Нет данных"));
 }
 
+QString PanelFacade::healthReason() const
+{
+    return state().value(QStringLiteral("healthReason")).toString(QStringLiteral("Нет данных"));
+}
+
 QString PanelFacade::modeColor() const
 {
     return state().value(QStringLiteral("modeColor")).toString(QStringLiteral("#d84236"));

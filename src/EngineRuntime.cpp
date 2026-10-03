@@ -400,6 +400,11 @@ private:
             return webJsonOk({{QStringLiteral("token"), m_webAuthToken}});
         });
 
+        m_webServer.route(QStringLiteral("/api/auth/check"),
+                          [this](const QHttpServerRequest &request) {
+            return webCheckAuth(request) ? webJsonOk() : webUnauthorized();
+        });
+
         m_webServer.route(QStringLiteral("/api/manual-emergency/start"), QHttpServerRequest::Method::Post,
                           [this](const QHttpServerRequest &request) {
             if (!webCheckAuth(request))
@@ -932,6 +937,8 @@ private:
             {QStringLiteral("voltageAvailable"), std::isfinite(measuredVoltage)},
             {QStringLiteral("currentAvailable"), std::isfinite(measuredCurrent)},
             {QStringLiteral("tolerance"), std::isfinite(line->powerTestTolerancePercent) ? line->powerTestTolerancePercent : 5.0},
+            {QStringLiteral("lastFunctionalTest"), toJson(line->lastFunctionalTest)},
+            {QStringLiteral("lastDurationTest"), toJson(line->lastDurationTest)},
             {QStringLiteral("mode"), hmiMode},
             {QStringLiteral("displayModeText"), hmiMode == 0 ? QStringLiteral("ПОСТОЯН.")
                                                                : hmiMode == 1 ? QStringLiteral("НЕПОСТ.")
@@ -1018,6 +1025,7 @@ private:
             {QStringLiteral("modeCode"), modeCode(m_lastSnapshot.mode)},
             {QStringLiteral("modeText"), m_relayBusStatus.online ? modeText(m_lastSnapshot.mode) : QStringLiteral("Нет данных")},
             {QStringLiteral("healthText"), systemAvailable ? healthText(m_lastSnapshot.health) : QStringLiteral("Нет данных")},
+            {QStringLiteral("healthReason"), systemAvailable ? m_lastSnapshot.explanation : QStringLiteral("Нет данных")},
             {QStringLiteral("modeColor"), m_lastSnapshot.mode == CabinetMode::Normal ? QStringLiteral("#11bf5d") : QStringLiteral("#d84236")},
             {QStringLiteral("manualEmergencyActive"), m_lastSnapshot.manualEmergencyActive},
             {QStringLiteral("systemOk"), systemAvailable && m_lastSnapshot.health == SystemHealth::Normal},

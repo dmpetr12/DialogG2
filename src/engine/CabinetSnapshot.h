@@ -200,6 +200,7 @@ struct MaintenanceLineStatus
     int lineIndex = 0;
     QString lineName;
     QDateTime lastTestAt;
+    TestRunStatus lastTestStatus = TestRunStatus::None;
     bool overdue = false;
 };
 
@@ -209,6 +210,7 @@ struct MaintenanceSnapshot
     int overdueLinesCount = 0;
     bool longTestOverdue = false;
     QDateTime lastLongTestAt;
+    TestRunStatus lastLongTestStatus = TestRunStatus::None;
     int lineLimitDays = 30;
     int longTestLimitDays = 365;
     QVector<MaintenanceLineStatus> lines;

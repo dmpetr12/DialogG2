@@ -135,7 +135,7 @@ Rectangle {
 
             ParameterBox {
                 title: "Состояние системы"
-                value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (panel.systemOk ? "НОРМ" : "АВАР")
+                value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (panel.systemOk ? "НОРМ" : panel.healthReason)
                 ok: panel.systemOk
                 Layout.fillWidth: true
                 Layout.fillHeight: true

@@ -20,7 +20,7 @@ public:
                                  const QDateTime &now) const;
 
 private:
-    static QDateTime latestCompletedDurationTest(const QVector<TestJournalEntry> &journal);
+    static TestJournalEntry latestCompletedDurationTest(const QVector<TestJournalEntry> &journal);
     static bool isCompletedTestStatus(TestRunStatus status);
     static QString lineDisplayName(const LineSnapshot &line);
 

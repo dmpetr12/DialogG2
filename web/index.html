@@ -242,6 +242,12 @@
       font-size: 36px;
     }
 
+    .panel-title {
+      margin: 0 0 14px;
+      font-size: 26px;
+      font-weight: 500;
+    }
+
     .form-grid {
       max-width: 760px;
       display: grid;
@@ -275,6 +281,31 @@
       background: #efefef;
       color: var(--text);
       font-size: 20px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+    }
+
+    .checkbox-row input,
+    .weekday-grid input {
+      width: 22px;
+      height: 22px;
+    }
+
+    .weekday-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(80px, 1fr));
+      gap: 8px;
+    }
+
+    tr.schedule-selected td {
+      background: #eaf4ff;
+      border-top-color: #80b0ff;
+      border-bottom-color: #80b0ff;
     }
 
     .form-actions {
@@ -376,7 +407,7 @@
     <nav class="nav">
       <button data-view="dashboard" class="active">Главная</button>
       <button data-view="lines">Линии</button>
-      <button data-view="line-settings" data-auth>Настройки линий</button>
+      <button data-view="line-settings" data-auth>Настройки</button>
       <button data-view="journal">Журнал</button>
       <button data-view="schedule">Расписание</button>
       <button data-view="logs">Логи</button>
@@ -447,9 +478,10 @@
 
     <section id="line-settings" class="view">
       <div class="page-head">
-        <div class="page-title">Настройки линий</div>
+        <div class="page-title">Настройки</div>
       </div>
       <div class="panel">
+        <h2 class="panel-title">Настройки линий</h2>
         <table>
           <thead>
             <tr><th>№</th><th>Название</th><th>Режим</th><th>Мощность, Вт</th><th>Допуск, %</th><th></th></tr>
@@ -457,6 +489,26 @@
           <tbody id="lineSettingsRows"></tbody>
         </table>
       </div>
+      <div class="panel form-grid">
+        <h2 class="panel-title" style="grid-column:1/-1">Время</h2>
+        <label for="settingsComputerTime">Время этого компьютера</label>
+        <output id="settingsComputerTime" class="form-value">--</output>
+        <div class="form-actions">
+          <button id="settingsTimeButton" type="button" class="primary" data-auth>Установить в шкафу</button>
+        </div>
+        <div id="settingsTimeMessage" class="message"></div>
+      </div>
+      <form id="settingsPasswordForm" class="panel form-grid">
+        <h2 class="panel-title" style="grid-column:1/-1">Смена пароля</h2>
+        <label for="settingsNewPassword">Новый пароль</label>
+        <input id="settingsNewPassword" type="password" autocomplete="new-password" required>
+        <label for="settingsRepeatPassword">Повторите пароль</label>
+        <input id="settingsRepeatPassword" type="password" autocomplete="new-password" required>
+        <div class="form-actions">
+          <button type="submit" class="primary" data-auth>Сменить пароль</button>
+        </div>
+        <div id="settingsPasswordMessage" class="message"></div>
+      </form>
     </section>
 
     <section id="line-edit" class="view">
@@ -520,13 +572,64 @@
         <div class="page-title">Расписание</div>
       </div>
       <div class="panel">
+        <div class="form-actions" style="margin-top:0;margin-bottom:10px">
+          <button id="scheduleAddButton" type="button" class="primary" data-auth>Добавить</button>
+          <button id="scheduleDeleteButton" type="button" class="danger" data-auth disabled>Удалить выделенный</button>
+        </div>
         <table>
           <thead>
-            <tr><th>Вкл</th><th>Период</th><th>Дата</th><th>Время</th><th>Тест</th></tr>
+            <tr><th>Период</th><th>Дни недели</th><th>Дата</th><th>Время</th><th>Тест</th><th>Действия</th></tr>
           </thead>
           <tbody id="scheduleRows"></tbody>
         </table>
       </div>
+    </section>
+
+    <section id="schedule-edit" class="view">
+      <div class="page-head">
+        <div id="scheduleEditTitle" class="page-title">Настройка расписания</div>
+      </div>
+      <form id="scheduleEditForm" class="panel form-grid">
+        <label for="scheduleEditPeriod">Период</label>
+        <select id="scheduleEditPeriod">
+          <option value="один раз">Один раз</option>
+          <option value="ежедневно">Ежедневно</option>
+          <option value="дни недели">Дни недели</option>
+          <option value="раз в месяц">Раз в месяц</option>
+          <option value="раз в 3 месяца">Раз в 3 месяца</option>
+          <option value="раз в полгода">Раз в полгода</option>
+          <option value="раз в год">Раз в год</option>
+        </select>
+
+        <label id="scheduleEditWeekDaysLabel">Дни недели</label>
+        <div id="scheduleEditWeekDays" class="weekday-grid">
+          <label class="checkbox-row"><input id="scheduleDayMon" type="checkbox" value="Mon">Пн</label>
+          <label class="checkbox-row"><input id="scheduleDayTue" type="checkbox" value="Tue">Вт</label>
+          <label class="checkbox-row"><input id="scheduleDayWed" type="checkbox" value="Wed">Ср</label>
+          <label class="checkbox-row"><input id="scheduleDayThu" type="checkbox" value="Thu">Чт</label>
+          <label class="checkbox-row"><input id="scheduleDayFri" type="checkbox" value="Fri">Пт</label>
+          <label class="checkbox-row"><input id="scheduleDaySat" type="checkbox" value="Sat">Сб</label>
+          <label class="checkbox-row"><input id="scheduleDaySun" type="checkbox" value="Sun">Вс</label>
+        </div>
+
+        <label for="scheduleEditStartDate">Дата начала</label>
+        <input id="scheduleEditStartDate" type="date" required>
+
+        <label for="scheduleEditStartTime">Время</label>
+        <input id="scheduleEditStartTime" type="time" required>
+
+        <label for="scheduleEditTestType">Тест</label>
+        <select id="scheduleEditTestType">
+          <option value="Функциональный тест">Функциональный тест</option>
+          <option value="Тест на время">Тест на время</option>
+        </select>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" data-auth>Сохранить</button>
+          <button id="scheduleEditBack" type="button">Назад</button>
+        </div>
+        <div id="scheduleEditMessage" class="message"></div>
+      </form>
     </section>
 
     <section id="logs" class="view">
@@ -540,9 +643,13 @@
   <script>
     const state = {
       token: localStorage.getItem("dialogG2Token") || "",
+      authenticated: false,
       currentView: "dashboard",
       last: null,
-      editingLinePosition: -1
+      editingLinePosition: -1,
+      schedule: [],
+      editingScheduleIndex: -1,
+      selectedScheduleIndex: -1
     };
 
     const $ = (id) => document.getElementById(id);
@@ -565,6 +672,7 @@
       try { data = text ? JSON.parse(text) : {}; } catch (_) {}
       if (response.status === 401) {
         state.token = "";
+        state.authenticated = false;
         localStorage.removeItem("dialogG2Token");
         authUi();
       }
@@ -573,13 +681,29 @@
     }
 
     function authUi() {
-      const unlocked = !!state.token;
+      const unlocked = state.authenticated && !!state.token;
       $("loginBtn").hidden = unlocked;
       document.querySelectorAll("[data-auth]").forEach((el) => el.disabled = !unlocked);
+      if ($("scheduleDeleteButton"))
+        $("scheduleDeleteButton").disabled = !unlocked || state.selectedScheduleIndex < 0;
       if (state.last) {
         $("fireBtn").disabled = !unlocked;
         renderTestButtons(state.last);
       }
+    }
+
+    async function validateAuth(lockWhileChecking = false) {
+      if (lockWhileChecking) {
+        state.authenticated = false;
+        authUi();
+      }
+      if (!state.token)
+        return;
+      try {
+        await api("/api/auth/check", {headers: {}});
+        state.authenticated = true;
+      } catch (_) {}
+      authUi();
     }
 
     function fmt(n, digits = 0) {
@@ -590,6 +714,10 @@
       if (!value) return "--";
       const d = new Date(value);
       return Number.isNaN(d.getTime()) ? "--" : d.toLocaleString("ru-RU");
+    }
+
+    function refreshComputerTime() {
+      $("settingsComputerTime").textContent = new Date().toLocaleString("ru-RU");
     }
 
     function setDot(id, ok, warn = false) {
@@ -656,7 +784,7 @@
     }
 
     function renderTestButtons(data) {
-      const unlocked = !!state.token;
+      const unlocked = state.authenticated && !!state.token;
       const kind = activeTestKind(data);
       const functionalActive = kind === 1;
       const durationActive = kind === 2;
@@ -683,7 +811,7 @@
       $("batteryState").textContent = !data.battery?.communicationOk ? "НЕТ ДАННЫХ" : (data.batteryOk ? "НОРМ" : "АВАР");
       $("linesState").textContent = !data.linesAvailable ? "НЕТ ДАННЫХ" : (data.linesOk ? "ИСПР" : "АВАР");
       $("busState").textContent = data.busConnected ? "ОК" : "НЕТ";
-      $("systemNote").textContent = data.healthText || "--";
+      $("systemNote").textContent = data.healthReason || data.healthText || "--";
       $("batteryNote").textContent = data.battery?.stateText || "--";
       if (data.testRunning) {
         setDot("modeDot", false, true);
@@ -704,7 +832,7 @@
 
       $("fireBtn").textContent = data.manualEmergencyActive ? "Стоп" : "Пуск";
       $("fireBtn").className = data.manualEmergencyActive ? "warn" : "danger";
-      $("fireBtn").disabled = !state.token;
+      $("fireBtn").disabled = !state.authenticated;
       renderTestButtons(data);
 
       const allLines = data.lines || [];
@@ -732,11 +860,24 @@
         </tr>
       `).join("");
 
-      $("maintenanceRows").innerHTML = (data.maintenance?.lines || []).map((line) => `
+      const lastLongTestAt = data.maintenance?.lastLongTestAt;
+      const longTestStatus = data.maintenance?.lastLongTestStatusCode;
+      const longTestRow = `
+        <tr>
+          <td>Тест длительности</td>
+          <td>${lastLongTestAt ? fmtDate(lastLongTestAt) : "—"}</td>
+          <td>${lastLongTestAt
+            ? (longTestStatus === "failed" ? "Неисправно" : (data.maintenance.longTestOverdue ? "Просрочен" : "Норма"))
+            : "—"}</td>
+        </tr>
+      `;
+      $("maintenanceRows").innerHTML = longTestRow + (data.maintenance?.lines || []).map((line) => `
         <tr>
           <td>${line.lineName || line.lineIndex}</td>
-          <td>${fmtDate(line.lastTestAt)}</td>
-          <td>${line.overdue ? "Просрочен" : "Норма"}</td>
+          <td>${line.lastTestAt ? fmtDate(line.lastTestAt) : "—"}</td>
+          <td>${line.lastTestAt
+            ? (line.lastTestStatusCode === "failed" ? "Неисправно" : (line.overdue ? "Просрочен" : "Норма"))
+            : "—"}</td>
         </tr>
       `).join("");
     }
@@ -773,19 +914,89 @@
 
     async function refreshSchedule() {
       const res = await api("/api/schedule");
-      $("scheduleRows").innerHTML = (res.data || []).map((entry) => `
-        <tr>
-          <td>${entry.enabled ? "Да" : "Нет"}</td>
-          <td>${entry.period || "--"}</td>
-          <td>${entry.startDate || "--"}</td>
-          <td>${entry.startTime || "--"}</td>
-          <td>${entry.testType || "--"}</td>
+      state.schedule = res.data || [];
+      if (state.selectedScheduleIndex >= state.schedule.length)
+        state.selectedScheduleIndex = -1;
+      const dayNames = {Mon: "Пн", Tue: "Вт", Wed: "Ср", Thu: "Чт", Fri: "Пт", Sat: "Сб", Sun: "Вс"};
+      $("scheduleRows").innerHTML = state.schedule.map((entry, index) => `
+        <tr class="${index === state.selectedScheduleIndex ? "schedule-selected" : ""}" onclick="selectSchedule(${index})">
+          <td>${escapeHtml(entry.period || "--")}</td>
+          <td>${(entry.weekDays || []).map((day) => escapeHtml(dayNames[day] || day)).join(", ") || "--"}</td>
+          <td>${escapeHtml(entry.startDate || "--")}</td>
+          <td>${escapeHtml(entry.startTime || "--")}</td>
+          <td>${escapeHtml(entry.testType || "--")}</td>
+          <td>
+            <button class="small" type="button" data-auth onclick="openScheduleEditor(${index})">Настроить</button>
+          </td>
         </tr>
       `).join("");
+      authUi();
+    }
+
+    function selectSchedule(index) {
+      if (index < 0 || index >= state.schedule.length)
+        return;
+      state.selectedScheduleIndex = index;
+      $("scheduleDeleteButton").disabled = !(state.authenticated && state.token);
+      const rows = $("scheduleRows").querySelectorAll?.("tr") || [];
+      rows.forEach((row, rowIndex) => {
+        row.classList.toggle("schedule-selected", rowIndex === index);
+      });
+    }
+    const scheduleDayIds = [
+      ["Mon", "scheduleDayMon"], ["Tue", "scheduleDayTue"], ["Wed", "scheduleDayWed"],
+      ["Thu", "scheduleDayThu"], ["Fri", "scheduleDayFri"], ["Sat", "scheduleDaySat"],
+      ["Sun", "scheduleDaySun"]
+    ];
+
+    function scheduleDays() {
+      return scheduleDayIds.filter(([, id]) => $(id).checked).map(([day]) => day);
+    }
+
+    function setScheduleDays(days) {
+      const selected = new Set(days || []);
+      scheduleDayIds.forEach(([day, id]) => { $(id).checked = selected.has(day); });
+    }
+
+    function updateScheduleWeekDaysVisibility() {
+      const hidden = $("scheduleEditPeriod").value !== "дни недели";
+      $("scheduleEditWeekDays").hidden = hidden;
+      $("scheduleEditWeekDaysLabel").hidden = hidden;
+    }
+
+    function openScheduleEditor(index) {
+      const entry = index >= 0 ? state.schedule[index] : null;
+      state.editingScheduleIndex = index;
+      $("scheduleEditTitle").textContent = index >= 0
+        ? "Настройка расписания " + (index + 1)
+        : "Добавление расписания";
+      $("scheduleEditPeriod").value = entry?.period || "один раз";
+      $("scheduleEditStartDate").value = entry?.startDate || new Date().toISOString().slice(0, 10);
+      $("scheduleEditStartTime").value = entry?.startTime || "00:00";
+      $("scheduleEditTestType").value = entry?.testType || "Функциональный тест";
+      setScheduleDays(entry?.weekDays || []);
+      $("scheduleEditMessage").textContent = "";
+      updateScheduleWeekDaysVisibility();
+      openView("schedule-edit");
+    }
+
+    async function removeSelectedSchedule() {
+      const index = state.selectedScheduleIndex;
+      if (index < 0)
+        return;
+      if (!window.confirm("Удалить запись расписания?"))
+        return;
+      try {
+        await api(`/api/schedule/${index}/remove`, {method: "POST", body: "{}"});
+        state.selectedScheduleIndex = -1;
+        await refreshSchedule();
+      } catch (err) {
+        setMessage(err.message);
+      }
     }
 
     async function post(path, body = {}) {
-      if (!state.token) {
+      if (!state.authenticated || !state.token) {
         setMessage("Введите пароль для управления");
         return;
       }
@@ -823,6 +1034,7 @@
       try {
         const res = await api("/api/login", {method: "POST", body: JSON.stringify({password})});
         state.token = res.token || "";
+        state.authenticated = !!state.token;
         localStorage.setItem("dialogG2Token", state.token);
         setMessage("");
         authUi();
@@ -833,6 +1045,80 @@
 
     on("fireBtn", "click", () => post(state.last?.manualEmergencyActive ? "/api/manual-emergency/stop" : "/api/manual-emergency/start"));
     on("lineEditBack", "click", () => openView("line-settings"));
+    on("scheduleAddButton", "click", () => openScheduleEditor(-1));
+    on("scheduleDeleteButton", "click", removeSelectedSchedule);
+    on("scheduleEditPeriod", "change", updateScheduleWeekDaysVisibility);
+    on("scheduleEditBack", "click", () => openView("schedule"));
+    on("scheduleEditForm", "submit", async (event) => {
+      event.preventDefault();
+      const period = $("scheduleEditPeriod").value;
+      const startDate = $("scheduleEditStartDate").value;
+      const startTime = $("scheduleEditStartTime").value;
+      const weekDays = scheduleDays();
+      if (!startDate || !startTime || (period === "дни недели" && weekDays.length === 0)) {
+        $("scheduleEditMessage").textContent = period === "дни недели"
+          ? "Выберите хотя бы один день недели"
+          : "Укажите дату и время";
+        return;
+      }
+
+      const body = {
+        period,
+        startDate,
+        startTime,
+        testType: $("scheduleEditTestType").value,
+        weekDays
+      };
+      const index = state.editingScheduleIndex;
+      const path = index >= 0
+        ? `/api/schedule/${index}/update`
+        : "/api/schedule/add";
+      try {
+        await api(path, {method: "POST", body: JSON.stringify(body)});
+        await refreshSchedule();
+        await openView("schedule");
+      } catch (err) {
+        $("scheduleEditMessage").textContent = err.message;
+      }
+    });
+    on("settingsTimeButton", "click", async () => {
+      try {
+        await api("/api/system/time", {
+          method: "POST",
+          body: JSON.stringify({msec: Date.now()})
+        });
+        $("settingsTimeMessage").textContent = "Время шкафа установлено";
+      } catch (err) {
+        $("settingsTimeMessage").textContent = err.message;
+      }
+    });
+    on("settingsPasswordForm", "submit", async (event) => {
+      event.preventDefault();
+      const password = $("settingsNewPassword").value.trim();
+      const repeated = $("settingsRepeatPassword").value.trim();
+      if (!password || password !== repeated) {
+        $("settingsPasswordMessage").textContent = !password
+          ? "Введите новый пароль"
+          : "Пароли не совпадают";
+        return;
+      }
+
+      try {
+        await api("/api/password/change", {
+          method: "POST",
+          body: JSON.stringify({password})
+        });
+        state.token = "";
+        state.authenticated = false;
+        localStorage.removeItem("dialogG2Token");
+        $("settingsNewPassword").value = "";
+        $("settingsRepeatPassword").value = "";
+        $("settingsPasswordMessage").textContent = "Пароль изменён. Войдите с новым паролем.";
+        authUi();
+      } catch (err) {
+        $("settingsPasswordMessage").textContent = err.message;
+      }
+    });
     on("lineEditForm", "submit", async (event) => {
       event.preventDefault();
       const position = state.editingLinePosition;
@@ -873,9 +1159,12 @@
         post("/api/test/start-duration", {durationSec: 3600});
     });
 
-    authUi();
+    validateAuth(true);
+    refreshComputerTime();
     refreshState();
     setInterval(refreshState, 1500);
+    setInterval(refreshComputerTime, 1000);
+    setInterval(validateAuth, 5000);
   </script>
 </body>
 </html>
