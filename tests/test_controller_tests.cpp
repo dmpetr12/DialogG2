@@ -462,6 +462,41 @@ static TestJournalEntry durationJournalEntry(const QDateTime &finishedAt)
     return entry;
 }
 
+static bool interruptedDurationTestRecoversFromHeartbeat()
+{
+    const QDateTime startedAt = QDateTime::fromString(QStringLiteral("2026-10-05T12:00:00.000Z"), Qt::ISODateWithMs);
+    const QDateTime heartbeat = startedAt.addSecs(23 * 60 + 45);
+    ActiveTestSnapshot active;
+    active.active = true;
+    active.kind = TestKind::Duration;
+    active.source = TestSource::Scheduled;
+    active.startedAt = startedAt;
+    active.dueAt = startedAt.addSecs(3600);
+    active.durationSeconds = 3600;
+
+    const QJsonObject timing = {
+        {QStringLiteral("lastHeartbeat"), heartbeat.toString(Qt::ISODate)},
+        {QStringLiteral("activeDurationTest"), toJson(active)}
+    };
+    const TestJournalEntry recovered = TestController::recoverInterruptedDurationTest(timing, {});
+    if (!expect(recovered.kind == TestKind::Duration && recovered.status == TestRunStatus::Failed,
+                QStringLiteral("unfinished duration test must be failed on next start")))
+        return false;
+    if (!expect(recovered.startedAt == startedAt && recovered.finishedAt == heartbeat
+                    && recovered.source == TestSource::Scheduled,
+                QStringLiteral("recovery must preserve test start, source and last heartbeat")))
+        return false;
+    if (!expect(recovered.reason.contains(QStringLiteral("23"))
+                    && recovered.reason.contains(QStringLiteral("60")),
+                QStringLiteral("recovery reason must show confirmed and planned minutes")))
+        return false;
+
+    TestJournalEntry completed = recovered;
+    completed.status = TestRunStatus::Passed;
+    return expect(TestController::recoverInterruptedDurationTest(timing, {completed}).status == TestRunStatus::None,
+                  QStringLiteral("already journaled duration test must not gain a false failure"));
+}
+
 static bool maintenanceCheckerReportsMissingTests()
 {
     MaintenanceChecker checker;
@@ -1216,6 +1251,7 @@ int main(int argc, char *argv[])
         && functionalTestUsesRequestedWarmup()
         && activeTestsRequestBatteryMode()
         && durationTestUsesExpandedTolerance()
+        && interruptedDurationTestRecoversFromHeartbeat()
         && maintenanceCheckerReportsMissingTests()
         && maintenanceCheckerAcceptsFreshTests()
         && maintenanceCheckerReportsOldLineTest()

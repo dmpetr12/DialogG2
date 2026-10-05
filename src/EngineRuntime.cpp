@@ -227,7 +227,24 @@ public:
 
     void start()
     {
-        logPreviousRuntimeTiming();
+        const QJsonObject previousTiming = logPreviousRuntimeTiming();
+        const TestJournalEntry interruptedTest =
+            TestController::recoverInterruptedDurationTest(previousTiming, m_storedJournal);
+        if (interruptedTest.kind == TestKind::Duration) {
+            QVector<TestJournalEntry> journal = m_storedJournal;
+            journal.append(interruptedTest);
+            trimTestJournal(&journal);
+            QString error;
+            if (m_journalStore.write(journal, &error)) {
+                m_storedJournal = journal;
+                markMaintenanceDirty();
+                LOG_WARN(QStringLiteral("Recovered interrupted duration test: %1").arg(interruptedTest.reason));
+            } else {
+                // Keep the previous marker for the next start if the journal cannot be saved.
+                m_preserveRuntimeTiming = true;
+                LOG_CRITICAL(QStringLiteral("Interrupted duration test not saved: %1").arg(error));
+            }
+        }
 
         m_startedAt = QDateTime::currentDateTimeUtc();
         m_lastHeartbeat = m_startedAt;
@@ -1411,8 +1428,14 @@ private:
         testInputs.scheduledDuration = scheduleRequest.duration;
         const TestControllerResult testResult = m_testController.evaluate(testInputs);
 
-        if (!testResult.newJournalEntries.isEmpty())
-            persistTestResults(testResult.newJournalEntries);
+        if (!testResult.newJournalEntries.isEmpty()
+            && !persistTestResults(testResult.newJournalEntries)
+            && m_lastSnapshot.activeTest.active
+            && m_lastSnapshot.activeTest.kind == TestKind::Duration) {
+            // A completed test must reach the journal before its recovery marker is cleared.
+            m_preserveRuntimeTiming = true;
+            LOG_CRITICAL(QStringLiteral("Duration test result not saved; recovery marker retained"));
+        }
 
         if (testResult.manualRequestConsumed) {
             m_manualFunctionalRequest = {};
@@ -1460,10 +1483,10 @@ private:
         rememberHeartbeat();
     }
 
-    void persistTestResults(const QVector<TestJournalEntry> &entries)
+    bool persistTestResults(const QVector<TestJournalEntry> &entries)
     {
         if (entries.isEmpty())
-            return;
+            return true;
 
         m_storedJournal += entries;
         trimTestJournal(&m_storedJournal);
@@ -1471,13 +1494,14 @@ private:
         QString error;
         if (!m_journalStore.write(m_storedJournal, &error)) {
             LOG_WARN(QStringLiteral("Test journal not saved: %1").arg(error));
-            return;
+            return false;
         }
 
         m_lineManager.applyTestResults(entries);
         markMaintenanceDirty();
         if (!m_lineManager.saveConfig(defaultLinesConfigPath(), &error))
             LOG_WARN(QStringLiteral("Line test results not saved: %1").arg(error));
+        return true;
     }
 
     MaintenanceSnapshot maintenanceSnapshot(const QVector<LineSnapshot> &lines, const QDateTime &now)
@@ -1561,28 +1585,37 @@ private:
         writeRuntimeTiming(false);
     }
 
-    void logPreviousRuntimeTiming() const
+    QJsonObject logPreviousRuntimeTiming() const
     {
         QFile file(defaultRuntimeTimingPath());
         if (!file.open(QIODevice::ReadOnly))
-            return;
+            return {};
 
         QJsonParseError error;
         const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
         if (error.error != QJsonParseError::NoError || !doc.isObject()) {
             LOG_WARN(QStringLiteral("Previous runtime timing not readable: %1").arg(error.errorString()));
-            return;
+            return {};
         }
 
         const QJsonObject object = doc.object();
         LOG_INFO(QStringLiteral("Previous runtime timing: startedAt=%1, lastHeartbeat=%2")
                      .arg(object.value(QStringLiteral("startedAt")).toString(QStringLiteral("-")),
                           object.value(QStringLiteral("lastHeartbeat")).toString(QStringLiteral("-"))));
+        return object;
     }
 
     void writeRuntimeTiming(bool force)
     {
-        if (!force && m_lastRuntimeTimingWrite.isValid() && m_lastRuntimeTimingWrite.msecsTo(m_lastHeartbeat) < 60000)
+        if (m_preserveRuntimeTiming)
+            return;
+
+        const ActiveTestSnapshot active = m_lastSnapshot.activeTest;
+        const bool durationActive = active.active && active.kind == TestKind::Duration;
+        const QDateTime durationStartedAt = durationActive ? active.startedAt : QDateTime();
+        if (!force && durationStartedAt == m_persistedDurationStartedAt
+            && m_lastRuntimeTimingWrite.isValid()
+            && m_lastRuntimeTimingWrite.msecsTo(m_lastHeartbeat) < 60000)
             return;
 
         const QString filePath = defaultRuntimeTimingPath();
@@ -1592,11 +1625,13 @@ private:
             return;
         }
 
-        const QJsonObject object = {
+        QJsonObject object = {
             {QStringLiteral("schemaVersion"), 1},
             {QStringLiteral("startedAt"), m_startedAt.toString(Qt::ISODate)},
             {QStringLiteral("lastHeartbeat"), m_lastHeartbeat.toString(Qt::ISODate)}
         };
+        if (durationActive)
+            object.insert(QStringLiteral("activeDurationTest"), toJson(active));
 
         QSaveFile file(filePath);
         if (!file.open(QIODevice::WriteOnly)) {
@@ -1611,6 +1646,7 @@ private:
         }
 
         m_lastRuntimeTimingWrite = m_lastHeartbeat;
+        m_persistedDurationStartedAt = durationStartedAt;
     }
 
     AppConfig m_config;
@@ -1666,6 +1702,8 @@ private:
     CabinetSnapshot m_lastSnapshot;
     QDateTime m_startedAt;
     QDateTime m_lastHeartbeat;
+    QDateTime m_persistedDurationStartedAt;
+    bool m_preserveRuntimeTiming = false;
     QDateTime m_lastRuntimeTimingWrite;
 };
 

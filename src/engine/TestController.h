@@ -55,6 +55,8 @@ public:
 
     void reset();
     TestControllerResult evaluate(const TestControllerInputs &inputs);
+    static TestJournalEntry recoverInterruptedDurationTest(const QJsonObject &timing,
+                                                           const QVector<TestJournalEntry> &journal);
 
 private:
     struct Candidate

@@ -10,6 +10,38 @@ TestController::TestController(TestControllerConfig config)
 {
 }
 
+TestJournalEntry TestController::recoverInterruptedDurationTest(const QJsonObject &timing,
+                                                                const QVector<TestJournalEntry> &journal)
+{
+    const ActiveTestSnapshot active = activeTestFromJson(timing.value(QStringLiteral("activeDurationTest")).toObject());
+    if (!active.active || active.kind != TestKind::Duration || !active.startedAt.isValid()
+        || active.durationSeconds <= 0)
+        return {};
+
+    for (const TestJournalEntry &entry : journal) {
+        if (entry.kind == TestKind::Duration && entry.startedAt == active.startedAt
+            && entry.status != TestRunStatus::None && entry.status != TestRunStatus::Running)
+            return {};
+    }
+
+    const QDateTime heartbeat = QDateTime::fromString(timing.value(QStringLiteral("lastHeartbeat")).toString(),
+                                                     Qt::ISODate);
+    const QDateTime lastConfirmedAt = heartbeat.isValid() && heartbeat >= active.startedAt
+        ? heartbeat : active.startedAt;
+    const qint64 minutes = active.startedAt.secsTo(lastConfirmedAt) / 60;
+
+    TestJournalEntry entry;
+    entry.kind = TestKind::Duration;
+    entry.source = active.source;
+    entry.startedAt = active.startedAt;
+    entry.finishedAt = lastConfirmedAt;
+    entry.status = TestRunStatus::Failed;
+    entry.reason = QStringLiteral("Тест длительности прерван отключением системы: проработал не менее %1 из %2 мин (по heartbeat)")
+                       .arg(minutes)
+                       .arg((active.durationSeconds + 59) / 60);
+    return entry;
+}
+
 void TestController::reset()
 {
     m_activeTest = {};
