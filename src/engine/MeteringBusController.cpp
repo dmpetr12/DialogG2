@@ -10,6 +10,7 @@
 namespace DialogG2 {
 
 static constexpr int ReconnectIntervalMs = 3000;
+static constexpr int AmcPowerNoResponseGraceMs = 20000;
 
 static QSerialPort::Parity parityFromConfig(const QString &value)
 {
@@ -437,6 +438,8 @@ void MeteringBusController::handleCurrentResponse(const QByteArray &frame)
             || byteAt(frame, 2) != m_currentRequest.count * 2) return;
         updateBusMonitorSuccess();
         m_requestFailures.remove(requestKey(m_currentRequest));
+        if (m_currentRequest.meterKind == MeterKind::Amc16zFak24BranchPower)
+            m_lastAmcPowerResponse.restart();
         const QVector<quint16> values = ModbusRtuCodec::registersFromReadResponse(frame);
         if (m_currentRequest.meterKind == MeterKind::Adl200Input)
             emit adl200InputMeterUpdated(Adl200Meter::decodeRealtimeHoldingRegisters(values));
@@ -469,7 +472,11 @@ void MeteringBusController::handleRequestFailure(const QString &error)
 {
     const QString key = requestKey(m_currentRequest);
     const int failures = ++m_requestFailures[key];
-    if (failures >= std::max(1, m_config.busOfflineFailureThreshold))
+    const bool amcPowerRequest = m_currentRequest.meterKind == MeterKind::Amc16zFak24BranchPower;
+    if (amcPowerRequest && !m_lastAmcPowerResponse.isValid())
+        m_lastAmcPowerResponse.start();
+    if (amcPowerRequest ? m_lastAmcPowerResponse.elapsed() >= AmcPowerNoResponseGraceMs
+                        : failures >= std::max(1, m_config.busOfflineFailureThreshold))
         invalidateRequest(m_currentRequest);
     const QString message = error.isEmpty() ? QStringLiteral("Metering bus request failed") : error;
     emit errorOccurred(message);
@@ -507,6 +514,7 @@ void MeteringBusController::invalidateRequest(const Request &request)
 void MeteringBusController::invalidateMeasurements()
 {
     m_requestFailures.clear();
+    m_lastAmcPowerResponse.invalidate();
     emit adl200InputMeterUpdated({});
     emit amc16zFak24BranchPowersUpdated({});
     emit amc16zBranchVoltagesUpdated({});

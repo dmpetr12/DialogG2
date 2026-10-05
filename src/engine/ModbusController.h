@@ -17,12 +17,14 @@
 
 class QModbusReply;
 class QModbusRtuSerialClient;
+struct TelemetryTestAccess;
 
 namespace DialogG2 {
 
 class ModbusController : public QObject
 {
     Q_OBJECT
+    friend struct ::TelemetryTestAccess;
 
 public:
     explicit ModbusController(QObject *parent = nullptr);

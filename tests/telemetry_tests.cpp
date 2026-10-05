@@ -1,5 +1,7 @@
 #include <QCoreApplication>
 #include <QJsonObject>
+#include <QModbusDevice>
+#include <QModbusRtuSerialClient>
 #include <QTimer>
 #include <QVariantMap>
 #include "PanelFacade.h"
@@ -10,6 +12,11 @@
 #include <cstdio>
 
 struct TelemetryTestAccess {
+    static bool relayConnectionErrorMarksBusOffline(DialogG2::ModbusController &bus) {
+        bus.m_busMonitor.markSuccess();
+        bus.m_client->errorOccurred(QModbusDevice::ConnectionError);
+        return !bus.busStatus().online;
+    }
     static QByteArray modbusFrame(int slave, int function, int count) {
         QByteArray frame;
         frame.append(char(slave)); frame.append(char(function)); frame.append(char(count * 2));
@@ -51,6 +58,17 @@ struct TelemetryTestAccess {
         bus.m_currentRequest.count = 7;
         bus.m_busy = true;
         bus.m_rxBuffer = frame;
+        bus.processReceiveBuffer();
+    }
+    static void receiveAmcPower(DialogG2::MeteringBusController &bus) {
+        bus.m_currentRequest = {};
+        bus.m_currentRequest.type = DialogG2::MeteringBusController::RequestType::ReadHolding;
+        bus.m_currentRequest.meterKind = DialogG2::MeteringBusController::MeterKind::Amc16zFak24BranchPower;
+        bus.m_currentRequest.slaveAddress = DialogG2::Amc16zFak24Meter::DefaultSlaveAddress;
+        bus.m_currentRequest.start = DialogG2::Amc16zFak24Meter::ActivePowerHoldingStart;
+        bus.m_currentRequest.count = DialogG2::Amc16zFak24Meter::ActivePowerHoldingCount;
+        bus.m_busy = true;
+        bus.m_rxBuffer = modbusFrame(bus.m_currentRequest.slaveAddress, 3, bus.m_currentRequest.count);
         bus.processReceiveBuffer();
     }
     static void seed(PanelFacade &panel) {
@@ -136,6 +154,9 @@ int main(int argc, char **argv) {
     TelemetryTestAccess::seed(panel);
     check(panel.inputVoltage() == 230.0 && panel.systemOk(), "fresh data restores measurements after disconnect");
     DialogG2::MeteringBusController bus;
+    DialogG2::ModbusController relay;
+    check(TelemetryTestAccess::relayConnectionErrorMarksBusOffline(relay),
+          "relay connection loss must mark the bus offline immediately");
     check(TelemetryTestAccess::branchPollsCorrect(bus), "AMC polls separate P/U/I blocks at slave 2");
     check(TelemetryTestAccess::activeRequestIsNotQueued(bus), "active request must not be queued again");
 
@@ -227,7 +248,24 @@ int main(int argc, char **argv) {
         TelemetryTestAccess::failMeter(bus, 4);
         TelemetryTestAccess::failBattery(bus);
     }
-    check(branchesInvalid && leakageInvalid && temperatureInvalid && batteryInvalid, "every failed device invalidates its measurements");
+    check(!branchesInvalid && leakageInvalid && temperatureInvalid && batteryInvalid,
+          "brief AMC power timeouts retain the last branch powers without delaying other devices");
+    if (!branchesInvalid) {
+        QEventLoop branchPowerWait;
+        QTimer::singleShot(19000, &branchPowerWait, &QEventLoop::quit);
+        branchPowerWait.exec();
+        TelemetryTestAccess::failMeter(bus, 2);
+        check(!branchesInvalid, "AMC branch powers remain available before 20 seconds");
+        QTimer::singleShot(1200, &branchPowerWait, &QEventLoop::quit);
+        branchPowerWait.exec();
+        TelemetryTestAccess::failMeter(bus, 2);
+        check(branchesInvalid, "AMC branch powers become unavailable after 20 seconds without a response");
+    }
+    TelemetryTestAccess::receiveAmcPower(bus);
+    check(!branchesInvalid, "a new valid AMC power response restores branch values immediately");
+    for (int i = 0; i < 3; ++i)
+        TelemetryTestAccess::failMeter(bus, 2);
+    check(!branchesInvalid, "a fresh AMC power response restarts the 20-second grace period");
     adlInvalid = branchesInvalid = leakageInvalid = temperatureInvalid = batteryInvalid = false;
     bus.disconnectDevice();
     check(voltageInvalid && currentInvalid && adlInvalid && branchesInvalid && leakageInvalid && temperatureInvalid && batteryInvalid, "port disconnect invalidates all devices");

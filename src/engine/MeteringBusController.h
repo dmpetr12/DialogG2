@@ -13,6 +13,7 @@ struct TelemetryTestAccess;
 
 #include <QByteArray>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QHash>
 #include <QObject>
 #include <QTimer>
@@ -121,6 +122,7 @@ private:
     Request m_currentRequest;
     QByteArray m_rxBuffer;
     QHash<QString, int> m_requestFailures;
+    QElapsedTimer m_lastAmcPowerResponse;
     qint64 m_nextConnectAttemptMsec = 0;
     bool m_busy = false;
 };

@@ -297,6 +297,15 @@ void ModbusController::recreateClient()
 
         const QString message = m_client ? m_client->errorString() : QStringLiteral("Modbus client error");
         emit errorOccurred(message);
+        if (error == QModbusDevice::ConnectionError) {
+            const bool wasOnline = m_busMonitor.status().online;
+            m_busMonitor.reset();
+            emit busStatusChanged(m_busMonitor.status());
+            if (wasOnline)
+                emit busOffline(message);
+            if (m_client && m_client->state() == QModbusDevice::ConnectedState)
+                m_client->disconnectDevice();
+        }
         m_nextConnectAttemptMsec = QDateTime::currentMSecsSinceEpoch() + ReconnectIntervalMs;
     });
 }
