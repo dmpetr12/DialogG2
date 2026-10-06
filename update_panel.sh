@@ -93,11 +93,6 @@ echo "== Preparing runtime directories =="
 mkdir -p "$BUILD_DIR/logs" "$BUILD_DIR/state"
 sudo usermod -aG dialout "$USER_NAME" || true
 sudo fuser -k 502/tcp >/dev/null 2>&1 || true
-if command -v setcap >/dev/null 2>&1; then
-  sudo setcap cap_net_bind_service=+ep "$BUILD_DIR/dialog-g2-engine" || true
-else
-  echo "setcap not found; service may need root or a preinstalled libcap2-bin to bind port 502"
-fi
 
 echo "== Installing engine systemd service =="
 sudo tee "/etc/systemd/system/$ENGINE_SERVICE" >/dev/null <<SERVICE
@@ -113,8 +108,8 @@ ExecStart=$BUILD_DIR/dialog-g2-engine
 Restart=always
 RestartSec=2
 User=$USER_NAME
-AmbientCapabilities=CAP_SYS_TIME
-CapabilityBoundingSet=CAP_SYS_TIME
+AmbientCapabilities=CAP_SYS_TIME CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_SYS_TIME CAP_NET_BIND_SERVICE
 NoNewPrivileges=true
 
 [Install]
