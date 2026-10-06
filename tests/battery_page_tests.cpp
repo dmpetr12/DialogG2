@@ -91,6 +91,31 @@ int main(int argc, char **argv) {
     }
     delete startPage;
 
+    panel.insert("systemOk", false);
+    panel.insert("healthReason", QString::fromUtf8("Есть неисправность: АКБ: нет данных BMS, линия 1, линия 2"));
+    panel.insert("readLogs", QVariant::fromValue(engine.evaluate("(function() { return []; })")));
+    QQmlComponent systemComponent(&engine, QUrl::fromLocalFile(QStringLiteral(SYSTEM_QML_PATH)));
+    auto *systemPage = qobject_cast<QQuickItem *>(systemComponent.create());
+    if (!systemPage) { qCritical() << systemComponent.errors(); return 6; }
+    systemPage->setParentItem(window.contentItem());
+    settle();
+    QObject *systemReason = systemPage->findChild<QObject *>("systemReasonText");
+    if (!systemReason
+        || systemReason->property("text").toString() != QString::fromUtf8("АКБ: нет данных BMS, линия 1, линия 2")
+        || systemReason->property("wrapMode").toInt() != 1
+        || systemReason->property("truncated").toBool()) {
+        fprintf(stderr, "FAIL: system card must show the complete fault reasons without redundant prefix\n");
+        ++failures;
+    }
+    panel.insert("healthReason", QString::fromUtf8(
+        "Есть неисправность: связь Modbus, АКБ: нет данных BMS, ток утечки, температура, линия 1, линия 2, линия 3"));
+    settle();
+    if (!systemReason || systemReason->property("truncated").toBool()) {
+        fprintf(stderr, "FAIL: system card must keep a longer fault list visible\n");
+        ++failures;
+    }
+    delete systemPage;
+
     panel.insert("systemAvailable", false);
     panel.insert("systemOk", false);
     panel.insert("testRunning", true);

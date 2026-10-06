@@ -135,8 +135,9 @@ Rectangle {
 
             ParameterBox {
                 title: "Состояние системы"
-                value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (panel.systemOk ? "НОРМ" : panel.healthReason)
+                value: !panel.systemAvailable ? "НЕТ ДАННЫХ" : (panel.systemOk ? "НОРМ" : panel.healthReason.replace(/^Есть неисправность:\s*/, ""))
                 ok: panel.systemOk
+                longValue: !panel.systemOk && panel.systemAvailable
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -281,6 +282,7 @@ Rectangle {
         property string title: ""
         property string value: ""
         property bool ok: true
+        property bool longValue: false
 
         radius: 6
         color: "#f7f7f7"
@@ -301,24 +303,27 @@ Rectangle {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 8
+                spacing: longValue ? 4 : 8
 
                 Text {
                     text: title
                     color: "#555555"
-                    font.pixelSize: 24
+                    font.pixelSize: longValue ? 20 : 24
                     font.family: "Arial"
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
 
                 Text {
+                    objectName: longValue ? "systemReasonText" : ""
                     text: value
                     color: "#111111"
-                    font.pixelSize: 34
+                    font.pixelSize: longValue ? 17 : 34
                     font.family: "Arial"
                     font.bold: true
+                    wrapMode: longValue ? Text.WordWrap : Text.NoWrap
                     elide: Text.ElideRight
+                    maximumLineCount: longValue ? 3 : 1
                     Layout.fillWidth: true
                 }
             }
