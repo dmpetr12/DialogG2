@@ -1,9 +1,0 @@
-Re-extracting code files in . (no LLM needed)...
-[graphify watch] 27 file(s) not classified (no supported extension or shebang), skipped: .gitignore, .graphify_version, BatteryPage.qml, DateTimePage.qml, JournalPage.qml, LineSettingsPage.qml (+21 more)
-  AST extraction: 45/45 uncached files (100%) [16 workers]
-[graphify watch] community set changed since labeling (90 saved labels, 90 communities now; renamed 46 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
-[graphify] backed up curated graph (5 files) -> 2026-09-18/
-[graphify watch] Rebuilt: 1417 nodes, 2784 edges, 90 communities
-[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out
-Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
-Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.

@@ -1,8 +1,0 @@
-qt.qml.import: addImportPath: "C:/Qt_work/DialogG2/build-msvc/Debug/qml"
-qt.qml.import: addImportPath: "qrc:/qt/qml"
-qt.qml.import: addImportPath: "qrc:/qt-project.org/imports"
-qt.qml.import: addImportPath: "C:/Qt_work/DialogG2/build-msvc/Debug"
-qt.qml.import: locateLocalQmldir: DialogG2 module's qmldir file not found
-qt.qml.import: addLibraryImport:  "DialogG2" version "(latest)" as ""
-QQmlApplicationEngine failed to load component
-<Unknown File>: Module "DialogG2" contains no type named "Main"

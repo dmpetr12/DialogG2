@@ -4,3 +4,6 @@ build-*/
 *.autosave
 .qtcreator/
 CMakeUserPresets.json
+graphify-out/
+tmp/
+.codex/
