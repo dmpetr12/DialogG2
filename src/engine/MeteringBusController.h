@@ -116,6 +116,7 @@ private:
 
     QTimer m_scheduler;
     QTimer m_timeoutTimer;
+    QTimer m_interRequestTimer;
     QVector<PollTask> m_pollTasks;
     std::deque<Request> m_queue;
 

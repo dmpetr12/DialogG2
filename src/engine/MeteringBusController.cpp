@@ -11,6 +11,7 @@ namespace DialogG2 {
 
 static constexpr int ReconnectIntervalMs = 3000;
 static constexpr int AmcPowerNoResponseGraceMs = 20000;
+static constexpr int InterRequestGapMs = 100;
 
 static QSerialPort::Parity parityFromConfig(const QString &value)
 {
@@ -58,6 +59,10 @@ MeteringBusController::MeteringBusController(QObject *parent)
     connect(&m_timeoutTimer, &QTimer::timeout, this, &MeteringBusController::onRequestTimeout);
     m_timeoutTimer.setSingleShot(true);
 
+    connect(&m_interRequestTimer, &QTimer::timeout, this, &MeteringBusController::pump);
+    m_interRequestTimer.setSingleShot(true);
+    m_interRequestTimer.setTimerType(Qt::PreciseTimer);
+
     connect(m_port, &QSerialPort::readyRead, this, &MeteringBusController::onReadyRead);
     connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
         if (error == QSerialPort::NoError)
@@ -72,6 +77,7 @@ MeteringBusController::MeteringBusController(QObject *parent)
         if (error == QSerialPort::ResourceError || error == QSerialPort::DeviceNotFoundError
             || error == QSerialPort::PermissionError) {
             m_timeoutTimer.stop();
+            m_interRequestTimer.stop();
             m_queue.clear();
             m_rxBuffer.clear();
             m_busy = false;
@@ -136,6 +142,7 @@ void MeteringBusController::disconnectDevice()
 {
     stopPolling();
     m_timeoutTimer.stop();
+    m_interRequestTimer.stop();
     m_queue.clear();
     m_rxBuffer.clear();
     m_busy = false;
@@ -274,7 +281,7 @@ void MeteringBusController::enqueue(const Request &request)
 
 void MeteringBusController::pump()
 {
-    if (!isConnected() || m_busy || m_queue.empty())
+    if (!isConnected() || m_busy || m_interRequestTimer.isActive() || m_queue.empty())
         return;
 
     m_currentRequest = m_queue.front();
@@ -465,7 +472,7 @@ void MeteringBusController::finishCurrentRequest()
     m_timeoutTimer.stop();
     m_rxBuffer.clear();
     m_busy = false;
-    pump();
+    m_interRequestTimer.start(InterRequestGapMs);
 }
 
 void MeteringBusController::handleRequestFailure(const QString &error)

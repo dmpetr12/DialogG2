@@ -108,6 +108,18 @@ struct TelemetryTestAccess {
         bus.m_busy = false;
         return skipped;
     }
+    static bool finishedRequestWaitsBeforeNext(DialogG2::MeteringBusController &bus) {
+        bus.m_queue.clear();
+        bus.m_queue.push_back({});
+        bus.m_busy = true;
+        bus.finishCurrentRequest();
+        const bool waiting = !bus.m_busy && bus.m_queue.size() == 1
+            && bus.m_interRequestTimer.isActive()
+            && bus.m_interRequestTimer.interval() == 100;
+        bus.m_interRequestTimer.stop();
+        bus.m_queue.clear();
+        return waiting;
+    }
     static void batteryCellsBeforeBasic(DialogG2::MeteringBusController &bus) {
         bus.m_currentRequest.type = DialogG2::MeteringBusController::RequestType::JbdBmsCellVoltages;
         bus.invalidateRequest(bus.m_currentRequest);
@@ -159,6 +171,8 @@ int main(int argc, char **argv) {
           "relay connection loss must mark the bus offline immediately");
     check(TelemetryTestAccess::branchPollsCorrect(bus), "AMC polls separate P/U/I blocks at slave 2");
     check(TelemetryTestAccess::activeRequestIsNotQueued(bus), "active request must not be queued again");
+    check(TelemetryTestAccess::finishedRequestWaitsBeforeNext(bus),
+          "next metering request waits 100 ms after completion");
 
     {
         DialogG2::MeteringBusController lateMetering;

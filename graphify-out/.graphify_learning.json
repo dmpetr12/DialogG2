@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-24T08:55:42.663826+00:00",
+  "generated_at": "2026-10-05T16:51:30.697500+00:00",
   "nodes": {
     "src_engine_cabinetsnapshot_cabinetsnapshot": {
-      "code_fingerprint": "901189569e170ef1fd09031feeea619531d8269552cf1447bc4a35e9bd87dec1",
+      "code_fingerprint": "fe202082c366b0b3a3dc1a7044955a40fc334f941adb0fc738ac13b7efd48d50",
       "label": "CabinetSnapshot",
       "last": "2026-09-23T12:09:52.066914+00:00",
       "provenance": [
@@ -17,29 +17,50 @@
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 1.764599514,
+      "score": 1.358166379,
       "source_file": "src/engine/CabinetSnapshot.h",
       "status": "preferred",
       "uses": 2
     },
-    "src_engine_meteringbuscontroller_meteringbuscontroller": {
-      "code_fingerprint": "d83ec07a3574aa5780f88acb822f1d1a134c241ac4fafb456140b46c94a16c5e",
-      "label": "MeteringBusController",
-      "last": "2026-09-13T20:40:20.749837+00:00",
+    "src_engine_linemanager_cabinetiomap_fireinput": {
+      "code_fingerprint": "c27c9e8b12f54536dde4d51bcca519bd630d99070ee9100ccb822bf7abb689c2",
+      "label": "fireInput",
+      "last": "2026-10-03T19:02:05.223869+00:00",
       "provenance": [
+        {
+          "date": "2026-10-03T19:02:05.223869+00:00",
+          "outcome": "useful",
+          "q": "посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический"
+        }
+      ],
+      "score": 0.956844182,
+      "source_file": "src/engine/LineManager.h",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_engine_meteringbuscontroller_meteringbuscontroller": {
+      "code_fingerprint": "ccf32677167dad8a21be77b6956f44f18f3937dc5ea19419d1ebd98e1eecb9c7",
+      "label": "MeteringBusController",
+      "last": "2026-09-24T08:56:41.072110+00:00",
+      "provenance": [
+        {
+          "date": "2026-09-24T08:56:41.072110+00:00",
+          "outcome": "useful",
+          "q": "Всё исправно, но по линиям показывает нет данных"
+        },
         {
           "date": "2026-09-13T20:40:20.749837+00:00",
           "outcome": "useful",
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 0.784390693,
+      "score": 1.373411157,
       "source_file": "src/engine/MeteringBusController.h",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_engine_modbuscontroller_modbuscontroller": {
-      "code_fingerprint": "d34db1fdbed6cb9b3c91038e5cd60692ac8799a089d5ecd6d5616227bc662fc1",
+      "code_fingerprint": "10b75da1a0d490212feec0ba18fbdeaf132fe1b7a978fd0ccf4670dbd443b09c",
       "label": "ModbusController",
       "last": "2026-09-13T20:40:20.749837+00:00",
       "provenance": [
@@ -49,7 +70,7 @@
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 0.784390693,
+      "score": 0.603725128,
       "source_file": "src/engine/ModbusController.h",
       "status": "tentative",
       "uses": 1
@@ -57,37 +78,47 @@
     "src_engine_modbustcpserver_modbustcpserver": {
       "code_fingerprint": "21f233c635adf8e89b454b39ff79ffab4b83543edfca8f915c92c8cf30b381b8",
       "label": "ModbusTcpServer",
-      "last": "2026-09-13T20:40:20.749837+00:00",
+      "last": "2026-10-03T19:02:05.223869+00:00",
       "provenance": [
+        {
+          "date": "2026-10-03T19:02:05.223869+00:00",
+          "outcome": "useful",
+          "q": "посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический"
+        },
         {
           "date": "2026-09-13T20:40:20.749837+00:00",
           "outcome": "useful",
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 0.784390693,
+      "score": 1.56056931,
       "source_file": "src/engine/ModbusTcpServer.h",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_engine_stateengine_stateengine": {
-      "code_fingerprint": "96328b4aeec05c51eb951372b5c429584c9edb459629bffbaa2f3e4edf8c4e85",
+      "code_fingerprint": "9be55216712ae2efbc8b4096c3606245cc2a9535ac645be40927b0a28564c12b",
       "label": "StateEngine",
-      "last": "2026-09-24T08:19:57.634077+00:00",
+      "last": "2026-10-03T19:02:05.223869+00:00",
       "provenance": [
+        {
+          "date": "2026-10-03T19:02:05.223869+00:00",
+          "outcome": "useful",
+          "q": "посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический"
+        },
         {
           "date": "2026-09-24T08:19:57.634077+00:00",
           "outcome": "useful",
           "q": "Мы не потеряли логику авария и неисправность?"
         }
       ],
-      "score": 0.999426545,
+      "score": 1.726076816,
       "source_file": "src/engine/StateEngine.h",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_engine_stateengine_stateengine_faultlamprequired": {
-      "code_fingerprint": "96328b4aeec05c51eb951372b5c429584c9edb459629bffbaa2f3e4edf8c4e85",
+      "code_fingerprint": "9be55216712ae2efbc8b4096c3606245cc2a9535ac645be40927b0a28564c12b",
       "label": "faultLampRequired",
       "last": "2026-09-24T08:19:57.634077+00:00",
       "provenance": [
@@ -97,7 +128,7 @@
           "q": "Мы не потеряли логику авария и неисправность?"
         }
       ],
-      "score": 0.999426545,
+      "score": 0.769232634,
       "source_file": "src/engine/StateEngine.h",
       "status": "tentative",
       "uses": 1
@@ -105,40 +136,55 @@
     "src_engineruntime_engineruntime": {
       "code_fingerprint": "96d643f165dd9e94203e1a3d9354890561a5ee930a92729f7904a5775a9ebaa4",
       "label": "EngineRuntime",
-      "last": "2026-09-13T20:40:20.749837+00:00",
+      "last": "2026-10-03T19:02:05.223869+00:00",
       "provenance": [
+        {
+          "date": "2026-10-03T19:02:05.223869+00:00",
+          "outcome": "useful",
+          "q": "посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический"
+        },
         {
           "date": "2026-09-13T20:40:20.749837+00:00",
           "outcome": "useful",
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 0.784390693,
+      "score": 1.56056931,
       "source_file": "src/EngineRuntime.h",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_engineruntime_engineruntime_impl": {
-      "code_fingerprint": "b6a14857efdf9ff99ae37702cdadd5b96552b23f2ae296d8604df90e171654bc",
+      "code_fingerprint": "3291ba87b0e5c266e2583aeb761d316c0c376248d934774e79ced45101e057a1",
       "label": "EngineRuntime::Impl",
-      "last": "2026-09-23T12:09:52.066914+00:00",
+      "last": "2026-09-24T08:56:41.072110+00:00",
       "provenance": [
+        {
+          "date": "2026-09-24T08:56:41.072110+00:00",
+          "outcome": "useful",
+          "q": "Всё исправно, но по линиям показывает нет данных"
+        },
         {
           "date": "2026-09-23T12:09:52.066914+00:00",
           "outcome": "useful",
           "q": "Реле общей неисправности должно включаться при аварии входного напряжения"
         }
       ],
-      "score": 0.980208821,
+      "score": 1.52412728,
       "source_file": "src/EngineRuntime.cpp",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_panelfacade_panelfacade": {
-      "code_fingerprint": "e3abccfa0702d729c3bb497893687b3355801379b07a1d4bf32cfaca511a0da6",
+      "code_fingerprint": "7dfcf6708def65712abeab6700c2d7142aaab83229c4c0da50b9c201fcb6405f",
       "label": "PanelFacade",
-      "last": "2026-09-24T08:19:57.634077+00:00",
+      "last": "2026-09-24T08:56:41.072110+00:00",
       "provenance": [
+        {
+          "date": "2026-09-24T08:56:41.072110+00:00",
+          "outcome": "useful",
+          "q": "Всё исправно, но по линиям показывает нет данных"
+        },
         {
           "date": "2026-09-24T08:19:57.634077+00:00",
           "outcome": "useful",
@@ -150,10 +196,26 @@
           "q": "Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями."
         }
       ],
-      "score": 1.783817238,
+      "score": 2.142643791,
       "source_file": "src/PanelFacade.h",
       "status": "preferred",
-      "uses": 2
+      "uses": 3
+    },
+    "src_panelfacade_panelfacade_linesavailable": {
+      "code_fingerprint": "7dfcf6708def65712abeab6700c2d7142aaab83229c4c0da50b9c201fcb6405f",
+      "label": "linesAvailable",
+      "last": "2026-09-24T08:56:41.072110+00:00",
+      "provenance": [
+        {
+          "date": "2026-09-24T08:56:41.072110+00:00",
+          "outcome": "useful",
+          "q": "Всё исправно, но по линиям показывает нет данных"
+        }
+      ],
+      "score": 0.769686029,
+      "source_file": "src/PanelFacade.h",
+      "status": "tentative",
+      "uses": 1
     }
   },
   "version": 1

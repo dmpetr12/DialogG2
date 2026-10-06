@@ -1,17 +1,17 @@
-# Graph Report - DialogG2  (2026-10-06)
+# Graph Report - DialogG2  (2026-10-05)
 
 ## Corpus Check
-- 125 files · ~98,093 words
+- 125 files · ~98,035 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 58 file(s) not represented in the graph (top: .log 41, .qml 14, (none) 2)
 
 ## Summary
-- 1520 nodes · 3039 edges · 90 communities (82 shown, 8 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 278 edges (avg confidence: 0.83)
+- 1518 nodes · 3035 edges · 92 communities (83 shown, 9 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 277 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `681a2074`
+- Built from commit: `e5d8861d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,41 +42,41 @@
 - Request
 - Adl200Measurement
 - MaintenanceSnapshot
-- ModbusTcpServer.cpp
-- EngineRuntime.cpp
-- CabinetSnapshot.cpp
+- evaluate
+- .processIpcMessage
 - CabinetSnapshot.h
+- EngineRuntime.cpp
 - handleRequestSuccess
-- LineManager
+- ModbusRtuCodec.cpp
 - .setupWebRoutes
 - Request
-- LineConfig
+- TestControllerResult
 - TelemetryTestAccess
 - BMS батареи: заметки по протоколу
 - Modbus RTU
 - TestJournalEntry
 - QString
-- WaveSharePoint
-- QObject
-- CabinetIoMap
+- update
+- QFile
+- Candidate
 - ActiveTestSnapshot
 - ManualEmergencyController
 - LineOperationalMonitor
 - decodeChannel1RealtimeRegisters
-- .start
+- TestControllerInputs
 - graphify reference: extra exports and benchmark
 - Q: посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический
-- finishCurrentRequest
-- start
+- testLine
+- JbdBmsProtocol
 - TestLineMeasurement
 - TestController
 - PasswordManager
-- handleCurrentResponse
+- parseResponse
 - Q: Всё исправно, но по линиям показывает нет данных
-- .tick
+- .start
 - LineManager
 - Dialog G2 Panel
-- LineManager.h
+- WaveShareModuleState
 - graphify reference: query, path, explain
 - Логирование
 - MODBUS TCP
@@ -84,7 +84,7 @@
 - Q: Используя knowledge graph Graphify, опиши архитектуру этого проекта и основные связи между QML, backend и моделями.
 - Q: Реле общей неисправности должно включаться при аварии входного напряжения
 - handleRequestFailure
-- numbersToJson
+- handleCurrentResponse
 - graphify reference: add a URL and watch a folder
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
@@ -101,15 +101,17 @@
 - Q: Мы не потеряли логику авария и неисправность?
 - LineOperationalCheck
 - StateFileStore
-- dateTimeOrNull
+- testScheduleStartsWeekdayDuration
 - handleRequestFailure
 - web_ui_tests.js
 - invalidateRequest
-- .Impl
+- StateLogEvent
+- StateChangeTracker
+- lineModeToHmi
 
 ## God Nodes (most connected - your core abstractions)
 1. `EngineRuntime::Impl` - 124 edges
-2. `MeteringBusController` - 89 edges
+2. `MeteringBusController` - 87 edges
 3. `ModbusController` - 77 edges
 4. `PanelFacade` - 71 edges
 5. `CabinetSnapshot` - 55 edges
@@ -134,7 +136,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (90 total, 8 thin omitted)
+## Communities (92 total, 9 thin omitted)
 
 ### Community 0 - "TestScheduleManager"
 Cohesion: 0.09
@@ -142,43 +144,43 @@ Nodes (43): QDateTime, QJsonObject, QString, QVariant, QVector, TestKind, entryF
 
 ### Community 1 - "PanelFacade"
 Cohesion: 0.07
-Nodes (80): Q_INVOKABLE, qint64, QJsonObject, QObject, QString, QStringList, QVariant, Q_OBJECT (+72 more)
+Nodes (79): Q_INVOKABLE, qint64, QJsonObject, QObject, QString, QStringList, QVariant, Q_OBJECT (+71 more)
 
 ### Community 2 - "LineManager.cpp"
-Cohesion: 0.33
-Nodes (14): LineKind, QJsonObject, QString, ioMapFromJson(), ioMapToJson(), lineConfigFromJson(), lineKindFromConfig(), lineKindToConfig() (+6 more)
+Cohesion: 0.07
+Nodes (64): CabinetIoMap, faultLampRelay, fireInput, manualFireButton, manualStopButton, modeRelay, reserveRelay, testLampRelay (+56 more)
 
 ### Community 3 - "toJson"
-Cohesion: 0.12
-Nodes (32): batteryStateCode(), batteryStateText(), BatteryState, CabinetMode, LineKind, LineOperationalState, LineOutputState, LineState (+24 more)
+Cohesion: 0.09
+Nodes (59): activeTestFromJson(), batteryFromJson(), batteryStateCode(), batteryStateText(), BatteryState, CabinetMode, LineKind, LineOperationalState (+51 more)
 
 ### Community 4 - "TestController"
-Cohesion: 0.06
-Nodes (51): Candidate, durationSeconds, kind, priority, source, valid, QDateTime, QJsonObject (+43 more)
+Cohesion: 0.14
+Nodes (23): QDateTime, QJsonObject, QString, QVector, TestKind, TestRunStatus, TestSource, QVector (+15 more)
 
 ### Community 5 - "EngineRuntime::Impl"
 Cohesion: 0.04
-Nodes (55): QTimer, quint8, EngineRuntime::Impl, m_battery, m_cachedMaintenance, m_config, m_demoMode, m_hmiManualEmergencyStartRequested (+47 more)
+Nodes (57): QHttpServer, QLocalServer, QTimer, quint8, EngineRuntime::Impl, m_battery, m_cachedMaintenance, m_config (+49 more)
 
 ### Community 6 - "BatterySnapshot"
 Cohesion: 0.07
 Nodes (29): BatterySnapshot, alarmStatusRaw, balancingActive, cellCount, cellVoltageDelta, cellVoltages, chargeAllowed, communicationOk (+21 more)
 
 ### Community 7 - "ModbusRtuConfig"
-Cohesion: 0.08
-Nodes (40): AppConfig, load, m_logging, m_meteringRtu, m_modbusTcp, m_relayRtu, m_webServer, save (+32 more)
+Cohesion: 0.07
+Nodes (43): AppConfig, load, m_logging, m_meteringRtu, m_modbusTcp, m_relayRtu, m_webServer, save (+35 more)
 
 ### Community 8 - "EngineInputs"
 Cohesion: 0.07
 Nodes (38): CabinetMode, QString, QStringList, QVector, SystemHealth, EngineInputs, activeTest, battery (+30 more)
 
 ### Community 9 - "Logger"
-Cohesion: 0.10
-Nodes (37): QFile, QMessageLogContext, QMutex, QtMsgType, Level, qint64, QString, Level (+29 more)
+Cohesion: 0.11
+Nodes (35): QMessageLogContext, QMutex, QtMsgType, Level, qint64, QString, Level, qint64 (+27 more)
 
 ### Community 10 - "MeteringBusController"
 Cohesion: 0.06
-Nodes (36): Q_OBJECT, QByteArray, QHash, QObject, QString, QTimer, QVector, MeteringBusController (+28 more)
+Nodes (35): QElapsedTimer, Q_OBJECT, QByteArray, QHash, QObject, QString, QTimer, QVector (+27 more)
 
 ### Community 11 - "metering"
 Cohesion: 0.06
@@ -186,11 +188,11 @@ Nodes (32): logging, level, baudRate, busOfflineFailureThreshold, dataBits, pari
 
 ### Community 12 - "ModbusController"
 Cohesion: 0.06
-Nodes (32): deque, Q_OBJECT, QObject, QTimer, QVector, ModbusController, adl200InputMeterUpdated, amc16zFak24BranchPowersUpdated (+24 more)
+Nodes (33): deque, Q_OBJECT, QObject, QTimer, QVector, ModbusController, adl200InputMeterUpdated, amc16zFak24BranchPowersUpdated (+25 more)
 
 ### Community 13 - "MeteringBusController.cpp"
-Cohesion: 0.12
-Nodes (20): DataBits, Parity, StopBits, dataBitsFromConfig(), addAdl200InputMeterPolling, addAsj60Ld16aLeakagePolling, addJbdBmsPolling, addWhdTemperatureHumidityPolling (+12 more)
+Cohesion: 0.11
+Nodes (23): DataBits, Parity, StopBits, dataBitsFromConfig(), addAdl200InputMeterPolling, addAsj60Ld16aLeakagePolling, addJbdBmsPolling, addWhdTemperatureHumidityPolling (+15 more)
 
 ### Community 14 - "What You Must Do When Invoked"
 Cohesion: 0.08
@@ -201,27 +203,27 @@ Cohesion: 0.08
 Nodes (24): CabinetSnapshot, activeFaults, activeTest, battery, explanation, fireInputActive, health, inputCurrent (+16 more)
 
 ### Community 16 - "ModbusTcpServer"
-Cohesion: 0.09
-Nodes (23): Error, RegisterType, Q_OBJECT, QObject, QTimer, ModbusTcpServer, durationTestRequested, functionalTestRequested (+15 more)
+Cohesion: 0.08
+Nodes (47): Error, quint32, RegisterType, batteryState(), cabinetState(), QDateTime, QObject, QString (+39 more)
 
 ### Community 17 - "LineSnapshot"
-Cohesion: 0.06
-Nodes (42): LineKind, LineOutputState, LineState, LineSnapshot, enabled, index, kind, lastDurationTest (+34 more)
+Cohesion: 0.10
+Nodes (21): LineKind, LineOutputState, LineState, LineSnapshot, enabled, index, kind, lastDurationTest (+13 more)
 
 ### Community 18 - "ModbusController.cpp"
 Cohesion: 0.10
 Nodes (20): addAdl200InputMeterPolling, addAmc16zFak24BranchPowerPolling, addAsj60Ld16aLeakagePolling, addHoldingRegistersPolling, addInputRegistersPolling, addWaveShareModulePolling, addWhdTemperatureHumidityPolling, clearPollTasks (+12 more)
 
 ### Community 19 - "test_controller_tests.cpp"
-Cohesion: 0.06
-Nodes (93): QDate, QTime, QVector, evaluate, QDateTime, QString, QVector, TestRunStatus (+85 more)
+Cohesion: 0.15
+Nodes (37): evaluate, adl200DecoderScalesRealtimeRegisters(), adl200UsesReservedSafeAddress(), amc16zFak24DecoderScalesBranchPowers(), amc16zRmsDecoderKeepsUnitsAndMissingData(), asj60Ld16aDecoderReadsChannelStatusesAndLeakage(), QString, quint16 (+29 more)
 
 ### Community 20 - "Amc16zFak24Meter"
 Cohesion: 0.15
 Nodes (17): Amc16zBranchMeasurement, activePower, channel, valid, Amc16zFak24Meter, ActivePowerBranchCount, ActivePowerHoldingCount, ActivePowerHoldingStart (+9 more)
 
 ### Community 21 - "decodeChannelHoldingRegisters"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (17): Asj60Ld16aMonitor, ChannelCount, ChannelDataHoldingCount, ChannelDataHoldingStart, decodeChannelHoldingRegisters, DefaultSlaveAddress, RegistersPerChannel, Asj60LeakageChannel (+9 more)
 
 ### Community 22 - "ModbusBusMonitor"
@@ -240,45 +242,41 @@ Nodes (18): Adl200Measurement, activePower, apparentPower, current, frequency, p
 Cohesion: 0.09
 Nodes (25): QString, TestRunStatus, LineTestResult, completedAt, details, measuredPower, nominalPower, status (+17 more)
 
-### Community 26 - "ModbusTcpServer.cpp"
-Cohesion: 0.30
-Nodes (16): quint32, batteryState(), cabinetState(), QDateTime, quint16, dateTimeToU32(), emergencyState(), highWord() (+8 more)
+### Community 26 - "evaluate"
+Cohesion: 0.15
+Nodes (19): QDateTime, QString, QVector, TestRunStatus, MaintenanceChecker, evaluate, isCompletedTestStatus, latestCompletedDurationTest (+11 more)
 
-### Community 27 - "EngineRuntime.cpp"
-Cohesion: 0.18
-Nodes (14): QHttpServer, QLocalServer, QLocalSocket, applyHmiLineMode(), LineKind, QByteArray, QJsonObject, defaultLinesConfigPath() (+6 more)
+### Community 27 - ".processIpcMessage"
+Cohesion: 0.27
+Nodes (8): QLocalSocket, QByteArray, QJsonObject, defaultLinesConfigPath(), errorResponse(), okResponse(), scheduleEntryFromHmi(), scheduleEntryToHmi()
 
-### Community 28 - "CabinetSnapshot.cpp"
-Cohesion: 0.46
-Nodes (14): activeTestFromJson(), batteryFromJson(), QJsonObject, dateTimeFromJson(), doubleOrNaN(), intOrUnknown(), lineFromJson(), lineOperationalCheckFromJson() (+6 more)
-
-### Community 29 - "CabinetSnapshot.h"
-Cohesion: 0.22
-Nodes (9): QElapsedTimer, QDateTime, QVector, deque, QSerialPort, TelemetryTestAccess, QModbusRtuSerialClient, TelemetryTestAccess (+1 more)
+### Community 29 - "EngineRuntime.cpp"
+Cohesion: 0.26
+Nodes (8): QDateTime, QStringList, QVector, QHash, deque, TelemetryTestAccess, TelemetryTestAccess, QTimer
 
 ### Community 30 - "handleRequestSuccess"
 Cohesion: 0.22
 Nodes (15): quint16, quint8, QVector, Request, RequestPriority, bitsFromReply, enqueue, finishRequest (+7 more)
 
-### Community 31 - "LineManager"
-Cohesion: 0.27
-Nodes (15): QVector, LineManager, addLine, applyTestResults, defaultLinePoint, defaultLines, findLineIndex, line (+7 more)
+### Community 31 - "ModbusRtuCodec.cpp"
+Cohesion: 0.34
+Nodes (13): byteAt(), QByteArray, quint16, quint8, QVector, ModbusRtuCodec, appendCrc, bitsFromReadResponse (+5 more)
 
 ### Community 32 - ".setupWebRoutes"
-Cohesion: 0.24
-Nodes (3): QHttpServerRequest, QHttpServerResponse, QJsonArray
+Cohesion: 0.20
+Nodes (4): QHttpServerRequest, QHttpServerResponse, qint64, QJsonArray
 
 ### Community 33 - "Request"
 Cohesion: 0.15
 Nodes (13): MeterKind, qint64, RequestType, PollTask, intervalMs, nextDueMsec, request, Request (+5 more)
 
-### Community 34 - "LineConfig"
-Cohesion: 0.14
-Nodes (14): LineKind, QString, LineConfig, enabled, index, kind, lastDurationTest, lastFunctionalTest (+6 more)
+### Community 34 - "TestControllerResult"
+Cohesion: 0.13
+Nodes (19): QVector, evaluate, TestControllerResult, activeTest, journalEntries, lines, manualRequestConsumed, manualTestActive (+11 more)
 
 ### Community 35 - "TelemetryTestAccess"
-Cohesion: 0.18
-Nodes (6): busStatus, onReadyRead, processReceiveBuffer, QByteArray, QJsonValue, TelemetryTestAccess
+Cohesion: 0.14
+Nodes (8): addAmc16zFak24BranchPowerPolling, busStatus, clearPollTasks, onReadyRead, processReceiveBuffer, QByteArray, QJsonValue, TelemetryTestAccess
 
 ### Community 36 - "BMS батареи: заметки по протоколу"
 Cohesion: 0.17
@@ -293,20 +291,20 @@ Cohesion: 0.17
 Nodes (17): TestJournalEntry, finishedAt, kind, lines, reason, source, startedAt, status (+9 more)
 
 ### Community 39 - "QString"
-Cohesion: 0.24
-Nodes (8): main(), QObject, QString, QStringList, defaultAppConfigPath(), defaultLogPath(), defaultStatePath(), EngineRuntime::EngineRuntime()
+Cohesion: 0.15
+Nodes (8): QObject, QString, QStringList, defaultLogPath(), defaultTestJournalPath(), defaultTestSchedulePath(), EngineRuntime::EngineRuntime(), ipcServerName()
 
-### Community 40 - "WaveSharePoint"
-Cohesion: 0.27
-Nodes (10): QHash, quint8, evaluate, inputActive, pointIsUsed, requiredModuleCount, setRelayBit, WaveSharePoint (+2 more)
+### Community 40 - "update"
+Cohesion: 0.28
+Nodes (14): LineOutputState, LineState, QString, QVector, SystemHealth, faultReason(), findLine(), isOperationalLineState() (+6 more)
 
-### Community 41 - "QObject"
-Cohesion: 0.29
-Nodes (6): Impl, QStringList, EngineRuntime, m_impl, QObject, unique_ptr
+### Community 41 - "QFile"
+Cohesion: 0.18
+Nodes (8): Impl, QFile, EngineRuntime, m_impl, start, QObject, main(), unique_ptr
 
-### Community 42 - "CabinetIoMap"
-Cohesion: 0.20
-Nodes (10): CabinetIoMap, faultLampRelay, fireInput, manualFireButton, manualStopButton, modeRelay, reserveRelay, testLampRelay (+2 more)
+### Community 42 - "Candidate"
+Cohesion: 0.14
+Nodes (14): Candidate, durationSeconds, kind, priority, source, valid, TestKind, TestSource (+6 more)
 
 ### Community 43 - "ActiveTestSnapshot"
 Cohesion: 0.20
@@ -317,16 +315,16 @@ Cohesion: 0.29
 Nodes (8): ManualEmergencyController, active, evaluate, m_active, reset, ManualEmergencyInputs, startRequested, stopRequested
 
 ### Community 45 - "LineOperationalMonitor"
-Cohesion: 0.17
-Nodes (13): QHash, QDateTime, QDateTime, QHash, LineOperationalMonitor, checkLine, LineOperationalMonitor::LineOperationalMonitor(), m_config (+5 more)
+Cohesion: 0.18
+Nodes (12): QDateTime, QDateTime, QHash, LineOperationalMonitor, checkLine, LineOperationalMonitor::LineOperationalMonitor(), m_config, m_onSince (+4 more)
 
 ### Community 46 - "decodeChannel1RealtimeRegisters"
-Cohesion: 0.19
+Cohesion: 0.18
 Nodes (12): quint16, QVector, signedTenths(), WhdMeasurement, humidity, temperature, valid, WhdTemperatureHumidityController (+4 more)
 
-### Community 47 - ".start"
-Cohesion: 0.22
-Nodes (3): qint64, start, ipcServerName()
+### Community 47 - "TestControllerInputs"
+Cohesion: 0.14
+Nodes (14): QDateTime, TestControllerInputs, fireInputActive, lines, manualDuration, manualFunctional, now, scheduledDuration (+6 more)
 
 ### Community 48 - "graphify reference: extra exports and benchmark"
 Cohesion: 0.22
@@ -336,13 +334,13 @@ Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only
 Cohesion: 0.40
 Nodes (4): Answer, Outcome, Q: посмотри по модели, где берется и обрабатывается режим сигнала пожар электрический, Source Nodes
 
-### Community 50 - "finishCurrentRequest"
-Cohesion: 0.29
-Nodes (6): Request, enqueue, finishCurrentRequest, onRequestTimeout, sameRequest, sendRequest
+### Community 50 - "testLine"
+Cohesion: 0.26
+Nodes (12): evaluate, activeTestsRequestBatteryMode(), durationTestUsesExpandedTolerance(), functionalTestPasses(), functionalTestUsesRequestedWarmup(), lineDataAvailabilityDependsOnlyOnPower(), manualEmergencyControllerLatchesUntilStop(), manualTestBlockedByFireIsConsumed() (+4 more)
 
-### Community 51 - "start"
-Cohesion: 0.25
-Nodes (8): QObject, QString, ModbusTcpServer::ModbusTcpServer(), refreshRegisters, setupServerMap, start, stop, updateSnapshot
+### Community 51 - "JbdBmsProtocol"
+Cohesion: 0.18
+Nodes (11): quint8, JbdBmsProtocol, CommandBasicInfo, CommandCellVoltages, CommandHardwareVersion, CommandProtectionCounters, JbdBmsResponse, callbackId (+3 more)
 
 ### Community 52 - "TestLineMeasurement"
 Cohesion: 0.25
@@ -356,16 +354,16 @@ Nodes (7): TestController, Остановка оператором, Приори
 Cohesion: 0.24
 Nodes (7): QSettings, QObject, QString, PasswordManager, m_settings, passwordChanged, Q_PROPERTY
 
-### Community 55 - "handleCurrentResponse"
-Cohesion: 0.08
-Nodes (47): byteAt(), QByteArray, qint16, QString, QStringList, quint16, quint8, QByteArray (+39 more)
+### Community 55 - "parseResponse"
+Cohesion: 0.29
+Nodes (16): byteAt(), QByteArray, qint16, QString, QStringList, quint16, quint8, i16At() (+8 more)
 
 ### Community 56 - "Q: Всё исправно, но по линиям показывает нет данных"
 Cohesion: 0.40
 Nodes (4): Answer, Outcome, Q: Всё исправно, но по линиям показывает нет данных, Source Nodes
 
-### Community 57 - ".tick"
-Cohesion: 0.20
+### Community 57 - ".start"
+Cohesion: 0.16
 Nodes (5): QDateTime, QHash, QVector, defaultRuntimeTimingPath(), trimTestJournal()
 
 ### Community 58 - "LineManager"
@@ -376,7 +374,7 @@ Nodes (6): LineManager, Логика, Нумерация линий, Первы�
 Cohesion: 0.29
 Nodes (6): Dialog G2 Panel, Движок, Отсутствие данных на панели, Релейные выходы WaveShare, Сборка, Состав
 
-### Community 60 - "LineManager.h"
+### Community 60 - "WaveShareModuleState"
 Cohesion: 0.15
 Nodes (13): quint8, LineManagerInputs, faultLampOn, forceLineIndex, forceLinesOn, modeRelayOn, modules, testLampOn (+5 more)
 
@@ -408,9 +406,9 @@ Nodes (4): Answer, Outcome, Q: Реле общей неисправности д
 Cohesion: 0.40
 Nodes (5): Parity, QString, handleRequestFailure, updateBusMonitorFailure, parityFromConfig()
 
-### Community 68 - "numbersToJson"
-Cohesion: 0.38
-Nodes (7): QJsonArray, QStringList, QVector, numbersFromJson(), numbersToJson(), stringsFromJson(), stringsToJson()
+### Community 68 - "handleCurrentResponse"
+Cohesion: 0.33
+Nodes (6): byteAt(), QByteArray, quint8, amc16zBranchCurrentsUpdated, amc16zBranchVoltagesUpdated, handleCurrentResponse
 
 ### Community 69 - "graphify reference: add a URL and watch a folder"
 Cohesion: 0.50
@@ -448,12 +446,12 @@ Nodes (9): LineOperationalState, LineOperationalCheck, details, measuredPower, n
 Cohesion: 0.36
 Nodes (7): QString, QString, StateFileStore, m_filePath, read, StateFileStore::StateFileStore(), write
 
-### Community 85 - "dateTimeOrNull"
-Cohesion: 0.40
-Nodes (6): QDateTime, QJsonValue, dateTimeOrNull(), dateTimeToJson(), intOrNull(), numberOrNull()
+### Community 85 - "testScheduleStartsWeekdayDuration"
+Cohesion: 0.47
+Nodes (6): QDate, QTime, QDateTime, testSchedulePersistsLegacyArrayFormat(), testScheduleStartsDailyFunctionalOnce(), testScheduleStartsWeekdayDuration()
 
 ### Community 86 - "handleRequestFailure"
-Cohesion: 0.40
+Cohesion: 0.50
 Nodes (4): QString, handleRequestFailure, requestKey, updateBusMonitorFailure
 
 ### Community 87 - "web_ui_tests.js"
@@ -461,13 +459,21 @@ Cohesion: 0.16
 Nodes (13): context, element(), elements, expect(), fs, html, intervals, listeners (+5 more)
 
 ### Community 88 - "invalidateRequest"
-Cohesion: 0.33
-Nodes (5): QObject, disconnectDevice, invalidateMeasurements, invalidateRequest, MeteringBusController::MeteringBusController()
+Cohesion: 0.22
+Nodes (8): QObject, Request, disconnectDevice, enqueue, invalidateMeasurements, invalidateRequest, MeteringBusController::MeteringBusController(), sameRequest
+
+### Community 89 - "StateLogEvent"
+Cohesion: 0.50
+Nodes (4): QString, StateLogEvent, message, warning
+
+### Community 90 - "StateChangeTracker"
+Cohesion: 0.67
+Nodes (3): StateChangeTracker, m_initialized, m_previous
 
 ## Knowledge Gaps
-- **601 isolated node(s):** `schemaVersion`, `port`, `baudRate`, `parity`, `dataBits` (+596 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 742 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **600 isolated node(s):** `schemaVersion`, `port`, `baudRate`, `parity`, `dataBits` (+595 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 741 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Work-memory lessons
 
@@ -483,17 +489,17 @@ Nodes (5): QObject, disconnectDevice, invalidateMeasurements, invalidateRequest,
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `EngineRuntime::Impl` connect `EngineRuntime::Impl` to `TestScheduleManager`, `TestController`, `BatterySnapshot`, `ModbusRtuConfig`, `EngineInputs`, `MeteringBusController`, `ModbusController`, `CabinetSnapshot`, `ModbusTcpServer`, `LineSnapshot`, `test_controller_tests.cpp`, `ModbusBusMonitor`, `MaintenanceSnapshot`, `EngineRuntime.cpp`, `LineManager`, `.setupWebRoutes`, `TestJournalEntry`, `QString`, `ManualEmergencyController`, `LineOperationalMonitor`, `.start`, `PasswordManager`, `.tick`, `LineManager.h`, `StateFileStore`, `.Impl`?**
-  _High betweenness centrality (0.273) - this node is a cross-community bridge._
-- **Why does `ModbusController` connect `ModbusController` to `PanelFacade`, `handleRequestFailure`, `TelemetryTestAccess`, `EngineRuntime::Impl`, `ModbusRtuConfig`, `setupDevice`, `ModbusController.cpp`, `ModbusBusMonitor`, `Request`, `CabinetSnapshot.h`, `handleRequestSuccess`?**
-  _High betweenness centrality (0.086) - this node is a cross-community bridge._
-- **Why does `MeteringBusController` connect `MeteringBusController` to `Request`, `PanelFacade`, `TelemetryTestAccess`, `EngineRuntime::Impl`, `BatterySnapshot`, `ModbusRtuConfig`, `MeteringBusController.cpp`, `finishCurrentRequest`, `handleRequestFailure`, `handleCurrentResponse`, `invalidateRequest`, `ModbusBusMonitor`, `CabinetSnapshot.h`?**
-  _High betweenness centrality (0.085) - this node is a cross-community bridge._
+- **Why does `EngineRuntime::Impl` connect `EngineRuntime::Impl` to `TestScheduleManager`, `LineManager.cpp`, `toJson`, `TestController`, `BatterySnapshot`, `ModbusRtuConfig`, `EngineInputs`, `MeteringBusController`, `ModbusController`, `CabinetSnapshot`, `ModbusTcpServer`, `ModbusBusMonitor`, `MaintenanceSnapshot`, `evaluate`, `.processIpcMessage`, `EngineRuntime.cpp`, `.setupWebRoutes`, `TestJournalEntry`, `QString`, `ManualEmergencyController`, `LineOperationalMonitor`, `TestControllerInputs`, `PasswordManager`, `.start`, `WaveShareModuleState`, `StateFileStore`, `StateChangeTracker`?**
+  _High betweenness centrality (0.266) - this node is a cross-community bridge._
+- **Why does `ModbusController` connect `ModbusController` to `PanelFacade`, `handleRequestFailure`, `TelemetryTestAccess`, `EngineRuntime::Impl`, `ModbusRtuConfig`, `setupDevice`, `ModbusController.cpp`, `ModbusBusMonitor`, `Request`, `EngineRuntime.cpp`, `handleRequestSuccess`?**
+  _High betweenness centrality (0.088) - this node is a cross-community bridge._
+- **Why does `MeteringBusController` connect `MeteringBusController` to `Request`, `PanelFacade`, `TelemetryTestAccess`, `handleCurrentResponse`, `EngineRuntime::Impl`, `BatterySnapshot`, `ModbusRtuConfig`, `MeteringBusController.cpp`, `handleRequestFailure`, `ModbusBusMonitor`, `invalidateRequest`, `EngineRuntime.cpp`?**
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._
 - **What connects `schemaVersion`, `port`, `baudRate` to the rest of the system?**
-  _601 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _600 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `TestScheduleManager` be split into smaller, more focused modules?**
   _Cohesion score 0.09408033826638477 - nodes in this community are weakly interconnected._
 - **Should `PanelFacade` be split into smaller, more focused modules?**
-  _Cohesion score 0.06712564543889846 - nodes in this community are weakly interconnected._
-- **Should `toJson` be split into smaller, more focused modules?**
-  _Cohesion score 0.12096774193548387 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06788128122245078 - nodes in this community are weakly interconnected._
+- **Should `LineManager.cpp` be split into smaller, more focused modules?**
+  _Cohesion score 0.0703962703962704 - nodes in this community are weakly interconnected._
