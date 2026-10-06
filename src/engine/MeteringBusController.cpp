@@ -71,7 +71,7 @@ MeteringBusController::MeteringBusController(QObject *parent)
             ? QStringLiteral("Serial port error")
             : m_port->errorString();
         invalidateMeasurements();
-        emit errorOccurred(message);
+        reportError(message);
         updateBusMonitorFailure(message);
 
         if (error == QSerialPort::ResourceError || error == QSerialPort::DeviceNotFoundError
@@ -486,8 +486,28 @@ void MeteringBusController::handleRequestFailure(const QString &error)
                         : failures >= std::max(1, m_config.busOfflineFailureThreshold))
         invalidateRequest(m_currentRequest);
     const QString message = error.isEmpty() ? QStringLiteral("Metering bus request failed") : error;
-    emit errorOccurred(message);
+    reportError(message);
     updateBusMonitorFailure(message);
+}
+
+void MeteringBusController::reportError(const QString &message)
+{
+    if (message == m_lastReportedError) {
+        ++m_suppressedErrorCount;
+        return;
+    }
+    flushRepeatedErrors();
+    m_lastReportedError = message;
+    emit errorOccurred(message);
+}
+
+void MeteringBusController::flushRepeatedErrors()
+{
+    if (m_suppressedErrorCount > 0)
+        emit errorOccurred(QStringLiteral("%1 (ещё %2 повторов)")
+                               .arg(m_lastReportedError).arg(m_suppressedErrorCount));
+    m_lastReportedError.clear();
+    m_suppressedErrorCount = 0;
 }
 
 void MeteringBusController::invalidateRequest(const Request &request)
@@ -535,6 +555,7 @@ void MeteringBusController::invalidateMeasurements()
 
 void MeteringBusController::updateBusMonitorSuccess()
 {
+    flushRepeatedErrors();
     const bool wasOnline = m_busMonitor.status().online;
     m_busMonitor.markSuccess();
     emit busStatusChanged(m_busMonitor.status());

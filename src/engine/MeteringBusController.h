@@ -102,6 +102,8 @@ private:
     void handleRequestFailure(const QString &error);
     void invalidateMeasurements();
     void invalidateRequest(const Request &request);
+    void reportError(const QString &message);
+    void flushRepeatedErrors();
     void updateBusMonitorSuccess();
     void updateBusMonitorFailure(const QString &error);
 
@@ -126,6 +128,8 @@ private:
     QElapsedTimer m_lastAmcPowerResponse;
     qint64 m_nextConnectAttemptMsec = 0;
     bool m_busy = false;
+    QString m_lastReportedError;
+    int m_suppressedErrorCount = 0;
 };
 
 } // namespace DialogG2

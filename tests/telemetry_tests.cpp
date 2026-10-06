@@ -141,6 +141,21 @@ struct TelemetryTestAccess {
         bus.m_currentRequest.type = DialogG2::MeteringBusController::RequestType::JbdBmsBasicInfo;
         bus.handleRequestFailure(QStringLiteral("test timeout"));
     }
+    static bool repeatedMeteringErrorsAreSummarized() {
+        DialogG2::MeteringBusController bus;
+        QVector<QString> messages;
+        QObject::connect(&bus, &DialogG2::MeteringBusController::errorOccurred,
+                         &bus, [&](const QString &message) { messages.append(message); });
+        for (int i = 0; i < 3; ++i)
+            bus.handleRequestFailure(QStringLiteral("File exists"));
+        bus.updateBusMonitorSuccess();
+        bus.handleRequestFailure(QStringLiteral("File exists"));
+        return messages.size() == 3
+            && messages[0] == QStringLiteral("File exists")
+            && messages[1].contains(QStringLiteral("File exists"))
+            && messages[1].contains(QStringLiteral("2"))
+            && messages[2] == QStringLiteral("File exists");
+    }
 };
 
 int main(int argc, char **argv) {
@@ -166,6 +181,8 @@ int main(int argc, char **argv) {
     TelemetryTestAccess::seed(panel);
     check(panel.inputVoltage() == 230.0 && panel.systemOk(), "fresh data restores measurements after disconnect");
     DialogG2::MeteringBusController bus;
+    check(TelemetryTestAccess::repeatedMeteringErrorsAreSummarized(),
+          "repeated metering errors are logged once and summarized after recovery");
     DialogG2::ModbusController relay;
     check(TelemetryTestAccess::relayConnectionErrorMarksBusOffline(relay),
           "relay connection loss must mark the bus offline immediately");
