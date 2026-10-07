@@ -3,6 +3,7 @@ import QtQuick.Controls
 
 Item {
     id: root
+    objectName: "testPage"
 
     property bool unlocked: false
     property int selectedTest: 0

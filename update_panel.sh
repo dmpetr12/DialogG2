@@ -75,8 +75,25 @@ sudo apt install -y --no-upgrade \
   qml6-module-qtquick-controls \
   qml6-module-qtquick-layouts
 
+echo "== Saving runtime settings and state =="
+RUNTIME_BACKUP=""
+if [ -d "$BUILD_DIR/config" ] || [ -d "$BUILD_DIR/state" ]; then
+  RUNTIME_BACKUP="$(mktemp -d "$USER_HOME/dialog-g2-runtime-XXXXXXXX")"
+  for directory in config state; do
+    if [ -d "$BUILD_DIR/$directory" ]; then
+      cp -a "$BUILD_DIR/$directory" "$RUNTIME_BACKUP/"
+    fi
+  done
+  echo "Saved to: $RUNTIME_BACKUP"
+fi
+
 echo "== Removing previous DialogG2 source/build =="
-rm -rf "$PROJECT_DIR"
+RESOLVED_HOME="$(realpath -m "$USER_HOME")"
+RESOLVED_PROJECT="$(realpath -m "$PROJECT_DIR")"
+case "$RESOLVED_PROJECT" in
+  "$RESOLVED_HOME"/*) rm -rf -- "$PROJECT_DIR" ;;
+  *) echo "Refusing to remove project outside $RESOLVED_HOME: $RESOLVED_PROJECT" >&2; exit 1 ;;
+esac
 
 echo "== Cloning DialogG2 =="
 git clone --branch "$BRANCH_NAME" --single-branch "$REPO_URL" "$PROJECT_DIR"
@@ -88,6 +105,16 @@ cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" \
 
 echo "== Building =="
 cmake --build "$BUILD_DIR" -j"$(nproc)"
+
+echo "== Restoring runtime settings and state =="
+if [ -n "$RUNTIME_BACKUP" ]; then
+  for directory in config state; do
+    if [ -d "$RUNTIME_BACKUP/$directory" ]; then
+      mkdir -p "$BUILD_DIR/$directory"
+      cp -a "$RUNTIME_BACKUP/$directory/." "$BUILD_DIR/$directory/"
+    fi
+  done
+fi
 
 echo "== Preparing runtime directories =="
 mkdir -p "$BUILD_DIR/logs" "$BUILD_DIR/state"

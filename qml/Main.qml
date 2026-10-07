@@ -29,6 +29,8 @@ ApplicationWindow {
     property bool startupMaintenanceChecked: false
     readonly property var maintenance: panel.maintenance
     readonly property int idleTimeoutMs: 10 * 60 * 1000
+    readonly property bool testActiveOnTestPage: panel.testRunning && pageStack.currentItem
+                                                 && pageStack.currentItem.objectName === "testPage"
 
     Timer {
         interval: 1000
@@ -41,9 +43,11 @@ ApplicationWindow {
         id: accessIdleTimer
         interval: window.idleTimeoutMs
         repeat: false
-        running: window.unlocked
+        running: window.unlocked && !window.testActiveOnTestPage
 
         onTriggered: {
+            if (window.testActiveOnTestPage)
+                return
             window.unlocked = false
             pageStack.replace(startPageComponent)
         }
@@ -72,7 +76,7 @@ ApplicationWindow {
     }
 
     onUnlockedChanged: {
-        if (unlocked)
+        if (unlocked && !testActiveOnTestPage)
             accessIdleTimer.restart()
         else
             accessIdleTimer.stop()
@@ -260,19 +264,19 @@ ApplicationWindow {
         propagateComposedEvents: true
 
         onPressed: function(mouse) {
-            if (window.unlocked)
+            if (window.unlocked && !window.testActiveOnTestPage)
                 accessIdleTimer.restart()
             mouse.accepted = false
         }
 
         onReleased: function(mouse) {
-            if (window.unlocked)
+            if (window.unlocked && !window.testActiveOnTestPage)
                 accessIdleTimer.restart()
             mouse.accepted = false
         }
 
         onClicked: function(mouse) {
-            if (window.unlocked)
+            if (window.unlocked && !window.testActiveOnTestPage)
                 accessIdleTimer.restart()
             mouse.accepted = false
         }

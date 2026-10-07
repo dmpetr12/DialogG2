@@ -216,4 +216,5 @@ target_compile_definitions(battery-page-tests PRIVATE
     START_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/StartPage.qml"
     SYSTEM_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/SystemPage.qml"
     TEST_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/pages/TestPage.qml"
+    MAIN_QML_PATH="${CMAKE_CURRENT_SOURCE_DIR}/qml/Main.qml"
 )

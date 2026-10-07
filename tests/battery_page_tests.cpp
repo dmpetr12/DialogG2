@@ -10,6 +10,7 @@
 #include <QThread>
 #include <cstdio>
 #include <cmath>
+#include <functional>
 
 int main(int argc, char **argv) {
     qInstallMessageHandler([](QtMsgType, const QMessageLogContext &, const QString &message) { fprintf(stderr, "%s\n", message.toUtf8().constData()); });
@@ -114,6 +115,27 @@ int main(int argc, char **argv) {
         fprintf(stderr, "FAIL: system card must keep a longer fault list visible\n");
         ++failures;
     }
+    const QString longLogLine = QString::fromUtf8(
+        "[2026-10-07 12:00:00] [WARNING] Система: неисправность шкафа. Причины: ")
+        + QString::fromUtf8("нет связи с измерителем мощности, ").repeated(12);
+    systemPage->setProperty("logLines", QVariantList{longLogLine});
+    systemPage->setProperty("logVisible", true);
+    settle();
+    QObject *logEntry = nullptr;
+    std::function<void(QQuickItem *)> findLogEntry = [&](QQuickItem *item) {
+        if (item->property("text").toString() == longLogLine)
+            logEntry = item;
+        for (QQuickItem *child : item->childItems())
+            findLogEntry(child);
+    };
+    findLogEntry(systemPage);
+    if (!logEntry || logEntry->property("truncated").toBool()
+        || logEntry->property("lineCount").toInt() < 2) {
+        fprintf(stderr, "FAIL: long HMI system log entry must wrap without truncation (found=%d, truncated=%d, lines=%d)\n",
+                logEntry != nullptr, logEntry ? logEntry->property("truncated").toBool() : -1,
+                logEntry ? logEntry->property("lineCount").toInt() : -1);
+        ++failures;
+    }
     delete systemPage;
 
     panel.insert("systemAvailable", false);
@@ -155,6 +177,55 @@ int main(int argc, char **argv) {
         ++failures;
     }
     delete testPage;
+
+    panel.insert("logLevel", "INFO");
+    panel.insert("temperature", 20.0);
+    panel.insert("demoMode", false);
+    panel.insert("maintenance", QVariantMap{{"ok", true}});
+    panel.insert("testRunning", false);
+    QQmlComponent mainComponent(&engine, QUrl::fromLocalFile(QStringLiteral(MAIN_QML_PATH)));
+    auto *mainWindow = qobject_cast<QQuickWindow *>(mainComponent.create());
+    if (!mainWindow) { qCritical() << mainComponent.errors(); return 7; }
+    mainWindow->setProperty("unlocked", true);
+    settle();
+    QObject *idleTimer = nullptr;
+    QObject *startOnMain = nullptr;
+    for (QObject *child : mainWindow->findChildren<QObject *>()) {
+        if (child->property("interval").toInt() == 600000)
+            idleTimer = child;
+        if (child->metaObject()->indexOfSignal("testRequested()") >= 0)
+            startOnMain = child;
+    }
+    if (!idleTimer || !startOnMain || !QMetaObject::invokeMethod(startOnMain, "testRequested")) {
+        fprintf(stderr, "FAIL: HMI test page or idle timer not found\n");
+        ++failures;
+    } else {
+        settle();
+        if (!idleTimer->property("running").toBool()) {
+            fprintf(stderr, "FAIL: HMI idle lock must still run on the test page before a test starts\n");
+            ++failures;
+        }
+        panel.insert("testRunning", true);
+        settle();
+        if (idleTimer->property("running").toBool()) {
+            fprintf(stderr, "FAIL: HMI must pause idle lock during an active test on the test page\n");
+            ++failures;
+        }
+        idleTimer->setProperty("interval", 10);
+        settle();
+        if (!mainWindow->property("unlocked").toBool()) {
+            fprintf(stderr, "FAIL: HMI must stay unlocked during an active test on the test page\n");
+            ++failures;
+        }
+        idleTimer->setProperty("interval", 600000);
+        panel.insert("testRunning", false);
+        settle();
+        if (!idleTimer->property("running").toBool()) {
+            fprintf(stderr, "FAIL: HMI must resume idle lock after the test ends\n");
+            ++failures;
+        }
+    }
+    delete mainWindow;
 
     panel.insert("lines", QVariantList{QVariantMap{
         {"index", 1}, {"description", QString::fromUtf8("Гараж")},

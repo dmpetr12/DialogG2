@@ -227,7 +227,7 @@ Rectangle {
                            : "#222222"
                     font.pixelSize: 18
                     font.family: "Consolas"
-                    elide: Text.ElideRight
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
 
                 ScrollBar.vertical: ScrollBar {
